@@ -1,0 +1,65 @@
+<div class="space-y-6">
+  <h1 class="text-2xl font-bold text-gray-900">에스크로 관리</h1>
+
+  <!-- 테이블 -->
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">신고번호</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">고객</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">마스터</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">금액</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">수수료</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">상태</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">입금일</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">작업</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          <% @escrow_transactions.each do |escrow| %>
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">#<%= escrow.id %></td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <%= link_to "##{escrow.request_id}", admin_request_path(escrow.request), class: "text-blue-600 hover:text-blue-800 text-sm font-mono" %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%= escrow.customer&.name || "-" %></td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><%= escrow.master&.name || "-" %></td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-gray-900"><%= number_to_currency(escrow.amount, unit: "₩", precision: 0) %></td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-600"><%= number_to_currency(escrow.platform_fee, unit: "₩", precision: 0) %></td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <%
+                  escrow_badge = case escrow.status
+                    when "pending"   then "bg-yellow-100 text-yellow-800"
+                    when "deposited" then "bg-blue-100 text-blue-800"
+                    when "held"      then "bg-orange-100 text-orange-800"
+                    when "released"  then "bg-green-100 text-green-800"
+                    when "settled"   then "bg-emerald-100 text-emerald-800"
+                    when "refunded"  then "bg-red-100 text-red-800"
+                    when "disputed"  then "bg-purple-100 text-purple-800"
+                    else "bg-gray-100 text-gray-800"
+                  end
+                %>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= escrow_badge %>">
+                  <%= escrow.status_label %>
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= escrow.deposited_at&.strftime("%Y-%m-%d") || "-" %></td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <%= link_to "상세", admin_escrow_transaction_path(escrow), class: "text-blue-600 hover:text-blue-800 text-sm font-medium" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <% if @escrow_transactions.respond_to?(:total_pages) %>
+    <div class="mt-6">
+      <%= paginate @escrow_transactions %>
+    </div>
+  <% end %>
+</div>

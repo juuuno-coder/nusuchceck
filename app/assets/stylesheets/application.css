@@ -1,0 +1,36 @@
+/*
+ * Application CSS
+ * Tailwind CSS handles most styling.
+ * Add custom styles here if needed.
+ */
+
+/* Custom styles for star rating */
+.star-rating input[type="radio"] {
+  display: none;
+}
+
+.star-rating label {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+/* Status badge animations */
+.status-badge {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Flash message animation */
+.flash-message {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,166 @@
+<!-- Hero Section -->
+<section class="relative bg-gradient-to-br from-blue-700 via-blue-600 to-blue-800 -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+  <div class="absolute inset-0 bg-black/10"></div>
+  <div class="relative max-w-4xl mx-auto text-center text-white">
+    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
+      누수 문제,<br class="sm:hidden"> 전문가에게 맡기세요
+    </h1>
+    <p class="mt-6 text-lg md:text-xl text-blue-100 max-w-2xl mx-auto leading-relaxed">
+      검증된 누수 전문가가 탐지부터 시공, 정산까지 한 번에 해결합니다.
+      투명한 가격과 에스크로 결제로 안심하고 이용하세요.
+    </p>
+    <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+      <% if user_signed_in? %>
+        <% if current_user.customer? %>
+          <%= link_to new_customers_request_path, class: "inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-xl bg-white text-blue-700 hover:bg-gray-100 shadow-lg hover:shadow-xl transition-all duration-200" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            누수 신고하기
+          <% end %>
+        <% elsif current_user.master? %>
+          <%= link_to masters_requests_path, class: "inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-xl bg-white text-blue-700 hover:bg-gray-100 shadow-lg hover:shadow-xl transition-all duration-200" do %>
+            배정된 신고 보기
+          <% end %>
+        <% end %>
+      <% else %>
+        <%= link_to new_user_registration_path, class: "inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-xl bg-white text-blue-700 hover:bg-gray-100 shadow-lg hover:shadow-xl transition-all duration-200" do %>
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          누수 신고하기
+        <% end %>
+        <%= link_to new_user_session_path, class: "inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-xl border-2 border-white text-white hover:bg-white/10 transition-all duration-200" do %>
+          로그인
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<!-- 3단계 프로세스 -->
+<section class="py-16 md:py-20">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900">간단한 3단계로 해결</h2>
+      <p class="mt-3 text-lg text-gray-500">복잡한 누수 문제, 누수체크가 쉽게 연결합니다</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <!-- Step 1 -->
+      <div class="relative bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow p-8 text-center border border-gray-100">
+        <div class="w-16 h-16 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center mx-auto mb-5">
+          <span class="text-2xl font-bold">1</span>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">신고 접수</h3>
+        <p class="text-gray-600 leading-relaxed">
+          누수 증상과 위치를 입력하고 사진을 첨부하면 접수가 완료됩니다. 몇 분이면 충분합니다.
+        </p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="relative bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow p-8 text-center border border-gray-100">
+        <div class="w-16 h-16 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center mx-auto mb-5">
+          <span class="text-2xl font-bold">2</span>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">전문가 매칭</h3>
+        <p class="text-gray-600 leading-relaxed">
+          검증된 누수 탐지 전문가가 배정되어 현장을 방문합니다. 탐지 결과에 따라 견적을 받으세요.
+        </p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="relative bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow p-8 text-center border border-gray-100">
+        <div class="w-16 h-16 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center mx-auto mb-5">
+          <span class="text-2xl font-bold">3</span>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">투명한 정산</h3>
+        <p class="text-gray-600 leading-relaxed">
+          에스크로 결제로 안전하게 대금을 보호합니다. 시공 완료 확인 후 정산이 이루어집니다.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 장점 섹션 -->
+<section class="py-16 md:py-20 bg-gray-100 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900">왜 누수체크인가요?</h2>
+      <p class="mt-3 text-lg text-gray-500">고객과 전문가 모두를 위한 신뢰 기반 플랫폼</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8">
+      <!-- 장점 1: 검증된 마스터 -->
+      <div class="flex items-start bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex-shrink-0 w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mr-4">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-gray-900 mb-1">검증된 마스터</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            자격증, 경력, 보험 가입 여부를 철저히 심사합니다. 검증을 통과한 전문가만 활동할 수 있습니다.
+          </p>
+        </div>
+      </div>
+
+      <!-- 장점 2: 에스크로 결제 -->
+      <div class="flex items-start bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex-shrink-0 w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mr-4">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-gray-900 mb-1">에스크로 결제</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            결제 금액은 에스크로 계좌에 안전하게 보관됩니다. 시공 완료를 확인한 뒤 정산이 이루어져 양측 모두 안심할 수 있습니다.
+          </p>
+        </div>
+      </div>
+
+      <!-- 장점 3: 표준 견적 -->
+      <div class="flex items-start bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex-shrink-0 w-12 h-12 bg-yellow-100 text-yellow-600 rounded-lg flex items-center justify-center mr-4">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-gray-900 mb-1">표준 견적 시스템</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            표준화된 견적 항목으로 투명한 가격을 제공합니다. 바가지 걱정 없이 합리적인 비용으로 시공 받으세요.
+          </p>
+        </div>
+      </div>
+
+      <!-- 장점 4: 보험서류 자동화 -->
+      <div class="flex items-start bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex-shrink-0 w-12 h-12 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mr-4">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-gray-900 mb-1">보험서류 자동화</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            보험 청구에 필요한 탐지 보고서, 견적서, 시공 완료 보고서를 PDF로 자동 생성합니다. 번거로운 서류 작업을 줄여드립니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA 섹션 -->
+<section class="py-16 text-center">
+  <div class="max-w-2xl mx-auto">
+    <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">지금 바로 시작하세요</h2>
+    <p class="text-gray-600 mb-8">누수 걱정, 더 이상 혼자 고민하지 마세요.</p>
+    <% unless user_signed_in? %>
+      <%= link_to new_user_registration_path, class: "inline-flex items-center px-8 py-4 text-lg font-semibold rounded-xl bg-blue-700 text-white hover:bg-blue-800 shadow-lg hover:shadow-xl transition-all duration-200" do %>
+        무료 회원가입
+        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+      <% end %>
+    <% end %>
+  </div>
+</section>

@@ -1,0 +1,128 @@
+<div class="max-w-3xl mx-auto space-y-6">
+  <!-- 뒤로가기 + 헤더 -->
+  <div>
+    <%= link_to admin_escrow_transactions_path, class: "text-sm text-blue-600 hover:text-blue-800 flex items-center" do %>
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      목록으로
+    <% end %>
+    <div class="flex items-center justify-between mt-2">
+      <h1 class="text-2xl font-bold text-gray-900">에스크로 거래 #<%= @escrow_transaction.id %></h1>
+      <%
+        escrow_badge = case @escrow_transaction.status
+          when "pending"   then "bg-yellow-100 text-yellow-800"
+          when "deposited" then "bg-blue-100 text-blue-800"
+          when "held"      then "bg-orange-100 text-orange-800"
+          when "released"  then "bg-green-100 text-green-800"
+          when "settled"   then "bg-emerald-100 text-emerald-800"
+          when "refunded"  then "bg-red-100 text-red-800"
+          when "disputed"  then "bg-purple-100 text-purple-800"
+          else "bg-gray-100 text-gray-800"
+        end
+      %>
+      <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <%= escrow_badge %>">
+        <%= @escrow_transaction.status_label %>
+      </span>
+    </div>
+  </div>
+
+  <!-- 거래 정보 -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">거래 정보</h2>
+    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+      <div>
+        <dt class="text-sm font-medium text-gray-500">관련 신고</dt>
+        <dd class="mt-1">
+          <%= link_to "##{@escrow_transaction.request_id}", admin_request_path(@escrow_transaction.request), class: "text-blue-600 hover:text-blue-800 font-mono" %>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">고객</dt>
+        <dd class="mt-1 text-sm text-gray-900"><%= @escrow_transaction.customer&.name || "-" %></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">마스터</dt>
+        <dd class="mt-1 text-sm text-gray-900"><%= @escrow_transaction.master&.name || "-" %></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">생성일</dt>
+        <dd class="mt-1 text-sm text-gray-900"><%= @escrow_transaction.created_at.strftime("%Y-%m-%d %H:%M") %></dd>
+      </div>
+    </dl>
+  </div>
+
+  <!-- 금액 정보 -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">금액 정보</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div class="text-center p-4 bg-blue-50 rounded-lg">
+        <p class="text-sm font-medium text-blue-600">총 거래 금액</p>
+        <p class="text-2xl font-bold text-blue-900 mt-1"><%= number_to_currency(@escrow_transaction.amount, unit: "₩", precision: 0) %></p>
+      </div>
+      <div class="text-center p-4 bg-yellow-50 rounded-lg">
+        <p class="text-sm font-medium text-yellow-600">플랫폼 수수료 (<%= (EscrowTransaction::PLATFORM_FEE_RATE * 100).to_i %>%)</p>
+        <p class="text-2xl font-bold text-yellow-900 mt-1"><%= number_to_currency(@escrow_transaction.platform_fee, unit: "₩", precision: 0) %></p>
+      </div>
+      <div class="text-center p-4 bg-green-50 rounded-lg">
+        <p class="text-sm font-medium text-green-600">마스터 지급액</p>
+        <p class="text-2xl font-bold text-green-900 mt-1"><%= number_to_currency(@escrow_transaction.master_payout, unit: "₩", precision: 0) %></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 일시 기록 -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">일시 기록</h2>
+    <dl class="space-y-3 text-sm">
+      <div class="flex justify-between">
+        <dt class="text-gray-500">생성일</dt>
+        <dd class="text-gray-900"><%= @escrow_transaction.created_at.strftime("%Y-%m-%d %H:%M") %></dd>
+      </div>
+      <% if @escrow_transaction.deposited_at.present? %>
+        <div class="flex justify-between">
+          <dt class="text-gray-500">입금일</dt>
+          <dd class="text-gray-900"><%= @escrow_transaction.deposited_at.strftime("%Y-%m-%d %H:%M") %></dd>
+        </div>
+      <% end %>
+      <% if @escrow_transaction.released_at.present? %>
+        <div class="flex justify-between">
+          <dt class="text-gray-500">지급일</dt>
+          <dd class="text-gray-900"><%= @escrow_transaction.released_at.strftime("%Y-%m-%d %H:%M") %></dd>
+        </div>
+      <% end %>
+      <% if @escrow_transaction.refunded_at.present? %>
+        <div class="flex justify-between">
+          <dt class="text-gray-500">환불일</dt>
+          <dd class="text-gray-900"><%= @escrow_transaction.refunded_at.strftime("%Y-%m-%d %H:%M") %></dd>
+        </div>
+      <% end %>
+    </dl>
+  </div>
+
+  <!-- 관리 작업 -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">관리 작업</h2>
+    <div class="flex flex-col sm:flex-row gap-3">
+      <% if @escrow_transaction.deposited? || @escrow_transaction.held? %>
+        <%= button_to "대금 지급",
+              release_payment_admin_escrow_transaction_path(@escrow_transaction),
+              method: :post,
+              class: "flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium text-sm text-center",
+              data: { turbo_confirm: "마스터에게 대금을 지급하시겠습니까?" } %>
+      <% end %>
+
+      <% if @escrow_transaction.pending? || @escrow_transaction.deposited? || @escrow_transaction.held? %>
+        <%= button_to "환불 처리",
+              refund_admin_escrow_transaction_path(@escrow_transaction),
+              method: :post,
+              class: "flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium text-sm text-center",
+              data: { turbo_confirm: "정말 환불 처리하시겠습니까? 이 작업은 되돌릴 수 없습니다." } %>
+      <% end %>
+
+      <% if @escrow_transaction.status.in?(%w[released settled refunded]) %>
+        <p class="text-sm text-gray-500 text-center flex-1 py-2">이 거래는 이미 처리 완료되었습니다.</p>
+      <% end %>
+    </div>
+  </div>
+</div>

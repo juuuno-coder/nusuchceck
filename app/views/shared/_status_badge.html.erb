@@ -1,0 +1,40 @@
+<%# 상태 뱃지 파셜 - status 변수를 받아서 색상별 뱃지 표시 %>
+<%
+  badge_colors = {
+    "reported"               => "bg-blue-100 text-blue-800",
+    "assigned"               => "bg-yellow-100 text-yellow-800",
+    "visiting"               => "bg-amber-100 text-amber-800",
+    "detecting"              => "bg-orange-100 text-orange-800",
+    "no_leak_found"          => "bg-gray-100 text-gray-800",
+    "estimate_pending"       => "bg-indigo-100 text-indigo-800",
+    "estimate_submitted"     => "bg-cyan-100 text-cyan-800",
+    "construction_agreed"    => "bg-teal-100 text-teal-800",
+    "escrow_deposited"       => "bg-emerald-100 text-emerald-800",
+    "constructing"           => "bg-purple-100 text-purple-800",
+    "construction_completed" => "bg-lime-100 text-lime-800",
+    "closed"                 => "bg-green-100 text-green-800",
+    "cancelled"              => "bg-red-100 text-red-800"
+  }
+
+  status_labels = {
+    "reported"               => "접수됨",
+    "assigned"               => "마스터 배정",
+    "visiting"               => "방문 중",
+    "detecting"              => "탐지 중",
+    "no_leak_found"          => "누수 미확인",
+    "estimate_pending"       => "견적 대기",
+    "estimate_submitted"     => "견적 제출",
+    "construction_agreed"    => "공사 합의",
+    "escrow_deposited"       => "에스크로 입금",
+    "constructing"           => "공사 진행",
+    "construction_completed" => "공사 완료",
+    "closed"                 => "종료",
+    "cancelled"              => "취소"
+  }
+
+  css_class = badge_colors[status.to_s] || "bg-gray-100 text-gray-800"
+  label = status_labels[status.to_s] || status.to_s.humanize
+%>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= css_class %>">
+  <%= label %>
+</span>

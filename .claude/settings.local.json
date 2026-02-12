@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wsl:*)",
+      "Bash(timeout 60 bash -c 'while true; do result=$\\(wsl -l -v 2>&1\\); if echo \"\"$result\"\" | grep -q \"\"Ubuntu\"\"; then echo \"\"$result\"\"; break; fi; sleep 5; done')",
+      "Bash(iconv:*)",
+      "Bash(powershell:*)",
+      "Bash(if not exist \"D:\\\\dev\\\\nusucheck\\\\db\\\\migrate\" mkdir \"D:\\\\dev\\\\nusucheck\\\\db\\\\migrate\")",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}

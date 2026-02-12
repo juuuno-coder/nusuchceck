@@ -1,0 +1,119 @@
+<div class="max-w-2xl mx-auto">
+  <div class="mb-6">
+    <%= link_to masters_profile_path, class: "text-sm text-blue-600 hover:text-blue-800 flex items-center" do %>
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      프로필로 돌아가기
+    <% end %>
+    <h1 class="text-2xl font-bold text-gray-900 mt-2">프로필 수정</h1>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <%= form_with(model: @profile, url: masters_profile_path, method: :patch, class: "space-y-6") do |f| %>
+
+      <% if @profile.errors.any? %>
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+          <h3 class="text-sm font-medium text-red-800 mb-2">입력 오류가 있습니다:</h3>
+          <ul class="list-disc list-inside text-sm text-red-700 space-y-1">
+            <% @profile.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <!-- 자격증 번호 -->
+      <div>
+        <%= f.label :license_number, "자격증 번호", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.text_field :license_number,
+              placeholder: "누수탐지 자격증 번호",
+              class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+
+      <!-- 경력 -->
+      <div>
+        <%= f.label :experience_years, "경력 (년)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.number_field :experience_years,
+              min: 0, max: 50, step: 1,
+              class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+
+      <!-- 보유 장비 -->
+      <div>
+        <%= f.label :equipment, "보유 장비", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.text_field :equipment,
+              value: @profile.equipment_list.join(", "),
+              placeholder: "열화상카메라, 청음기, 수분측정기 (콤마로 구분)",
+              class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+        <p class="mt-1 text-xs text-gray-500">콤마(,)로 구분하여 입력해 주세요.</p>
+      </div>
+
+      <!-- 서비스 지역 -->
+      <div>
+        <%= f.label :service_areas, "서비스 지역", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.text_field :service_areas,
+              value: @profile.service_areas_list.join(", "),
+              placeholder: "서울 강남구, 서울 서초구, 경기 성남시 (콤마로 구분)",
+              class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+        <p class="mt-1 text-xs text-gray-500">콤마(,)로 구분하여 입력해 주세요.</p>
+      </div>
+
+      <hr class="border-gray-200">
+
+      <!-- 계좌 정보 -->
+      <h3 class="text-lg font-semibold text-gray-900">계좌 정보</h3>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <%= f.label :bank_name, "은행", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.select :bank_name,
+                options_for_select([
+                  ["선택", ""],
+                  ["국민은행", "국민은행"],
+                  ["신한은행", "신한은행"],
+                  ["우리은행", "우리은행"],
+                  ["하나은행", "하나은행"],
+                  ["농협은행", "농협은행"],
+                  ["기업은행", "기업은행"],
+                  ["카카오뱅크", "카카오뱅크"],
+                  ["토스뱅크", "토스뱅크"],
+                  ["SC제일은행", "SC제일은행"],
+                  ["대구은행", "대구은행"],
+                  ["부산은행", "부산은행"]
+                ], @profile.bank_name),
+                {}, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+        <div>
+          <%= f.label :account_number, "계좌번호", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.text_field :account_number,
+                placeholder: "계좌번호",
+                class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+        <div>
+          <%= f.label :account_holder, "예금주", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.text_field :account_holder,
+                placeholder: "예금주명",
+                class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+      </div>
+
+      <hr class="border-gray-200">
+
+      <!-- 자기소개 -->
+      <div>
+        <%= f.label :bio, "자기소개", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.text_area :bio,
+              rows: 5,
+              placeholder: "경력, 전문 분야, 특기 사항 등을 자유롭게 작성해 주세요.",
+              class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+
+      <!-- 제출 버튼 -->
+      <div class="flex items-center justify-end gap-3 pt-4 border-t">
+        <%= link_to "취소", masters_profile_path, class: "px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium text-sm" %>
+        <%= f.submit "저장", class: "px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>

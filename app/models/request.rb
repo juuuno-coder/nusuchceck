@@ -6,6 +6,7 @@ class Request < ApplicationRecord
   has_many :estimates, dependent: :destroy
   has_one :escrow_transaction, dependent: :destroy
   has_one :review, dependent: :destroy
+  has_many :insurance_claims, dependent: :nullify
   has_many_attached :photos
 
   validates :symptom_type, presence: true

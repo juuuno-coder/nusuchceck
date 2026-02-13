@@ -1,0 +1,129 @@
+<div class="max-w-2xl mx-auto py-8">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">AI 점검 결과</h1>
+    <%= link_to new_leak_inspection_path, class: "text-sm text-blue-600 hover:text-blue-800" do %>
+      새로운 점검하기 →
+    <% end %>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+    <!-- 업로드된 사진 -->
+    <% if @inspection.photo.attached? %>
+      <div class="aspect-video bg-gray-100 flex items-center justify-center overflow-hidden">
+        <%= image_tag @inspection.photo, class: "w-full h-full object-cover" %>
+      </div>
+    <% end %>
+
+    <div class="p-6 space-y-6">
+      <% if @inspection.completed? %>
+        <!-- 누수 감지 결과 배지 -->
+        <div class="flex flex-wrap items-center gap-3">
+          <% if @inspection.leak_detected? %>
+            <span class="px-4 py-2 bg-red-100 text-red-700 rounded-full font-bold text-sm">
+              ⚠ 누수 감지됨
+            </span>
+            <span class="px-3 py-1 bg-<%= @inspection.severity_color %>-100 text-<%= @inspection.severity_color %>-700 rounded-full text-sm font-medium">
+              심각도: <%= @inspection.severity_label %>
+            </span>
+          <% else %>
+            <span class="px-4 py-2 bg-green-100 text-green-700 rounded-full font-bold text-sm">
+              ✓ 누수 미감지
+            </span>
+          <% end %>
+
+          <% if @inspection.ai_model_used == "mock" %>
+            <span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs">
+              데모 분석
+            </span>
+          <% end %>
+        </div>
+
+        <!-- 분석 요약 -->
+        <div>
+          <h3 class="font-semibold text-gray-900 mb-2">분석 요약</h3>
+          <p class="text-gray-700 leading-relaxed"><%= @inspection.analysis_summary %></p>
+        </div>
+
+        <!-- 상세 분석 -->
+        <% if @inspection.analysis_detail.present? %>
+          <% detail = @inspection.analysis_detail.with_indifferent_access %>
+          <% details = detail[:details] || {} %>
+
+          <% if details[:observed_symptoms].present? %>
+            <div>
+              <h3 class="font-semibold text-gray-900 mb-2">관찰된 증상</h3>
+              <ul class="list-disc list-inside text-gray-600 space-y-1">
+                <% details[:observed_symptoms].each do |symptom| %>
+                  <li><%= symptom %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <% if details[:possible_causes].present? %>
+            <div>
+              <h3 class="font-semibold text-gray-900 mb-2">가능한 원인</h3>
+              <ul class="list-disc list-inside text-gray-600 space-y-1">
+                <% details[:possible_causes].each do |cause| %>
+                  <li><%= cause %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <% if details[:affected_area].present? %>
+            <div>
+              <h3 class="font-semibold text-gray-900 mb-2">영향 범위</h3>
+              <p class="text-gray-600"><%= details[:affected_area] %></p>
+            </div>
+          <% end %>
+        <% end %>
+
+        <!-- 추천 조치 -->
+        <% if @inspection.recommended_action.present? %>
+          <div class="bg-blue-50 rounded-xl p-4">
+            <h3 class="font-semibold text-blue-900 mb-2">추천 조치</h3>
+            <p class="text-blue-800"><%= @inspection.recommended_action %></p>
+          </div>
+        <% end %>
+
+        <!-- 분석 메타 정보 -->
+        <div class="text-xs text-gray-400 flex items-center gap-4">
+          <span>분석 시간: <%= @inspection.analysis_duration_seconds %>초</span>
+          <% if @inspection.location_description.present? %>
+            <span>위치: <%= @inspection.location_description %></span>
+          <% end %>
+        </div>
+
+        <!-- CTA: 정식 신고 유도 -->
+        <div class="border-t pt-6 text-center space-y-3">
+          <p class="text-gray-600">전문가에게 정확한 진단을 받아보세요</p>
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <% if user_signed_in? && current_user.is_a?(Customer) %>
+              <%= link_to new_customers_request_path, class: "inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition" do %>
+                정식 누수 신고하기
+              <% end %>
+            <% else %>
+              <%= link_to new_user_registration_path, class: "inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition" do %>
+                회원가입 후 신고하기
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+
+      <% elsif @inspection.failed? %>
+        <div class="text-center py-8">
+          <p class="text-red-600 font-medium mb-4">분석 중 오류가 발생했습니다.</p>
+          <%= link_to "다시 시도하기", new_leak_inspection_path,
+                class: "px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" %>
+        </div>
+
+      <% else %>
+        <div class="text-center py-8">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p class="text-gray-600">분석 중입니다...</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

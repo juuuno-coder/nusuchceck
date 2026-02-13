@@ -1,0 +1,177 @@
+<div class="max-w-3xl mx-auto">
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <%= link_to admin_insurance_claims_path, class: "text-sm text-blue-600 hover:text-blue-800 flex items-center mb-2" do %>
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        목록으로
+      <% end %>
+      <h1 class="text-2xl font-bold text-gray-900">보험 신청 심사</h1>
+      <span class="text-sm font-mono text-gray-500"><%= @insurance_claim.claim_number %></span>
+    </div>
+    <span class="px-4 py-2 rounded-full text-sm font-semibold
+      <%= case @insurance_claim.status
+          when 'draft' then 'bg-gray-100 text-gray-700'
+          when 'submitted' then 'bg-blue-100 text-blue-700'
+          when 'under_review' then 'bg-yellow-100 text-yellow-700'
+          when 'approved' then 'bg-green-100 text-green-700'
+          when 'rejected' then 'bg-red-100 text-red-700'
+          when 'completed' then 'bg-purple-100 text-purple-700'
+          end %>">
+      <%= @insurance_claim.status_label %>
+    </span>
+  </div>
+
+  <!-- 정보 카드 -->
+  <div class="bg-white rounded-lg shadow divide-y">
+    <div class="p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">신청자 정보</h3>
+      <dl class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+        <div>
+          <dt class="text-gray-500">성명</dt>
+          <dd class="font-medium text-gray-900"><%= @insurance_claim.applicant_name %></dd>
+        </div>
+        <div>
+          <dt class="text-gray-500">연락처</dt>
+          <dd class="font-medium text-gray-900"><%= @insurance_claim.applicant_phone %></dd>
+        </div>
+        <div>
+          <dt class="text-gray-500">이메일</dt>
+          <dd class="font-medium text-gray-900"><%= @insurance_claim.applicant_email || "-" %></dd>
+        </div>
+        <div>
+          <dt class="text-gray-500">생년월일</dt>
+          <dd class="font-medium text-gray-900"><%= @insurance_claim.birth_date&.strftime("%Y.%m.%d") || "-" %></dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">사고 정보</h3>
+      <dl class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+        <div>
+          <dt class="text-gray-500">사고 발생일</dt>
+          <dd class="font-medium text-gray-900"><%= @insurance_claim.incident_date.strftime("%Y.%m.%d") %></dd>
+        </div>
+        <div>
+          <dt class="text-gray-500">피해 유형</dt>
+          <dd class="font-medium text-gray-900"><%= @insurance_claim.damage_type_label %></dd>
+        </div>
+        <div class="col-span-2">
+          <dt class="text-gray-500">사고 장소</dt>
+          <dd class="font-medium text-gray-900">
+            <%= @insurance_claim.incident_address %>
+            <% if @insurance_claim.incident_detail_address.present? %>
+              (<%= @insurance_claim.incident_detail_address %>)
+            <% end %>
+          </dd>
+        </div>
+        <% if @insurance_claim.estimated_damage_amount.present? %>
+          <div>
+            <dt class="text-gray-500">예상 피해 금액</dt>
+            <dd class="font-medium text-gray-900"><%= number_to_currency(@insurance_claim.estimated_damage_amount, unit: "₩", precision: 0) %></dd>
+          </div>
+        <% end %>
+        <div class="col-span-2">
+          <dt class="text-gray-500">사고 내용</dt>
+          <dd class="font-medium text-gray-900 whitespace-pre-line"><%= @insurance_claim.incident_description %></dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">보험 정보</h3>
+      <dl class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+        <div>
+          <dt class="text-gray-500">보험사</dt>
+          <dd class="font-medium text-gray-900"><%= @insurance_claim.insurance_company || "-" %></dd>
+        </div>
+        <div>
+          <dt class="text-gray-500">증권번호</dt>
+          <dd class="font-medium text-gray-900"><%= @insurance_claim.policy_number || "-" %></dd>
+        </div>
+      </dl>
+    </div>
+
+    <% if @insurance_claim.victim_name.present? %>
+      <div class="p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">피해자(제3자) 정보</h3>
+        <dl class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+          <div>
+            <dt class="text-gray-500">성명</dt>
+            <dd class="font-medium text-gray-900"><%= @insurance_claim.victim_name %></dd>
+          </div>
+          <div>
+            <dt class="text-gray-500">연락처</dt>
+            <dd class="font-medium text-gray-900"><%= @insurance_claim.victim_phone || "-" %></dd>
+          </div>
+        </dl>
+      </div>
+    <% end %>
+
+    <% if @insurance_claim.request.present? %>
+      <div class="p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">연관 누수 신고</h3>
+        <div class="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+          <span class="text-sm">
+            <span class="font-mono text-gray-500">NSC-<%= @insurance_claim.request.id.to_s.rjust(6, '0') %></span>
+            <span class="ml-2 text-gray-700"><%= @insurance_claim.request.address.truncate(30) %></span>
+          </span>
+          <%= link_to "상세보기", admin_request_path(@insurance_claim.request),
+                class: "text-sm text-blue-600 hover:text-blue-800" %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- 증빙 서류 -->
+    <% if @insurance_claim.supporting_documents.attached? %>
+      <div class="p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">증빙 서류</h3>
+        <div class="grid grid-cols-3 gap-3">
+          <% @insurance_claim.supporting_documents.each do |doc| %>
+            <% if doc.content_type.start_with?("image/") %>
+              <%= image_tag doc, class: "rounded-lg shadow-sm object-cover h-32 w-full" %>
+            <% else %>
+              <div class="bg-gray-50 rounded-lg p-3 text-sm text-gray-600">
+                <%= doc.filename %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 관리자 액션 -->
+  <div class="mt-6 bg-white rounded-lg shadow p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">심사 처리</h3>
+    <div class="flex flex-wrap gap-3">
+      <% if @insurance_claim.may_start_review? %>
+        <%= button_to "심사 시작", start_review_admin_insurance_claim_path(@insurance_claim),
+              method: :post,
+              class: "px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-medium text-sm" %>
+      <% end %>
+
+      <% if @insurance_claim.may_approve? %>
+        <%= button_to "승인", approve_admin_insurance_claim_path(@insurance_claim),
+              method: :post,
+              class: "px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium text-sm",
+              data: { turbo_confirm: "이 보험 신청을 승인하시겠습니까?" } %>
+      <% end %>
+
+      <% if @insurance_claim.may_reject? %>
+        <%= button_to "반려", reject_admin_insurance_claim_path(@insurance_claim),
+              method: :post,
+              class: "px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium text-sm",
+              data: { turbo_confirm: "이 보험 신청을 반려하시겠습니까?" } %>
+      <% end %>
+
+      <% if @insurance_claim.may_complete? %>
+        <%= button_to "처리 완료", complete_admin_insurance_claim_path(@insurance_claim),
+              method: :post,
+              class: "px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium text-sm" %>
+      <% end %>
+    </div>
+  </div>
+</div>

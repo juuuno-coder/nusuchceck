@@ -1,0 +1,9 @@
+.git
+.gitignore
+log/*
+tmp/*
+storage/*
+node_modules
+.env*
+nul
+세션로그

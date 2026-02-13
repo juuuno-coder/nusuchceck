@@ -39,6 +39,9 @@ gem "geocoder"
 # JSON
 gem "jbuilder"
 
+# AI (Claude Vision API)
+gem "anthropic"
+
 group :development, :test do
   gem "debug", platforms: %i[mri windows]
   gem "rspec-rails"

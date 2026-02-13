@@ -286,6 +286,18 @@
         </div>
       </div>
 
+      <!-- 보험 신청 -->
+      <% if @request.detection_leak_confirmed? || @request.closed? %>
+        <div class="bg-purple-50 rounded-lg shadow p-6">
+          <h2 class="text-lg font-semibold text-purple-900 mb-2">일상배상책임보험</h2>
+          <p class="text-sm text-purple-700 mb-4">누수 피해에 대한 보험을 바로 신청할 수 있습니다.</p>
+          <%= link_to new_customers_request_insurance_claim_path(@request),
+                class: "block w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium text-sm text-center" do %>
+            보험 신청하기
+          <% end %>
+        </div>
+      <% end %>
+
       <!-- 접수 정보 -->
       <div class="bg-white rounded-lg shadow p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">접수 정보</h2>

@@ -14,8 +14,16 @@ Rails.application.routes.draw do
         post :confirm_completion
       end
       resources :reviews, only: [:new, :create]
+      resources :insurance_claims, only: [:new, :create], controller: "insurance_claims"
     end
     resources :estimates, only: [:show]
+
+    resources :insurance_claims, only: [:index, :show, :new, :create, :edit, :update] do
+      member do
+        post :submit_claim
+        get  :download_pdf
+      end
+    end
   end
 
   # Master namespace
@@ -58,6 +66,15 @@ Rails.application.routes.draw do
         post :refund
       end
     end
+
+    resources :insurance_claims, only: [:index, :show] do
+      member do
+        post :start_review
+        post :approve
+        post :reject
+        post :complete
+      end
+    end
   end
 
   # PDF downloads
@@ -73,6 +90,9 @@ Rails.application.routes.draw do
   namespace :api do
     resources :standard_estimate_items, only: [:index]
   end
+
+  # AI 누수 빠른 점검 (비로그인 허용)
+  resources :leak_inspections, only: [:new, :create, :show]
 
   # Static pages
   root "pages#home"

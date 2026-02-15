@@ -27,10 +27,10 @@ class Request < ApplicationRecord
     villa: 1,
     house: 2,
     office: 3,
-    store: 4,
+    retail_store: 4,
     factory: 5,
     other_building: 6
-  }, _prefix: true
+  }
 
   enum :detection_result, {
     result_pending: 0,

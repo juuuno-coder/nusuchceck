@@ -9,7 +9,7 @@ Rails.application.configure do
   config.assets.compile = false
   config.active_storage.service = :local
   config.force_ssl = true
-  config.logger = ActiveSupport::TaggedLogging.logger(STDOUT)
+  config.logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
   config.log_tags = [:request_id]
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
   config.action_mailer.perform_caching = false

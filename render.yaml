@@ -1,0 +1,60 @@
+services:
+  # Web Service
+  - type: web
+    name: nusucheck
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nusucheck-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: nusucheck-redis
+          property: connectionString
+    healthCheckPath: /up
+    autoDeploy: true
+    region: singapore
+    plan: free
+
+  # Background Jobs (Sidekiq)
+  - type: worker
+    name: nusucheck-sidekiq
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    dockerCommand: bundle exec sidekiq
+    envVars:
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nusucheck-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: nusucheck-redis
+          property: connectionString
+    autoDeploy: true
+    region: singapore
+    plan: free
+
+databases:
+  - name: nusucheck-db
+    databaseName: nusucheck_production
+    plan: free
+    region: singapore
+
+  - name: nusucheck-redis
+    plan: free
+    region: singapore

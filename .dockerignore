@@ -1,9 +1,33 @@
+# Git
 .git
 .gitignore
+
+# Logs
 log/*
 tmp/*
-storage/*
+
+# Environment
+.env
+.env.local
+.env*.local
+
+# Dependencies
 node_modules
-.env*
-nul
-세션로그
+vendor/bundle
+
+# Build artifacts
+public/assets
+public/packs
+
+# Testing
+coverage
+spec
+test
+
+# Documentation
+README.md
+doc
+
+# Development
+.claude
+.vscode

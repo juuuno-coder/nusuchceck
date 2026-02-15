@@ -14,7 +14,7 @@ kill_timeout = "5s"
   RAILS_SERVE_STATIC_FILES = "true"
 
 [processes]
-  app = "bin/rails server"
+  app = "bin/rails server -b 0.0.0.0"
   worker = "bundle exec sidekiq"
 
 [[services]]

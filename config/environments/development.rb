@@ -19,9 +19,20 @@ Rails.application.configure do
   end
 
   config.active_storage.service = :local
-  config.action_mailer.raise_delivery_errors = false
+
+  # Action Mailer 설정
+  config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_caching = false
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: "localhost",
+    port: 1025,
+    enable_starttls_auto: false
+  }
+  # Development 환경에서는 콘솔에 이메일 내용 출력
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.logger = Logger.new(STDOUT)
   config.active_support.deprecation = :log
   config.active_support.disallowed_deprecation = :raise
   config.active_support.disallowed_deprecation_warnings = []
@@ -29,4 +40,5 @@ Rails.application.configure do
   config.active_record.verbose_query_logs = true
   config.active_job.verbose_enqueue_logs = true
   config.assets.quiet = true
+  config.assets.check_precompiled_asset = false
 end

@@ -1,22 +1,15 @@
 <div class="space-y-6">
   <!-- 뒤로가기 + 헤더 -->
-  <div class="flex items-center justify-between">
-    <div>
-      <%= link_to admin_masters_path, class: "text-sm text-blue-600 hover:text-blue-800 flex items-center" do %>
-        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-        </svg>
-        목록으로
-      <% end %>
-      <h1 class="text-2xl font-bold text-gray-900 mt-2">마스터: <%= @master.name %></h1>
-    </div>
-  </div>
+  <%= render "shared/page_header",
+      title: "마스터: #{@master.name}",
+      back_path: admin_masters_path,
+      back_text: "목록으로" %>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- 좌측: 정보 -->
     <div class="lg:col-span-2 space-y-6">
       <!-- 프로필 정보 -->
-      <div class="bg-white rounded-lg shadow p-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div class="flex items-start space-x-4 mb-6">
           <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
             <span class="text-blue-600 font-bold text-2xl"><%= @master.name&.first %></span>
@@ -43,10 +36,10 @@
               <dt class="text-sm font-medium text-gray-500">인증 상태</dt>
               <dd class="mt-1">
                 <% if profile.verified? %>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">인증 완료</span>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800" role="status">인증 완료</span>
                   <span class="text-xs text-gray-500 ml-2"><%= profile.verified_at&.strftime("%Y-%m-%d") %></span>
                 <% else %>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">미인증</span>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800" role="status">미인증</span>
                 <% end %>
               </dd>
             </div>
@@ -71,7 +64,7 @@
                     <% end %>
                   </div>
                 <% else %>
-                  <span class="text-sm text-gray-400">-</span>
+                  <span class="text-sm text-gray-500">-</span>
                 <% end %>
               </dd>
             </div>
@@ -85,7 +78,7 @@
                     <% end %>
                   </div>
                 <% else %>
-                  <span class="text-sm text-gray-400">-</span>
+                  <span class="text-sm text-gray-500">-</span>
                 <% end %>
               </dd>
             </div>
@@ -98,7 +91,7 @@
       </div>
 
       <!-- 최근 신고 -->
-      <div class="bg-white rounded-lg shadow p-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">최근 배정 신고</h2>
         <% recent_requests = @master.assigned_requests.recent.limit(10) %>
         <% if recent_requests.any? %>
@@ -124,7 +117,7 @@
       </div>
 
       <!-- 리뷰 목록 -->
-      <div class="bg-white rounded-lg shadow p-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">리뷰</h2>
         <% if @master.reviews.any? %>
           <div class="space-y-4">
@@ -133,7 +126,7 @@
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-sm font-medium text-gray-900"><%= review.customer&.name %></span>
                   <div class="flex items-center">
-                    <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                     </svg>
                     <span class="ml-1 text-sm font-bold text-gray-900"><%= review.overall_rating %></span>
@@ -150,7 +143,7 @@
                 <% if review.comment.present? %>
                   <p class="text-sm text-gray-700"><%= review.comment %></p>
                 <% end %>
-                <p class="text-xs text-gray-400 mt-2"><%= review.created_at.strftime("%Y-%m-%d") %></p>
+                <p class="text-xs text-gray-500 mt-2"><%= review.created_at.strftime("%Y-%m-%d") %></p>
               </div>
             <% end %>
           </div>
@@ -162,7 +155,7 @@
 
     <!-- 우측: 관리 액션 -->
     <div class="space-y-6">
-      <div class="bg-white rounded-lg shadow p-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">인증 관리</h2>
         <div class="space-y-3">
           <% if @master.verified? %>
@@ -170,26 +163,26 @@
             <%= button_to "인증 취소",
                   reject_admin_master_path(@master),
                   method: :post,
-                  class: "w-full px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 font-medium text-sm",
+                  class: "#{btn_classes(:danger, :md)} w-full",
                   data: { turbo_confirm: "정말 인증을 취소하시겠습니까?" } %>
           <% else %>
             <p class="text-sm text-yellow-600 font-medium">이 마스터는 미인증 상태입니다.</p>
             <%= button_to "인증 승인",
                   verify_admin_master_path(@master),
                   method: :post,
-                  class: "w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium text-sm",
+                  class: "#{btn_classes(:success, :md)} w-full",
                   data: { turbo_confirm: "이 마스터를 인증하시겠습니까?" } %>
             <%= button_to "인증 거절",
                   reject_admin_master_path(@master),
                   method: :post,
-                  class: "w-full px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 font-medium text-sm",
+                  class: "#{btn_classes(:danger, :md)} w-full",
                   data: { turbo_confirm: "인증을 거절하시겠습니까?" } %>
           <% end %>
         </div>
       </div>
 
       <!-- 통계 요약 -->
-      <div class="bg-white rounded-lg shadow p-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">활동 요약</h2>
         <dl class="space-y-3 text-sm">
           <div class="flex justify-between">

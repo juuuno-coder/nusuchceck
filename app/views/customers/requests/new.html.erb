@@ -1,117 +1,184 @@
-<div class="max-w-2xl mx-auto">
-  <div class="mb-6">
+<div class="max-w-2xl mx-auto py-8">
+  <div class="text-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">🔧 전문가를 바로 매칭해드려요</h1>
+    <p class="mt-3 text-lg text-gray-600">누수, 이제 걱정 끝!</p>
+    <p class="text-gray-600">간단한 정보만 입력하면 검증된 전문가가 찾아가요</p>
+  </div>
+
+  <!-- 절차 안내 -->
+  <div class="mb-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+    <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+      <span class="text-xl">⚡</span>
+      이렇게 빠르게 진행돼요
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+      <div class="bg-white rounded-xl p-4">
+        <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold mb-2">1</div>
+        <p class="font-semibold text-gray-900 text-sm">신고 접수</p>
+        <p class="text-xs text-gray-600 mt-1">3분이면 끝!</p>
+      </div>
+      <div class="bg-white rounded-xl p-4">
+        <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold mb-2">2</div>
+        <p class="font-semibold text-gray-900 text-sm">전문가 매칭</p>
+        <p class="text-xs text-gray-600 mt-1">즉시 배정</p>
+      </div>
+      <div class="bg-white rounded-xl p-4">
+        <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold mb-2">3</div>
+        <p class="font-semibold text-gray-900 text-sm">현장 방문</p>
+        <p class="text-xs text-gray-600 mt-1">정밀 진단</p>
+      </div>
+      <div class="bg-white rounded-xl p-4">
+        <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold mb-2">4</div>
+        <p class="font-semibold text-gray-900 text-sm">견적 & 수리</p>
+        <p class="text-xs text-gray-600 mt-1">투명한 가격</p>
+      </div>
+    </div>
+    <div class="mt-4 pt-4 border-t border-blue-200 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+      <div>
+        <p class="font-semibold text-gray-900 mb-1">💰 예상 비용</p>
+        <p class="text-gray-700 text-xs">탐지: 10~15만원 · 수리: 30만원~</p>
+      </div>
+      <div>
+        <p class="font-semibold text-gray-900 mb-1">⏱️ 처리 기간</p>
+        <p class="text-gray-700 text-xs">신고 → 방문: 평균 24시간 이내</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-4">
     <%= link_to customers_requests_path, class: "text-sm text-blue-600 hover:text-blue-800 flex items-center" do %>
       <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
       </svg>
       목록으로
     <% end %>
-    <h1 class="text-2xl font-bold text-gray-900 mt-2">새 신고 접수</h1>
-    <p class="text-sm text-gray-500 mt-1">누수 증상에 대한 정보를 입력해 주세요.</p>
   </div>
 
-  <div class="bg-white rounded-lg shadow p-6">
-    <%= form_with(model: @request, url: customers_requests_path, html: { multipart: true }, class: "space-y-6") do |f| %>
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+    <%= form_with(model: @request, url: customers_requests_path, html: { multipart: true }, class: "space-y-6", data: { controller: "form-validation", action: "submit->form-validation#submit" }) do |f| %>
 
-      <% if @request.errors.any? %>
-        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-          <h3 class="text-sm font-medium text-red-800 mb-2">입력 오류가 있습니다:</h3>
-          <ul class="list-disc list-inside text-sm text-red-700 space-y-1">
-            <% @request.errors.full_messages.each do |msg| %>
-              <li><%= msg %></li>
-            <% end %>
-          </ul>
-        </div>
-      <% end %>
+      <%= render "shared/form_errors", resource: @request %>
 
       <!-- 증상 유형 -->
       <div>
-        <%= f.label :symptom_type, "증상 유형", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.label :symptom_type, "어떤 증상인가요? *", class: "block text-sm font-medium text-gray-900 mb-1" %>
+        <p class="text-xs text-gray-600 mb-2">💡 가장 비슷한 증상을 선택해주세요</p>
         <%= f.select :symptom_type,
               options_for_select([
                 ["선택해 주세요", ""],
-                ["벽면 누수", "wall_leak"],
-                ["천장 누수", "ceiling_leak"],
-                ["바닥 누수", "floor_leak"],
-                ["배관 누수", "pipe_leak"],
-                ["화장실 누수", "toilet_leak"],
-                ["외부 누수", "outdoor_leak"]
+                ["💧 벽면 누수 (벽에서 물이 배어나와요)", "wall_leak"],
+                ["💧 천장 누수 (천장에서 물이 떨어져요)", "ceiling_leak"],
+                ["💧 바닥 누수 (바닥이 축축해요)", "floor_leak"],
+                ["🔧 배관 누수 (배관에서 새는 것 같아요)", "pipe_leak"],
+                ["🚽 화장실 누수 (화장실에서 물이 새요)", "toilet_leak"],
+                ["🏠 외부 누수 (외벽, 창틀에서 새요)", "outdoor_leak"]
               ], @request.symptom_type),
-              {}, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+              {}, class: input_classes(:select), data: { action: "blur->form-validation#validate" } %>
       </div>
 
       <!-- 건물 유형 -->
       <div>
-        <%= f.label :building_type, "건물 유형", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.label :building_type, "어떤 건물인가요? *", class: "block text-sm font-medium text-gray-900 mb-1" %>
+        <p class="text-xs text-gray-600 mb-2">건물 종류에 따라 적합한 전문가를 매칭해드려요</p>
         <%= f.select :building_type,
               options_for_select([
                 ["선택해 주세요", ""],
-                ["아파트", "apartment"],
-                ["빌라", "villa"],
-                ["주택", "house"],
-                ["사무실", "office"],
-                ["상가", "store"],
-                ["공장", "factory"],
-                ["기타", "other_building"]
+                ["🏢 아파트", "apartment"],
+                ["🏘️ 빌라/연립", "villa"],
+                ["🏠 단독주택", "house"],
+                ["🏬 사무실", "office"],
+                ["🏪 상가", "store"],
+                ["🏭 공장", "factory"],
+                ["📦 기타", "other_building"]
               ], @request.building_type),
-              {}, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+              {}, class: input_classes(:select), data: { action: "blur->form-validation#validate" } %>
       </div>
 
       <!-- 주소 -->
       <div>
-        <%= f.label :address, "주소", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.label :address, "어디로 방문하면 될까요? *", class: "block text-sm font-medium text-gray-900 mb-1" %>
+        <p class="text-xs text-gray-600 mb-2">정확한 주소를 입력해주세요</p>
         <%= f.text_field :address,
-              placeholder: "예: 서울시 강남구 테헤란로 123",
-              class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+              placeholder: "서울시 강남구 테헤란로 123",
+              class: input_classes(:text), data: { action: "blur->form-validation#validate" } %>
       </div>
 
       <!-- 상세 주소 -->
       <div>
-        <%= f.label :address_detail, "상세 주소", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.label :address_detail, "상세 주소", class: "block text-sm font-medium text-gray-900 mb-1" %>
         <%= f.text_field :address_detail,
-              placeholder: "예: 101동 502호",
-              class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+              placeholder: "101동 502호",
+              class: input_classes(:text), data: { action: "blur->form-validation#validate" } %>
+        <p class="text-xs text-gray-500 mt-1">동·호수를 정확히 알려주시면 빠르게 찾아갈 수 있어요</p>
       </div>
 
       <!-- 층수 -->
       <div>
-        <%= f.label :floor, "층수", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.label :floor, "몇 층인가요?", class: "block text-sm font-medium text-gray-900 mb-1" %>
         <%= f.text_field :floor,
-              placeholder: "예: 5층",
-              class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+              placeholder: "5층",
+              class: input_classes(:text), data: { action: "blur->form-validation#validate" } %>
+        <p class="text-xs text-gray-500 mt-1">층수 정보가 있으면 원인 파악에 도움이 돼요</p>
       </div>
 
       <!-- 설명 -->
       <div>
-        <%= f.label :description, "상세 설명", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.label :description, "어떤 상황인지 알려주세요", class: "block text-sm font-medium text-gray-900 mb-1" %>
+        <p class="text-xs text-gray-600 mb-2">💡 언제부터, 어떤 증상이, 얼마나 심한지 자세히 알려주시면 정확한 진단에 도움이 돼요</p>
         <%= f.text_area :description,
-              rows: 5,
-              placeholder: "누수 증상에 대해 자세히 설명해 주세요. (발생 시점, 증상, 피해 정도 등)",
-              class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+              rows: 6,
+              placeholder: "예시:\n일주일 전부터 천장에 물방울이 떨어지기 시작했어요.\n처음에는 조금씩이었는데 점점 심해지고 있습니다.\n아직 벽지가 들뜨지는 않았지만 천장에 물자국이 생겼어요.",
+              class: input_classes(:textarea), data: { action: "blur->form-validation#validate" } %>
       </div>
 
       <!-- 희망 방문 일시 -->
       <div>
-        <%= f.label :preferred_date, "희망 방문 일시", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.label :preferred_date, "언제 방문하면 좋을까요?", class: "block text-sm font-medium text-gray-900 mb-1" %>
+        <p class="text-xs text-gray-600 mb-2">편하신 시간을 선택해주세요 (선택사항)</p>
         <%= f.datetime_local_field :preferred_date,
-              class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
-        <p class="mt-1 text-xs text-gray-500">선택 사항입니다. 가능한 일시를 지정해 주세요.</p>
+              min: DateTime.now.strftime("%Y-%m-%dT%H:%M"),
+              class: input_classes(:text), data: { action: "blur->form-validation#validate" } %>
+        <p class="mt-1 text-xs text-gray-500">💡 급하시면 빈칸으로 두셔도 돼요. 최대한 빨리 연락드릴게요</p>
       </div>
 
       <!-- 사진 업로드 -->
       <div>
-        <%= f.label :photos, "사진 첨부", class: "block text-sm font-medium text-gray-700 mb-1" %>
-        <%= f.file_field :photos,
-              multiple: true,
-              accept: "image/*",
-              class: "w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" %>
-        <p class="mt-1 text-xs text-gray-500">최대 5장까지 업로드 가능합니다. (JPG, PNG)</p>
+        <%= f.label :photos, "현장 사진이 있나요?", class: "block text-sm font-medium text-gray-900 mb-1" %>
+        <p class="text-xs text-gray-600 mb-2">사진이 있으면 더 정확한 진단이 가능해요 (선택사항)</p>
+        <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-blue-400 transition">
+          <%= f.file_field :photos,
+                multiple: true,
+                accept: "image/*",
+                class: "w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer cursor-pointer" %>
+          <p class="mt-2 text-xs text-gray-500">JPG, PNG · 최대 5장 · 각 10MB 이하</p>
+        </div>
+        <div class="mt-2 px-4 py-3 bg-yellow-50 rounded-lg text-xs text-gray-700">
+          <p class="font-semibold mb-1">📸 이렇게 찍으면 좋아요</p>
+          <ul class="space-y-1">
+            <li>• 누수 부위를 가까이 찍어주세요</li>
+            <li>• 주변 환경도 함께 찍으면 원인 파악에 도움이 돼요</li>
+            <li>• 여러 각도에서 찍어주세요</li>
+          </ul>
+        </div>
       </div>
 
       <!-- 제출 버튼 -->
-      <div class="flex items-center justify-end gap-3 pt-4 border-t">
-        <%= link_to "취소", customers_requests_path, class: "px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium text-sm" %>
-        <%= f.submit "신고 접수", class: "px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm cursor-pointer" %>
+      <div class="pt-6 border-t-2 border-gray-200">
+        <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 mb-4 border border-green-100">
+          <p class="text-sm text-gray-800 flex items-start gap-2">
+            <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>신고하시면 <strong>즉시 전문가를 매칭</strong>해드려요. 빠르면 당일 방문도 가능해요</span>
+          </p>
+        </div>
+        <div class="flex items-center justify-end gap-3">
+          <%= link_to "취소", customers_requests_path,
+                class: "px-5 py-2.5 rounded-lg font-medium text-gray-700 hover:bg-gray-100 transition" %>
+          <%= f.submit "🚀 전문가 매칭받기",
+                class: "px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-lg hover:shadow-xl" %>
+        </div>
+        <p class="text-xs text-center text-gray-500 mt-3">신고 후 평균 2시간 이내에 전문가가 배정돼요</p>
       </div>
     <% end %>
   </div>

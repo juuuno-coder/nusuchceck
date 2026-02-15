@@ -1,13 +1,16 @@
-<div class="space-y-6">
-  <h1 class="text-2xl font-bold text-gray-900">관리자 대시보드</h1>
+<div class="space-y-6 fade-in">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-gray-900">📊 관리자 대시보드</h1>
+    <p class="text-sm text-gray-500"><%= Time.current.strftime("%Y년 %m월 %d일 %H:%M") %></p>
+  </div>
 
   <!-- 통계 카드 -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
     <!-- 전체 신고 -->
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 card-hover">
       <div class="flex items-center">
         <div class="flex-shrink-0 bg-blue-100 rounded-lg p-3">
-          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
           </svg>
         </div>
@@ -19,10 +22,10 @@
     </div>
 
     <!-- 진행중 신고 -->
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 card-hover">
       <div class="flex items-center">
         <div class="flex-shrink-0 bg-yellow-100 rounded-lg p-3">
-          <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
         </div>
@@ -34,10 +37,10 @@
     </div>
 
     <!-- 전체 마스터 -->
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 card-hover">
       <div class="flex items-center">
         <div class="flex-shrink-0 bg-green-100 rounded-lg p-3">
-          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
           </svg>
         </div>
@@ -49,10 +52,10 @@
     </div>
 
     <!-- 인증 마스터 -->
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 card-hover">
       <div class="flex items-center">
         <div class="flex-shrink-0 bg-emerald-100 rounded-lg p-3">
-          <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
           </svg>
         </div>
@@ -64,10 +67,10 @@
     </div>
 
     <!-- 대기 에스크로 -->
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 card-hover">
       <div class="flex items-center">
         <div class="flex-shrink-0 bg-purple-100 rounded-lg p-3">
-          <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
           </svg>
         </div>
@@ -79,10 +82,10 @@
     </div>
 
     <!-- 총 매출 -->
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 card-hover">
       <div class="flex items-center">
         <div class="flex-shrink-0 bg-red-100 rounded-lg p-3">
-          <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
         </div>
@@ -92,46 +95,110 @@
         </div>
       </div>
     </div>
+
+    <!-- 전체 보험청구 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 card-hover">
+      <div class="flex items-center">
+        <div class="flex-shrink-0 bg-indigo-100 rounded-lg p-3">
+          <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-500">전체 보험청구</p>
+          <p class="text-2xl font-bold text-gray-900"><%= @total_insurance_claims %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 제출 대기 보험청구 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 card-hover">
+      <div class="flex items-center">
+        <div class="flex-shrink-0 bg-orange-100 rounded-lg p-3">
+          <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-500">작성/검토 대기</p>
+          <p class="text-2xl font-bold text-gray-900"><%= @pending_insurance_claims %></p>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- 최근 신고 목록 -->
-  <div class="bg-white rounded-lg shadow">
-    <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-      <h2 class="text-lg font-semibold text-gray-900">최근 신고</h2>
-      <%= link_to "전체 보기", admin_requests_path, class: "text-sm text-blue-600 hover:text-blue-800" %>
-    </div>
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">접수번호</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">고객</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">증상</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">상태</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">날짜</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200">
-          <%
-            symptom_labels = {
-              "wall_leak" => "벽면 누수", "ceiling_leak" => "천장 누수",
-              "floor_leak" => "바닥 누수", "pipe_leak" => "배관 누수",
-              "toilet_leak" => "화장실 누수", "outdoor_leak" => "외부 누수"
-            }
-          %>
-          <% @recent_requests.each do |request| %>
-            <tr class="hover:bg-gray-50">
-              <td class="px-6 py-4 whitespace-nowrap">
-                <%= link_to "##{request.id}", admin_request_path(request), class: "text-blue-600 hover:text-blue-800 font-mono text-sm" %>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%= request.customer&.name || "-" %></td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><%= symptom_labels[request.symptom_type] || request.symptom_type %></td>
-              <td class="px-6 py-4 whitespace-nowrap"><%= render "shared/status_badge", status: request.status %></td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= request.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+  <!-- 최근 신고 + 보험청구 -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- 최근 신고 목록 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+      <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-gray-900">📋 최근 신고</h2>
+        <%= link_to "전체 보기", admin_requests_path, class: "text-sm text-blue-600 hover:text-blue-800 transition-smooth" %>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200" aria-label="최근 신고">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">번호</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">고객</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">증상</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">상태</th>
             </tr>
-          <% end %>
-        </tbody>
-      </table>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <% @recent_requests.each do |request| %>
+              <tr class="hover:bg-gray-50 transition-smooth">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <%= link_to "##{request.id}", admin_request_path(request), class: "text-blue-600 hover:text-blue-800 font-mono text-sm" %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%= truncate(request.customer&.name || "-", length: 10) %></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><%= symptom_label(request.symptom_type) %></td>
+                <td class="px-6 py-4 whitespace-nowrap"><%= render "shared/status_badge", status: request.status %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 최근 보험청구 목록 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+      <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-gray-900">💼 최근 보험청구</h2>
+        <%= link_to "전체 보기", admin_insurance_claims_path, class: "text-sm text-blue-600 hover:text-blue-800 transition-smooth" %>
+      </div>
+      <div class="p-6">
+        <% if @recent_insurance_claims.any? %>
+          <div class="space-y-3">
+            <% @recent_insurance_claims.each do |claim| %>
+              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-smooth">
+                <div class="flex-1">
+                  <%= link_to admin_insurance_claim_path(claim), class: "block" do %>
+                    <p class="font-mono text-sm text-blue-600 hover:text-blue-800"><%= claim.claim_number %></p>
+                    <p class="text-xs text-gray-600 mt-1"><%= truncate(claim.applicant_name, length: 15) %> • <%= truncate(claim.incident_address, length: 20) %></p>
+                  <% end %>
+                </div>
+                <div class="ml-3">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-medium
+                    <%= case claim.status
+                        when 'draft', 'pending_customer_review' then 'bg-yellow-100 text-yellow-800'
+                        when 'submitted', 'under_review' then 'bg-blue-100 text-blue-800'
+                        when 'approved' then 'bg-green-100 text-green-800'
+                        when 'rejected' then 'bg-red-100 text-red-800'
+                        else 'bg-gray-100 text-gray-800'
+                        end %>">
+                    <%= claim.status_label %>
+                  </span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-8 text-gray-500">
+            <p class="text-sm">아직 보험청구가 없어요</p>
+          </div>
+        <% end %>
+      </div>
     </div>
   </div>
 </div>

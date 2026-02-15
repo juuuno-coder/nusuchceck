@@ -1,21 +1,9 @@
-<%
-  symptom_labels = {
-    "wall_leak" => "벽면 누수", "ceiling_leak" => "천장 누수",
-    "floor_leak" => "바닥 누수", "pipe_leak" => "배관 누수",
-    "toilet_leak" => "화장실 누수", "outdoor_leak" => "외부 누수"
-  }
-  building_labels = {
-    "apartment" => "아파트", "villa" => "빌라", "house" => "주택",
-    "office" => "사무실", "store" => "상가", "factory" => "공장", "other_building" => "기타"
-  }
-%>
-
 <div class="space-y-6">
   <!-- 뒤로가기 + 헤더 -->
   <div class="flex items-center justify-between">
     <div>
       <%= link_to masters_requests_path, class: "text-sm text-blue-600 hover:text-blue-800 flex items-center" do %>
-        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
         목록으로
@@ -28,7 +16,7 @@
   </div>
 
   <!-- 상태 타임라인 -->
-  <div class="bg-white rounded-lg shadow p-6">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
     <%= render "shared/status_timeline", request_record: @request %>
   </div>
 
@@ -36,7 +24,7 @@
     <!-- 좌측: 정보 -->
     <div class="lg:col-span-2 space-y-6">
       <!-- 고객 정보 -->
-      <div class="bg-white rounded-lg shadow p-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">고객 정보</h2>
         <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
           <div>
@@ -51,16 +39,16 @@
       </div>
 
       <!-- 증상/위치 정보 -->
-      <div class="bg-white rounded-lg shadow p-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">증상 및 위치</h2>
         <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
           <div>
             <dt class="text-sm font-medium text-gray-500">증상 유형</dt>
-            <dd class="mt-1 text-sm text-gray-900"><%= symptom_labels[@request.symptom_type] || @request.symptom_type %></dd>
+            <dd class="mt-1 text-sm text-gray-900"><%= symptom_label(@request.symptom_type) %></dd>
           </div>
           <div>
             <dt class="text-sm font-medium text-gray-500">건물 유형</dt>
-            <dd class="mt-1 text-sm text-gray-900"><%= building_labels[@request.building_type] || @request.building_type || "-" %></dd>
+            <dd class="mt-1 text-sm text-gray-900"><%= building_label(@request.building_type) || "-" %></dd>
           </div>
           <div>
             <dt class="text-sm font-medium text-gray-500">주소</dt>
@@ -100,7 +88,7 @@
 
       <!-- 견적 목록 (있을 경우) -->
       <% if @request.estimates.any? %>
-        <div class="bg-white rounded-lg shadow p-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <h2 class="text-lg font-semibold text-gray-900 mb-4">견적 목록</h2>
           <div class="space-y-3">
             <% @request.estimates.recent.each do |estimate| %>
@@ -119,7 +107,7 @@
                       else "bg-gray-100 text-gray-800"
                     end
                   %>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= est_badge %>">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= est_badge %>" role="status">
                     <%= estimate.status_label %>
                   </span>
                   <%= link_to "수정", edit_masters_request_estimate_path(@request, estimate), class: "text-sm text-blue-600 hover:text-blue-800" if estimate.pending? %>
@@ -134,14 +122,14 @@
     <!-- 우측: 액션 -->
     <div class="space-y-6">
       <!-- 상태별 액션 버튼들 -->
-      <div class="bg-white rounded-lg shadow p-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">작업</h2>
         <div class="space-y-3">
           <% if @request.assigned? %>
             <%= button_to "방문 시작",
                   visit_masters_request_path(@request),
                   method: :post,
-                  class: "w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm",
+                  class: "#{btn_classes(:primary, :md)} w-full",
                   data: { turbo_confirm: "방문을 시작하시겠습니까?" } %>
           <% end %>
 
@@ -149,7 +137,7 @@
             <%= button_to "현장 도착",
                   arrive_masters_request_path(@request),
                   method: :post,
-                  class: "w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm",
+                  class: "#{btn_classes(:primary, :md)} w-full",
                   data: { turbo_confirm: "현장에 도착하셨습니까?" } %>
           <% end %>
 
@@ -160,16 +148,16 @@
                 <%= f.text_area :detection_notes,
                       rows: 3,
                       placeholder: "탐지 결과 메모 (누수 위치, 원인 등)",
-                      class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" %>
+                      class: input_classes(:textarea) %>
                 <%= f.submit "누수 확인 완료",
-                      class: "w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium text-sm cursor-pointer",
+                      class: "#{btn_classes(:success, :md)} w-full",
                       data: { turbo_confirm: "누수가 확인되었습니까?" } %>
               <% end %>
 
               <%= button_to "누수 미확인",
                     detection_fail_masters_request_path(@request),
                     method: :post,
-                    class: "w-full px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-medium text-sm",
+                    class: "#{btn_classes(:warning, :md)} w-full",
                     data: { turbo_confirm: "누수가 확인되지 않았습니까? 이 작업은 되돌릴 수 없습니다." } %>
             </div>
           <% end %>
@@ -178,16 +166,16 @@
             <% if @request.estimates.empty? %>
               <%= link_to "견적 작성",
                     new_masters_request_estimate_path(@request),
-                    class: "block w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm text-center" %>
+                    class: "block w-full #{btn_classes(:primary, :md)} text-center" %>
             <% else %>
               <%= link_to "견적 추가 작성",
                     new_masters_request_estimate_path(@request),
-                    class: "block w-full px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 font-medium text-sm text-center" %>
+                    class: "block w-full #{btn_classes(:outline, :md)} text-center" %>
 
               <%= button_to "견적 제출",
                     submit_estimate_masters_request_path(@request),
                     method: :post,
-                    class: "w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium text-sm",
+                    class: "#{btn_classes(:success, :md)} w-full",
                     data: { turbo_confirm: "견적을 고객에게 제출하시겠습니까?" } %>
             <% end %>
           <% end %>
@@ -196,7 +184,7 @@
             <%= button_to "공사 시작",
                   start_construction_masters_request_path(@request),
                   method: :post,
-                  class: "w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium text-sm",
+                  class: "#{btn_classes(:primary, :md)} w-full bg-purple-600 hover:bg-purple-700",
                   data: { turbo_confirm: "공사를 시작하시겠습니까?" } %>
           <% end %>
 
@@ -204,18 +192,31 @@
             <%= button_to "공사 완료",
                   complete_construction_masters_request_path(@request),
                   method: :post,
-                  class: "w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium text-sm",
+                  class: "#{btn_classes(:success, :md)} w-full",
                   data: { turbo_confirm: "공사가 완료되었습니까?" } %>
           <% end %>
 
-          <% if @request.status.in?(%w[closed cancelled no_leak_found construction_completed estimate_submitted construction_agreed]) %>
+          <% if @request.construction_completed? %>
+            <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 border border-purple-100 mb-3">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-lg">💼</span>
+                <p class="text-sm font-semibold text-gray-900">보험청구 도움</p>
+              </div>
+              <p class="text-xs text-gray-700 mb-3">고객을 위해 보험청구서를 작성해드릴 수 있어요</p>
+              <%= link_to "보험청구서 작성하기",
+                    new_masters_request_insurance_claim_path(@request),
+                    class: "block w-full text-center #{btn_classes(:primary, :md)} bg-purple-600 hover:bg-purple-700" %>
+            </div>
+          <% end %>
+
+          <% if @request.status.in?(%w[closed cancelled no_leak_found estimate_submitted construction_agreed]) %>
             <p class="text-sm text-gray-500 text-center">현재 상태에서 가능한 작업이 없습니다.</p>
           <% end %>
         </div>
       </div>
 
       <!-- 접수 정보 -->
-      <div class="bg-white rounded-lg shadow p-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">접수 정보</h2>
         <dl class="space-y-3 text-sm">
           <div class="flex justify-between">

@@ -1,7 +1,7 @@
 class CreateLeakInspections < ActiveRecord::Migration[7.1]
   def change
     create_table :leak_inspections do |t|
-      t.references :customer, null: true, foreign_key: { to_table: :users }, index: true
+      t.references :customer, null: true, index: true
 
       t.string  :status, default: "pending", null: false
       t.boolean :leak_detected, default: false
@@ -24,5 +24,6 @@ class CreateLeakInspections < ActiveRecord::Migration[7.1]
 
     add_index :leak_inspections, :status
     add_index :leak_inspections, :session_token, unique: true
+    add_foreign_key :leak_inspections, :users, column: :customer_id
   end
 end

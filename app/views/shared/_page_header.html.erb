@@ -1,0 +1,17 @@
+<%# 사용법: render "shared/page_header", title: "제목", back_path: some_path %>
+<%# 옵션: title, description, back_path, back_text %>
+
+<div class="mb-6">
+  <% if local_assigns[:back_path] %>
+    <%= link_to (local_assigns[:back_text] || "목록으로"), back_path, class: "text-sm text-blue-600 hover:text-blue-800 inline-flex items-center" do %>
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      <%= local_assigns[:back_text] || "목록으로" %>
+    <% end %>
+  <% end %>
+  <h1 class="text-2xl font-bold text-gray-900 <%= 'mt-2' if local_assigns[:back_path] %>"><%= title %></h1>
+  <% if local_assigns[:description] %>
+    <p class="text-sm text-gray-500 mt-1"><%= description %></p>
+  <% end %>
+</div>

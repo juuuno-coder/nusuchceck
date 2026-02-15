@@ -1,29 +1,25 @@
 <div class="max-w-3xl mx-auto">
-  <div class="mb-6">
-    <%= link_to customers_request_path(@estimate.request), class: "text-sm text-blue-600 hover:text-blue-800 flex items-center" do %>
-      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-      </svg>
-      신고 상세로 돌아가기
-    <% end %>
-    <div class="flex items-center justify-between mt-2">
-      <h1 class="text-2xl font-bold text-gray-900">견적서 #<%= @estimate.id %></h1>
-      <%
-        estimate_badge = case @estimate.status
-          when "pending"  then "bg-yellow-100 text-yellow-800"
-          when "accepted" then "bg-green-100 text-green-800"
-          when "rejected" then "bg-red-100 text-red-800"
-          when "expired"  then "bg-gray-100 text-gray-800"
-          else "bg-gray-100 text-gray-800"
-        end
-      %>
-      <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <%= estimate_badge %>">
-        <%= @estimate.status_label %>
-      </span>
-    </div>
+  <%= render "shared/page_header",
+      title: "견적서 ##{@estimate.id}",
+      back_path: customers_request_path(@estimate.request),
+      back_text: "신고 상세로 돌아가기" %>
+
+  <div class="flex items-center justify-end mb-4">
+    <%
+      estimate_badge = case @estimate.status
+        when "pending"  then "bg-yellow-100 text-yellow-800"
+        when "accepted" then "bg-green-100 text-green-800"
+        when "rejected" then "bg-red-100 text-red-800"
+        when "expired"  then "bg-gray-100 text-gray-800"
+        else "bg-gray-100 text-gray-800"
+      end
+    %>
+    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <%= estimate_badge %>" role="status">
+      <%= @estimate.status_label %>
+    </span>
   </div>
 
-  <div class="bg-white rounded-lg shadow p-6 space-y-6">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-6">
     <!-- 기본 정보 -->
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
       <div>
@@ -52,15 +48,15 @@
         category_labels = { "trip" => "출장비", "detection" => "탐지", "construction" => "공사", "material" => "자재" }
       %>
       <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
+        <table class="min-w-full divide-y divide-gray-200" aria-label="견적 항목 목록">
           <thead class="bg-gray-50">
             <tr>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">구분</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">항목명</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">단위</th>
-              <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">수량</th>
-              <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">단가</th>
-              <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">금액</th>
+              <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">구분</th>
+              <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">항목명</th>
+              <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">단위</th>
+              <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">수량</th>
+              <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">단가</th>
+              <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">금액</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">

@@ -3,6 +3,7 @@ class InsuranceClaim < ApplicationRecord
 
   belongs_to :customer, class_name: "Customer", inverse_of: :insurance_claims
   belongs_to :request, optional: true
+  belongs_to :prepared_by_master, class_name: "Master", optional: true
 
   has_many_attached :supporting_documents
 
@@ -17,15 +18,37 @@ class InsuranceClaim < ApplicationRecord
 
   aasm column: :status, whiny_transitions: true do
     state :draft, initial: true
+    state :pending_customer_review  # 마스터가 작성 후 고객 검토 대기
     state :submitted
     state :under_review
     state :approved
     state :rejected
     state :completed
 
+    # 고객이 직접 제출
     event :submit_claim do
       before { self.submitted_at = Time.current }
       transitions from: :draft, to: :submitted
+    end
+
+    # 마스터가 작성 완료 → 고객 검토 대기
+    event :send_to_customer do
+      transitions from: :draft, to: :pending_customer_review
+    end
+
+    # 고객이 승인 → 제출
+    event :customer_approve do
+      before do
+        self.customer_reviewed = true
+        self.customer_reviewed_at = Time.current
+        self.submitted_at = Time.current
+      end
+      transitions from: :pending_customer_review, to: :submitted
+    end
+
+    # 고객이 수정 요청 → 다시 draft로
+    event :customer_request_changes do
+      transitions from: :pending_customer_review, to: :draft
     end
 
     event :start_review do
@@ -49,9 +72,21 @@ class InsuranceClaim < ApplicationRecord
   end
 
   def status_label
-    { "draft" => "작성 중", "submitted" => "신청 완료",
-      "under_review" => "심사 중", "approved" => "승인",
-      "rejected" => "반려", "completed" => "완료" }[status] || status
+    { "draft" => "작성 중",
+      "pending_customer_review" => "고객 확인 대기",
+      "submitted" => "신청 완료",
+      "under_review" => "심사 중",
+      "approved" => "승인",
+      "rejected" => "반려",
+      "completed" => "완료" }[status] || status
+  end
+
+  def prepared_by_master?
+    prepared_by_master_id.present?
+  end
+
+  def pending_customer_approval?
+    pending_customer_review? && prepared_by_master?
   end
 
   def damage_type_label
@@ -62,11 +97,17 @@ class InsuranceClaim < ApplicationRecord
   def prefill_from_request!
     return unless request.present?
     self.incident_address ||= request.address
-    self.incident_detail_address ||= request.detailed_address
+    self.incident_detail_address ||= request.address_detail
     self.incident_description ||= request.description
     self.applicant_name ||= customer.name
     self.applicant_phone ||= customer.phone
     self.applicant_email ||= customer.email
+
+    # 마스터가 작성할 때 견적 정보 가져오기
+    if prepared_by_master? && request.accepted_estimate.present?
+      estimate = request.accepted_estimate
+      self.estimated_damage_amount ||= estimate.total_amount
+    end
   end
 
   private

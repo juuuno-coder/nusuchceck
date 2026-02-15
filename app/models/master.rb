@@ -4,6 +4,7 @@ class Master < User
   has_many :estimates, foreign_key: :master_id, dependent: :destroy, inverse_of: :master
   has_many :reviews, foreign_key: :master_id, dependent: :destroy, inverse_of: :master
   has_many :escrow_transactions, foreign_key: :master_id, dependent: :restrict_with_error, inverse_of: :master
+  has_many :prepared_insurance_claims, class_name: "InsuranceClaim", foreign_key: :prepared_by_master_id, dependent: :nullify
 
   accepts_nested_attributes_for :master_profile
 

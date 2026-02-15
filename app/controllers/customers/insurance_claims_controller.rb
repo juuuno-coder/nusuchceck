@@ -1,7 +1,7 @@
 class Customers::InsuranceClaimsController < ApplicationController
   include CustomerAccessible
 
-  before_action :set_insurance_claim, only: [:show, :edit, :update, :submit_claim, :download_pdf]
+  before_action :set_insurance_claim, only: [:show, :edit, :update, :submit_claim, :customer_approve, :customer_request_changes, :download_pdf]
   before_action :set_request, only: [:new, :create], if: -> { params[:request_id].present? }
 
   def index
@@ -56,6 +56,49 @@ class Customers::InsuranceClaimsController < ApplicationController
     else
       redirect_to customers_insurance_claim_path(@insurance_claim),
                   alert: "현재 상태에서는 신청할 수 없습니다."
+    end
+  end
+
+  def customer_approve
+    authorize @insurance_claim
+    if @insurance_claim.may_customer_approve?
+      @insurance_claim.customer_approve!
+
+      # 마스터에게 승인 알림 이메일 발송
+      if @insurance_claim.prepared_by_master?
+        InsuranceClaimMailer.customer_approved(@insurance_claim).deliver_later
+        # 실시간 알림 발송
+        NotificationService.notify_insurance_approved(@insurance_claim)
+      end
+
+      redirect_to customers_insurance_claim_path(@insurance_claim),
+                  notice: "보험 신청서를 승인하고 제출했습니다."
+    else
+      redirect_to customers_insurance_claim_path(@insurance_claim),
+                  alert: "현재 상태에서는 승인할 수 없습니다."
+    end
+  end
+
+  def customer_request_changes
+    authorize @insurance_claim
+    notes = params[:customer_review_notes]
+
+    if @insurance_claim.may_customer_request_changes?
+      @insurance_claim.customer_review_notes = notes
+      @insurance_claim.customer_request_changes!
+
+      # 마스터에게 수정 요청 알림 이메일 발송
+      if @insurance_claim.prepared_by_master?
+        InsuranceClaimMailer.change_requested(@insurance_claim).deliver_later
+        # 실시간 알림 발송
+        NotificationService.notify_insurance_change_requested(@insurance_claim)
+      end
+
+      redirect_to customers_insurance_claim_path(@insurance_claim),
+                  notice: "전문가에게 수정 요청을 보냈습니다."
+    else
+      redirect_to customers_insurance_claim_path(@insurance_claim),
+                  alert: "현재 상태에서는 수정 요청을 할 수 없습니다."
     end
   end
 

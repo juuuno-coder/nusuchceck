@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+    .content { background: #fff; padding: 30px; border: 1px solid #e5e7eb; }
+    .button { display: inline-block; background: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
+    .info-box { background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 15px 0; }
+    .footer { text-align: center; padding: 20px; color: #6b7280; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 style="margin: 0;">💼 보험청구서 검토 요청</h1>
+    </div>
+
+    <div class="content">
+      <p><strong><%= @customer.name %></strong>님, 안녕하세요!</p>
+
+      <p><strong><%= @master.name %></strong> 전문가가 보험청구서를 작성했어요.<br/>
+      내용을 확인하신 후 승인해주시면 자동으로 보험사에 제출됩니다.</p>
+
+      <div class="info-box">
+        <p style="margin: 5px 0;"><strong>📋 신청서 번호:</strong> <%= @insurance_claim.claim_number %></p>
+        <p style="margin: 5px 0;"><strong>🏠 사고 장소:</strong> <%= @insurance_claim.incident_address %></p>
+        <p style="margin: 5px 0;"><strong>📅 사고 발생일:</strong> <%= @insurance_claim.incident_date.strftime("%Y년 %m월 %d일") %></p>
+        <% if @insurance_claim.estimated_damage_amount.present? %>
+          <p style="margin: 5px 0;"><strong>💰 공사 금액:</strong> <%= number_to_currency(@insurance_claim.estimated_damage_amount, unit: "₩", precision: 0) %></p>
+        <% end %>
+      </div>
+
+      <p style="margin-top: 20px;">아래 버튼을 클릭하여 보험청구서를 확인해주세요:</p>
+
+      <div style="text-align: center;">
+        <%= link_to "보험청구서 확인하기", customers_insurance_claim_url(@insurance_claim), class: "button" %>
+      </div>
+
+      <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px; margin-top: 20px;">
+        <p style="margin: 0; font-size: 14px;">
+          <strong>⚠️ 참고사항:</strong><br/>
+          • 승인하시면 즉시 보험사에 제출됩니다<br/>
+          • 수정이 필요하면 전문가에게 요청할 수 있어요<br/>
+          • 승인 후에는 수정할 수 없으니 꼼꼼히 확인해주세요
+        </p>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>이 메일은 발신전용입니다. 문의사항은 누수체크 고객센터로 연락주세요.</p>
+      <p>&copy; 2024 누수체크. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<div class="relative" data-controller="notifications" data-notifications-unread-count-value="<%= current_user.notifications.unread.count %>" data-action="click@window->notifications#close">
+  <!-- 알림 벨 버튼 -->
+  <button type="button"
+          class="relative p-2 text-white hover:bg-blue-600 rounded-lg transition-smooth"
+          data-action="click->notifications#toggle"
+          aria-label="알림">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+    </svg>
+    <!-- 읽지 않은 알림 배지 -->
+    <span data-notifications-target="badge"
+          class="<%= current_user.notifications.unread.any? ? '' : 'hidden' %> absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+      <%= current_user.notifications.unread.count %>
+    </span>
+  </button>
+
+  <!-- 알림 드롭다운 -->
+  <div data-notifications-target="dropdown"
+       class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-lg border border-gray-200 z-50 max-h-[32rem] flex flex-col">
+    <!-- 헤더 -->
+    <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+      <h3 class="font-semibold text-gray-900 flex items-center gap-2">
+        🔔 알림
+        <span class="text-xs font-normal text-gray-500">(<span data-notifications-target="count"><%= current_user.notifications.unread.count %></span>개 안 읽음)</span>
+      </h3>
+      <button type="button"
+              data-action="click->notifications#markAllAsRead"
+              class="text-xs text-blue-600 hover:text-blue-800 font-medium">
+        모두 읽음
+      </button>
+    </div>
+
+    <!-- 알림 리스트 -->
+    <div data-notifications-target="list" class="overflow-y-auto flex-1">
+      <% notifications = current_user.notifications.recent.limit(10) %>
+      <% if notifications.any? %>
+        <% notifications.each do |notification| %>
+          <%= render 'notifications/notification', notification: notification %>
+        <% end %>
+      <% else %>
+        <div class="p-8 text-center text-gray-500">
+          <p class="text-sm">아직 알림이 없어요</p>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- 푸터 -->
+    <div class="px-4 py-3 border-t border-gray-200 text-center">
+      <%= link_to "모든 알림 보기", notifications_path, class: "text-sm text-blue-600 hover:text-blue-800 font-medium" %>
+    </div>
+  </div>
+</div>

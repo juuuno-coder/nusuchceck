@@ -2,6 +2,9 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  # Associations
+  has_many :notifications, as: :recipient, dependent: :destroy
+
   validates :name, presence: true
   validates :phone, format: { with: /\A01[016789]-?\d{3,4}-?\d{4}\z/, allow_blank: true }
 

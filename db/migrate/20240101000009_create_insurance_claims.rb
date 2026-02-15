@@ -1,8 +1,8 @@
 class CreateInsuranceClaims < ActiveRecord::Migration[7.1]
   def change
     create_table :insurance_claims do |t|
-      t.references :customer, null: false, foreign_key: { to_table: :users }, index: true
-      t.references :request, null: true, foreign_key: true, index: true
+      t.references :customer, null: false, index: true
+      t.references :request, null: true, index: true
 
       t.string :status, default: "draft", null: false
 
@@ -42,5 +42,7 @@ class CreateInsuranceClaims < ActiveRecord::Migration[7.1]
 
     add_index :insurance_claims, :status
     add_index :insurance_claims, :claim_number, unique: true
+    add_foreign_key :insurance_claims, :users, column: :customer_id
+    add_foreign_key :insurance_claims, :requests
   end
 end

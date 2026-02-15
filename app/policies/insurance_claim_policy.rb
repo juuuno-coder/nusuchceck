@@ -19,6 +19,14 @@ class InsuranceClaimPolicy < ApplicationPolicy
     owner? && record.may_submit_claim?
   end
 
+  def customer_approve?
+    owner? && record.may_customer_approve?
+  end
+
+  def customer_request_changes?
+    owner? && record.may_customer_request_changes?
+  end
+
   def download_pdf?
     owner? || user.admin?
   end

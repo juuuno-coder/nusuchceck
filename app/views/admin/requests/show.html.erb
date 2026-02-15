@@ -1,21 +1,9 @@
-<%
-  symptom_labels = {
-    "wall_leak" => "벽면 누수", "ceiling_leak" => "천장 누수",
-    "floor_leak" => "바닥 누수", "pipe_leak" => "배관 누수",
-    "toilet_leak" => "화장실 누수", "outdoor_leak" => "외부 누수"
-  }
-  building_labels = {
-    "apartment" => "아파트", "villa" => "빌라", "house" => "주택",
-    "office" => "사무실", "store" => "상가", "factory" => "공장", "other_building" => "기타"
-  }
-%>
-
 <div class="space-y-6">
   <!-- 뒤로가기 + 헤더 -->
   <div class="flex items-center justify-between">
     <div>
       <%= link_to admin_requests_path, class: "text-sm text-blue-600 hover:text-blue-800 flex items-center" do %>
-        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
         목록으로
@@ -28,7 +16,7 @@
   </div>
 
   <!-- 상태 타임라인 -->
-  <div class="bg-white rounded-lg shadow p-6">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
     <%= render "shared/status_timeline", request_record: @request %>
   </div>
 
@@ -36,7 +24,7 @@
     <!-- 좌측: 정보 -->
     <div class="lg:col-span-2 space-y-6">
       <!-- 기본 정보 -->
-      <div class="bg-white rounded-lg shadow p-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">기본 정보</h2>
         <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
           <div>
@@ -49,11 +37,11 @@
           </div>
           <div>
             <dt class="text-sm font-medium text-gray-500">증상 유형</dt>
-            <dd class="mt-1 text-sm text-gray-900"><%= symptom_labels[@request.symptom_type] || @request.symptom_type %></dd>
+            <dd class="mt-1 text-sm text-gray-900"><%= symptom_label(@request.symptom_type) %></dd>
           </div>
           <div>
             <dt class="text-sm font-medium text-gray-500">건물 유형</dt>
-            <dd class="mt-1 text-sm text-gray-900"><%= building_labels[@request.building_type] || @request.building_type || "-" %></dd>
+            <dd class="mt-1 text-sm text-gray-900"><%= building_label(@request.building_type) || "-" %></dd>
           </div>
           <div>
             <dt class="text-sm font-medium text-gray-500">주소</dt>
@@ -85,7 +73,7 @@
 
       <!-- 견적 정보 -->
       <% if @request.estimates.any? %>
-        <div class="bg-white rounded-lg shadow p-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <h2 class="text-lg font-semibold text-gray-900 mb-4">견적 목록</h2>
           <% @request.estimates.recent.each do |estimate| %>
             <div class="border rounded-lg p-4 mb-3 last:mb-0">
@@ -101,7 +89,7 @@
                       else "bg-gray-100 text-gray-800"
                     end
                   %>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= est_badge %>"><%= estimate.status_label %></span>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= est_badge %>" role="status"><%= estimate.status_label %></span>
                 </div>
               </div>
               <p class="text-sm text-gray-500">작성: <%= estimate.master&.name %> | <%= estimate.created_at.strftime("%Y-%m-%d %H:%M") %></p>
@@ -112,7 +100,7 @@
 
       <!-- 에스크로 -->
       <% if @request.escrow_transaction.present? %>
-        <div class="bg-white rounded-lg shadow p-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <h2 class="text-lg font-semibold text-gray-900 mb-4">에스크로 거래</h2>
           <% escrow = @request.escrow_transaction %>
           <dl class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
@@ -141,7 +129,7 @@
     <div class="space-y-6">
       <!-- 마스터 배정 -->
       <% if @request.reported? %>
-        <div class="bg-white rounded-lg shadow p-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <h2 class="text-lg font-semibold text-gray-900 mb-4">마스터 배정</h2>
           <%= form_with url: assign_master_admin_request_path(@request), method: :post, class: "space-y-3" do |f| %>
             <%= f.select :master_id,
@@ -149,23 +137,23 @@
                     Master.all.map { |m| ["#{m.name} (평점 #{m.average_rating})", m.id] }
                   ),
                   { prompt: "마스터 선택" },
-                  class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" %>
+                  class: input_classes(:select) %>
             <%= f.submit "배정",
-                  class: "w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm cursor-pointer",
+                  class: "#{btn_classes(:primary, :md)} w-full",
                   data: { turbo_confirm: "이 마스터를 배정하시겠습니까?" } %>
           <% end %>
         </div>
       <% end %>
 
       <!-- 관리 작업 -->
-      <div class="bg-white rounded-lg shadow p-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">관리 작업</h2>
         <div class="space-y-3">
           <% if @request.no_leak_found? %>
             <%= button_to "비용 미청구 종료",
                   close_no_charge_admin_request_path(@request),
                   method: :post,
-                  class: "w-full px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-medium text-sm",
+                  class: "#{btn_classes(:secondary, :md)} w-full",
                   data: { turbo_confirm: "비용 미청구로 종료하시겠습니까?" } %>
           <% end %>
 
@@ -173,7 +161,7 @@
             <%= button_to "최종 종료 (관리자)",
                   finalize_admin_request_path(@request),
                   method: :post,
-                  class: "w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium text-sm",
+                  class: "#{btn_classes(:success, :md)} w-full",
                   data: { turbo_confirm: "이 신고를 최종 종료하시겠습니까?" } %>
           <% end %>
 
@@ -184,7 +172,7 @@
       </div>
 
       <!-- 일시 정보 -->
-      <div class="bg-white rounded-lg shadow p-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">일시 기록</h2>
         <dl class="space-y-3 text-sm">
           <div class="flex justify-between">

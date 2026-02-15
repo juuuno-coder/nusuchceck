@@ -7,6 +7,13 @@ export default class extends Controller {
     this.inputTarget.click()
   }
 
+  keydown(event) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault()
+      this.trigger()
+    }
+  }
+
   preview() {
     const file = this.inputTarget.files[0]
     if (!file) return
@@ -21,6 +28,7 @@ export default class extends Controller {
     reader.onload = (e) => {
       this.previewTarget.src = e.target.result
       this.previewTarget.classList.remove("hidden")
+      this.previewTarget.setAttribute("alt", file.name)
       this.placeholderTarget.classList.add("hidden")
     }
     reader.readAsDataURL(file)

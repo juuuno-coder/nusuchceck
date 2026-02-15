@@ -9,7 +9,10 @@ module ApplicationCable
     private
 
     def find_verified_user
-      if verified_user = User.find_by(id: cookies.encrypted[:user_id])
+      # Devise 세션을 통한 인증
+      if verified_user = env['warden']&.user
+        verified_user
+      elsif verified_user = User.find_by(id: cookies.encrypted[:user_id])
         verified_user
       else
         reject_unauthorized_connection

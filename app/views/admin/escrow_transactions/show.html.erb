@@ -1,34 +1,30 @@
 <div class="max-w-3xl mx-auto space-y-6">
   <!-- 뒤로가기 + 헤더 -->
-  <div>
-    <%= link_to admin_escrow_transactions_path, class: "text-sm text-blue-600 hover:text-blue-800 flex items-center" do %>
-      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-      </svg>
-      목록으로
-    <% end %>
-    <div class="flex items-center justify-between mt-2">
-      <h1 class="text-2xl font-bold text-gray-900">에스크로 거래 #<%= @escrow_transaction.id %></h1>
-      <%
-        escrow_badge = case @escrow_transaction.status
-          when "pending"   then "bg-yellow-100 text-yellow-800"
-          when "deposited" then "bg-blue-100 text-blue-800"
-          when "held"      then "bg-orange-100 text-orange-800"
-          when "released"  then "bg-green-100 text-green-800"
-          when "settled"   then "bg-emerald-100 text-emerald-800"
-          when "refunded"  then "bg-red-100 text-red-800"
-          when "disputed"  then "bg-purple-100 text-purple-800"
-          else "bg-gray-100 text-gray-800"
-        end
-      %>
-      <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <%= escrow_badge %>">
-        <%= @escrow_transaction.status_label %>
-      </span>
-    </div>
+  <%= render "shared/page_header",
+      title: "에스크로 거래 ##{@escrow_transaction.id}",
+      back_path: admin_escrow_transactions_path,
+      back_text: "목록으로" %>
+
+  <div class="flex items-center justify-end">
+    <%
+      escrow_badge = case @escrow_transaction.status
+        when "pending"   then "bg-yellow-100 text-yellow-800"
+        when "deposited" then "bg-blue-100 text-blue-800"
+        when "held"      then "bg-orange-100 text-orange-800"
+        when "released"  then "bg-green-100 text-green-800"
+        when "settled"   then "bg-emerald-100 text-emerald-800"
+        when "refunded"  then "bg-red-100 text-red-800"
+        when "disputed"  then "bg-purple-100 text-purple-800"
+        else "bg-gray-100 text-gray-800"
+      end
+    %>
+    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <%= escrow_badge %>" role="status">
+      <%= @escrow_transaction.status_label %>
+    </span>
   </div>
 
   <!-- 거래 정보 -->
-  <div class="bg-white rounded-lg shadow p-6">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
     <h2 class="text-lg font-semibold text-gray-900 mb-4">거래 정보</h2>
     <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
       <div>
@@ -53,7 +49,7 @@
   </div>
 
   <!-- 금액 정보 -->
-  <div class="bg-white rounded-lg shadow p-6">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
     <h2 class="text-lg font-semibold text-gray-900 mb-4">금액 정보</h2>
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
       <div class="text-center p-4 bg-blue-50 rounded-lg">
@@ -72,7 +68,7 @@
   </div>
 
   <!-- 일시 기록 -->
-  <div class="bg-white rounded-lg shadow p-6">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
     <h2 class="text-lg font-semibold text-gray-900 mb-4">일시 기록</h2>
     <dl class="space-y-3 text-sm">
       <div class="flex justify-between">
@@ -101,14 +97,14 @@
   </div>
 
   <!-- 관리 작업 -->
-  <div class="bg-white rounded-lg shadow p-6">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
     <h2 class="text-lg font-semibold text-gray-900 mb-4">관리 작업</h2>
     <div class="flex flex-col sm:flex-row gap-3">
       <% if @escrow_transaction.deposited? || @escrow_transaction.held? %>
         <%= button_to "대금 지급",
               release_payment_admin_escrow_transaction_path(@escrow_transaction),
               method: :post,
-              class: "flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium text-sm text-center",
+              class: "flex-1 #{btn_classes(:success, :md)} text-center",
               data: { turbo_confirm: "마스터에게 대금을 지급하시겠습니까?" } %>
       <% end %>
 
@@ -116,7 +112,7 @@
         <%= button_to "환불 처리",
               refund_admin_escrow_transaction_path(@escrow_transaction),
               method: :post,
-              class: "flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium text-sm text-center",
+              class: "flex-1 #{btn_classes(:danger, :md)} text-center",
               data: { turbo_confirm: "정말 환불 처리하시겠습니까? 이 작업은 되돌릴 수 없습니다." } %>
       <% end %>
 

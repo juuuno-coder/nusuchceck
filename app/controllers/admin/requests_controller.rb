@@ -16,6 +16,10 @@ class Admin::RequestsController < ApplicationController
     authorize @request
     master = Master.find(params[:master_id])
     @request.assign!(master: master)
+
+    # 실시간 알림 발송
+    NotificationService.notify_request_assigned(@request)
+
     redirect_to admin_request_path(@request), notice: "#{master.name} 마스터가 배정되었습니다."
   rescue AASM::InvalidTransition => e
     redirect_to admin_request_path(@request), alert: "마스터 배정 실패: #{e.message}"

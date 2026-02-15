@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+    .content { background: #fff; padding: 30px; border: 1px solid #e5e7eb; }
+    .button { display: inline-block; background: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
+    .info-box { background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 15px 0; }
+    .request-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 15px 0; }
+    .footer { text-align: center; padding: 20px; color: #6b7280; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 style="margin: 0;">📝 보험청구서 수정 요청</h1>
+    </div>
+
+    <div class="content">
+      <p><strong><%= @master.name %></strong>님, 안녕하세요!</p>
+
+      <p><strong><%= @customer.name %></strong>님이 보험청구서 수정을 요청했어요.<br/>
+      고객의 요청사항을 확인하시고 수정해주세요.</p>
+
+      <div class="info-box">
+        <p style="margin: 5px 0;"><strong>📋 신청서 번호:</strong> <%= @insurance_claim.claim_number %></p>
+        <p style="margin: 5px 0;"><strong>👤 고객명:</strong> <%= @customer.name %></p>
+        <p style="margin: 5px 0;"><strong>🏠 사고 장소:</strong> <%= @insurance_claim.incident_address %></p>
+      </div>
+
+      <div class="request-box">
+        <p style="margin: 0 0 10px 0;"><strong>📝 고객 수정 요청사항:</strong></p>
+        <p style="margin: 0; white-space: pre-line; background: white; padding: 12px; border-radius: 6px;"><%=  @insurance_claim.customer_review_notes %></p>
+      </div>
+
+      <p style="margin-top: 20px;">아래 버튼을 클릭하여 보험청구서를 수정해주세요:</p>
+
+      <div style="text-align: center;">
+        <%= link_to "보험청구서 수정하기", edit_masters_insurance_claim_url(@insurance_claim), class: "button" %>
+      </div>
+
+      <div style="background: #dbeafe; border-left: 4px solid #3b82f6; padding: 12px; margin-top: 20px;">
+        <p style="margin: 0; font-size: 14px;">
+          <strong>💡 참고사항:</strong><br/>
+          • 수정 후 다시 고객에게 검토 요청을 보내주세요<br/>
+          • 고객이 승인하면 자동으로 보험사에 제출됩니다<br/>
+          • 신속한 처리가 고객 만족도를 높여요
+        </p>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>이 메일은 발신전용입니다. 문의사항은 누수체크 고객센터로 연락주세요.</p>
+      <p>&copy; 2024 누수체크. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

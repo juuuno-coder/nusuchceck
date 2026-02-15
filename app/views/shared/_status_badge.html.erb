@@ -35,6 +35,6 @@
   css_class = badge_colors[status.to_s] || "bg-gray-100 text-gray-800"
   label = status_labels[status.to_s] || status.to_s.humanize
 %>
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= css_class %>">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= css_class %>" role="status" aria-label="상태: <%= label %>">
   <%= label %>
 </span>

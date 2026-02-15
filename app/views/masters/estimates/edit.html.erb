@@ -1,31 +1,17 @@
 <div class="max-w-4xl mx-auto">
-  <div class="mb-6">
-    <%= link_to masters_request_path(@request), class: "text-sm text-blue-600 hover:text-blue-800 flex items-center" do %>
-      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-      </svg>
-      신고 상세로 돌아가기
-    <% end %>
-    <h1 class="text-2xl font-bold text-gray-900 mt-2">견적 수정</h1>
-    <p class="text-sm text-gray-500 mt-1">견적 #<%= @estimate.id %> (신고 #<%= @request.id %>)</p>
-  </div>
+  <%= render "shared/page_header",
+      title: "견적 수정",
+      description: "견적 ##{@estimate.id} (신고 ##{@request.id})",
+      back_path: masters_request_path(@request),
+      back_text: "신고 상세로 돌아가기" %>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- 좌측: 견적 폼 -->
     <div class="lg:col-span-2">
-      <div class="bg-white rounded-lg shadow p-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <%= form_with(model: [@request, @estimate], url: masters_request_estimate_path(@request, @estimate), method: :patch, class: "space-y-6") do |f| %>
 
-          <% if @estimate.errors.any? %>
-            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-              <h3 class="text-sm font-medium text-red-800 mb-2">입력 오류가 있습니다:</h3>
-              <ul class="list-disc list-inside text-sm text-red-700 space-y-1">
-                <% @estimate.errors.full_messages.each do |msg| %>
-                  <li><%= msg %></li>
-                <% end %>
-              </ul>
-            </div>
-          <% end %>
+          <%= render "shared/form_errors", resource: @estimate %>
 
           <!-- 견적 항목 -->
           <div data-controller="estimate-items">
@@ -34,7 +20,7 @@
               <button type="button"
                       data-action="click->estimate-items#add"
                       class="inline-flex items-center px-3 py-1.5 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 text-sm font-medium">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
                 항목 추가
@@ -48,7 +34,7 @@
                     <div class="sm:col-span-1">
                       <label class="block text-xs font-medium text-gray-500 mb-1">구분</label>
                       <select name="estimate[line_items][][category]"
-                              class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                              class="<%= input_classes(:select) %> !text-sm !py-2">
                         <option value="trip" <%= "selected" if item[:category] == "trip" %>>출장비</option>
                         <option value="detection" <%= "selected" if item[:category] == "detection" %>>탐지</option>
                         <option value="construction" <%= "selected" if item[:category] == "construction" %>>공사</option>
@@ -58,23 +44,23 @@
                     <div class="sm:col-span-2">
                       <label class="block text-xs font-medium text-gray-500 mb-1">항목명</label>
                       <input type="text" name="estimate[line_items][][name]" value="<%= item[:name] %>"
-                             class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                             class="<%= input_classes(:text) %> !text-sm !py-2">
                     </div>
                     <div>
                       <label class="block text-xs font-medium text-gray-500 mb-1">단위</label>
                       <input type="text" name="estimate[line_items][][unit]" value="<%= item[:unit] %>"
-                             class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                             class="<%= input_classes(:text) %> !text-sm !py-2">
                     </div>
                     <div>
                       <label class="block text-xs font-medium text-gray-500 mb-1">수량</label>
                       <input type="number" name="estimate[line_items][][quantity]" value="<%= item[:quantity] %>" min="1"
-                             class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                             class="<%= input_classes(:text) %> !text-sm !py-2"
                              data-action="input->estimate-items#calculate">
                     </div>
                     <div>
                       <label class="block text-xs font-medium text-gray-500 mb-1">단가</label>
                       <input type="number" name="estimate[line_items][][unit_price]" value="<%= item[:unit_price] %>" min="0" step="1000"
-                             class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                             class="<%= input_classes(:text) %> !text-sm !py-2"
                              data-action="input->estimate-items#calculate">
                     </div>
                   </div>
@@ -99,20 +85,20 @@
             <%= f.text_area :notes,
                   rows: 3,
                   placeholder: "추가 설명이나 주의사항을 입력해 주세요.",
-                  class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+                  class: input_classes(:textarea) %>
           </div>
 
           <!-- 유효기간 -->
           <div>
             <%= f.label :valid_until, "유효기간", class: "block text-sm font-medium text-gray-700 mb-1" %>
             <%= f.date_field :valid_until,
-                  class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+                  class: input_classes(:text) %>
           </div>
 
           <!-- 제출 버튼 -->
           <div class="flex items-center justify-end gap-3 pt-4 border-t">
-            <%= link_to "취소", masters_request_path(@request), class: "px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium text-sm" %>
-            <%= f.submit "견적 수정", class: "px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm cursor-pointer" %>
+            <%= link_to "취소", masters_request_path(@request), class: btn_classes(:secondary, :md) %>
+            <%= f.submit "견적 수정", class: btn_classes(:primary, :md) %>
           </div>
         <% end %>
       </div>
@@ -121,7 +107,7 @@
     <!-- 우측: 추천 항목 -->
     <div class="space-y-6">
       <% if defined?(@recommended_items) && @recommended_items&.any? %>
-        <div class="bg-white rounded-lg shadow p-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <h2 class="text-sm font-semibold text-gray-900 mb-3">추천 항목</h2>
           <div class="space-y-2">
             <% @recommended_items.each do |item| %>
@@ -146,7 +132,7 @@
       <% end %>
 
       <% if defined?(@standard_items) && @standard_items&.any? %>
-        <div class="bg-white rounded-lg shadow p-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <h2 class="text-sm font-semibold text-gray-900 mb-3">표준 항목</h2>
           <div class="space-y-2 max-h-96 overflow-y-auto">
             <% @standard_items.each do |item| %>
@@ -158,7 +144,7 @@
                       data-unit="<%= item.unit %>"
                       data-price="<%= item.default_price %>">
                 <span class="text-gray-900"><%= item.name %></span>
-                <span class="text-xs text-gray-400 ml-1">(<%= item.category_label %>)</span>
+                <span class="text-xs text-gray-500 ml-1">(<%= item.category_label %>)</span>
               </button>
             <% end %>
           </div>

@@ -1,11 +1,12 @@
-<div class="space-y-6">
+<div class="space-y-6 py-8">
   <!-- 헤더 -->
-  <div class="flex items-center justify-between">
-    <h1 class="text-2xl font-bold text-gray-900">배정된 신고 목록</h1>
+  <div class="text-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">🔧 내 작업 목록</h1>
+    <p class="mt-2 text-gray-600">배정된 누수 신고를 확인하고 관리하세요</p>
   </div>
 
   <!-- 검색/필터 -->
-  <div class="bg-white rounded-lg shadow p-4">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
     <%= search_form_for @q, url: masters_requests_path, html: { method: :get, class: "flex flex-col sm:flex-row gap-3" } do |f| %>
       <div class="flex-1">
         <%= f.select :status_eq,
@@ -24,7 +25,7 @@
                 ["종료", "closed"],
                 ["취소", "cancelled"]
               ], params.dig(:q, :status_eq)),
-              {}, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" %>
+              {}, class: input_classes(:select) %>
       </div>
       <div class="flex-1">
         <%= f.select :symptom_type_eq,
@@ -37,11 +38,11 @@
                 ["화장실 누수", "toilet_leak"],
                 ["외부 누수", "outdoor_leak"]
               ], params.dig(:q, :symptom_type_eq)),
-              {}, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" %>
+              {}, class: input_classes(:select) %>
       </div>
       <div class="flex gap-2">
-        <%= f.submit "검색", class: "px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-900 text-sm font-medium cursor-pointer" %>
-        <%= link_to "초기화", masters_requests_path, class: "px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 text-sm font-medium" %>
+        <%= f.submit "검색", class: btn_classes(:primary, :md) %>
+        <%= link_to "초기화", masters_requests_path, class: btn_classes(:secondary, :md) %>
       </div>
     <% end %>
   </div>
@@ -50,7 +51,7 @@
   <% if @requests.any? %>
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <% @requests.each do |request| %>
-        <%= link_to masters_request_path(request), class: "block bg-white rounded-lg shadow hover:shadow-md transition" do %>
+        <%= link_to masters_request_path(request), class: "block bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition" do %>
           <div class="p-5">
             <div class="flex items-center justify-between mb-3">
               <span class="text-sm font-mono text-gray-500">#<%= request.id %></span>
@@ -61,18 +62,11 @@
               <%= request.customer&.name || "고객" %>
             </h3>
 
-            <%
-              symptom_labels = {
-                "wall_leak" => "벽면 누수", "ceiling_leak" => "천장 누수",
-                "floor_leak" => "바닥 누수", "pipe_leak" => "배관 누수",
-                "toilet_leak" => "화장실 누수", "outdoor_leak" => "외부 누수"
-              }
-            %>
-            <p class="text-sm text-blue-600 font-medium mb-2"><%= symptom_labels[request.symptom_type] || request.symptom_type %></p>
+            <p class="text-sm text-blue-600 font-medium mb-2"><%= symptom_label(request.symptom_type) %></p>
 
             <div class="space-y-1 text-sm text-gray-600">
               <p class="flex items-center">
-                <svg class="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
@@ -80,7 +74,7 @@
               </p>
               <% if request.assigned_at.present? %>
                 <p class="flex items-center">
-                  <svg class="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                   </svg>
                   배정일: <%= request.assigned_at.strftime("%Y-%m-%d %H:%M") %>
@@ -97,12 +91,60 @@
       <%= paginate @requests %>
     </div>
   <% else %>
-    <div class="bg-white rounded-lg shadow p-12 text-center">
-      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-      </svg>
-      <h3 class="mt-4 text-lg font-medium text-gray-900">배정된 신고가 없습니다</h3>
-      <p class="mt-2 text-sm text-gray-500">새로운 신고가 배정되면 여기에 표시됩니다.</p>
+    <%= render "shared/empty_state",
+          icon: "document",
+          title: "현재 배정된 작업이 없어요",
+          description: "새로운 누수 신고가 배정되면 바로 알려드릴게요" %>
+
+    <!-- 대기 중 안내 -->
+    <div class="mt-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-2xl">⏱️</span>
+        <h3 class="font-bold text-gray-900">잠시만 기다려주세요</h3>
+      </div>
+      <div class="space-y-3 text-sm text-gray-700">
+        <p>새로운 누수 신고가 들어오면 <strong>즉시 알림</strong>을 보내드려요</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-blue-200">
+          <div>
+            <p class="font-semibold text-gray-900 mb-1">📍 내 지역 우선</p>
+            <p class="text-gray-600 text-xs">가까운 곳부터 배정돼요</p>
+          </div>
+          <div>
+            <p class="font-semibold text-gray-900 mb-1">⚡ 빠른 매칭</p>
+            <p class="text-gray-600 text-xs">실시간으로 매칭돼요</p>
+          </div>
+          <div>
+            <p class="font-semibold text-gray-900 mb-1">💰 투명한 수익</p>
+            <p class="text-gray-600 text-xs">에스크로로 안전하게</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 작업 준비 팁 -->
+    <div class="mt-6 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl p-6 border border-yellow-100">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-2xl">💡</span>
+        <h3 class="font-bold text-gray-900">신고가 배정되면 이렇게 준비하세요</h3>
+      </div>
+      <ul class="space-y-2 text-sm text-gray-700">
+        <li class="flex items-start gap-2">
+          <span class="flex-shrink-0 w-6 h-6 bg-yellow-500 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+          <span>고객 정보와 주소를 확인하세요</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="flex-shrink-0 w-6 h-6 bg-yellow-500 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
+          <span>방문 시간을 협의하고 준비물을 챙기세요</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="flex-shrink-0 w-6 h-6 bg-yellow-500 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
+          <span>현장에서 정확히 진단하고 견적을 제시하세요</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="flex-shrink-0 w-6 h-6 bg-yellow-500 text-white rounded-full flex items-center justify-center text-xs font-bold">4</span>
+          <span>작업 완료 후 에스크로로 안전하게 대금을 받으세요</span>
+        </li>
+      </ul>
     </div>
   <% end %>
 </div>

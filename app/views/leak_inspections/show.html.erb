@@ -1,33 +1,91 @@
 <div class="max-w-2xl mx-auto py-8">
   <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-gray-900">AI 점검 결과</h1>
-    <%= link_to new_leak_inspection_path, class: "text-sm text-blue-600 hover:text-blue-800" do %>
-      새로운 점검하기 →
+    <h1 class="text-2xl font-bold text-gray-900">📋 분석 결과가 나왔어요</h1>
+    <%= link_to new_leak_inspection_path, class: "text-sm text-blue-600 hover:text-blue-800 font-medium" do %>
+      다시 검사하기 →
     <% end %>
   </div>
 
-  <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <!-- 업로드된 사진 -->
     <% if @inspection.photo.attached? %>
       <div class="aspect-video bg-gray-100 flex items-center justify-center overflow-hidden">
-        <%= image_tag @inspection.photo, class: "w-full h-full object-cover" %>
+        <%= image_tag @inspection.photo, class: "w-full h-full object-cover", alt: "점검 대상 사진" %>
       </div>
     <% end %>
 
     <div class="p-6 space-y-6">
       <% if @inspection.completed? %>
+        <!-- 심각도별 알림 메시지 -->
+        <% if @inspection.leak_detected? %>
+          <% case @inspection.severity %>
+          <% when "critical", "high" %>
+            <div class="bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-200 rounded-2xl p-6">
+              <div class="flex items-start gap-4">
+                <span class="text-4xl">🔴</span>
+                <div class="flex-1">
+                  <h2 class="text-xl font-bold text-red-900 mb-2">빠른 조치가 필요해요</h2>
+                  <p class="text-red-800 leading-relaxed">
+                    생각보다 심각할 수 있어요. 더 큰 피해가 발생하기 전에<br>
+                    <strong>지금 바로 전문가에게 연락하세요.</strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+          <% when "medium" %>
+            <div class="bg-gradient-to-r from-yellow-50 to-amber-50 border-2 border-yellow-200 rounded-2xl p-6">
+              <div class="flex items-start gap-4">
+                <span class="text-4xl">🟡</span>
+                <div class="flex-1">
+                  <h2 class="text-xl font-bold text-yellow-900 mb-2">전문가 확인을 권장해요</h2>
+                  <p class="text-yellow-800 leading-relaxed">
+                    조기에 발견해서 다행이에요. 하지만 방치하면 악화될 수 있어요.<br>
+                    <strong>빠른 시일 내에 점검받으시길 추천드려요.</strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+          <% when "low" %>
+            <div class="bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-2xl p-6">
+              <div class="flex items-start gap-4">
+                <span class="text-4xl">🔵</span>
+                <div class="flex-1">
+                  <h2 class="text-xl font-bold text-blue-900 mb-2">경미한 수준이에요</h2>
+                  <p class="text-blue-800 leading-relaxed">
+                    지금 당장은 괜찮아 보여요. 하지만 정기적인 관찰이 필요해요.<br>
+                    <strong>계속 확인하시다가 악화되면 전문가와 상담하세요.</strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-6">
+            <div class="flex items-start gap-4">
+              <span class="text-4xl">✅</span>
+              <div class="flex-1">
+                <h2 class="text-xl font-bold text-green-900 mb-2">괜찮아 보여요</h2>
+                <p class="text-green-800 leading-relaxed">
+                  사진상으로는 누수 흔적이 보이지 않아요.<br>
+                  <strong>하지만 정기적인 점검은 중요해요.</strong> 의심스러운 부분이 있다면 다시 확인해주세요.
+                </p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
         <!-- 누수 감지 결과 배지 -->
         <div class="flex flex-wrap items-center gap-3">
           <% if @inspection.leak_detected? %>
-            <span class="px-4 py-2 bg-red-100 text-red-700 rounded-full font-bold text-sm">
-              ⚠ 누수 감지됨
+            <span class="px-4 py-2 bg-red-100 text-red-700 rounded-full font-bold text-sm" role="status">
+              누수 감지됨
             </span>
-            <span class="px-3 py-1 bg-<%= @inspection.severity_color %>-100 text-<%= @inspection.severity_color %>-700 rounded-full text-sm font-medium">
+            <span class="px-3 py-1 bg-<%= @inspection.severity_color %>-100 text-<%= @inspection.severity_color %>-700 rounded-full text-sm font-medium" role="status">
               심각도: <%= @inspection.severity_label %>
             </span>
           <% else %>
-            <span class="px-4 py-2 bg-green-100 text-green-700 rounded-full font-bold text-sm">
-              ✓ 누수 미감지
+            <span class="px-4 py-2 bg-green-100 text-green-700 rounded-full font-bold text-sm" role="status">
+              누수 미감지
             </span>
           <% end %>
 
@@ -39,8 +97,11 @@
         </div>
 
         <!-- 분석 요약 -->
-        <div>
-          <h3 class="font-semibold text-gray-900 mb-2">분석 요약</h3>
+        <div class="bg-gray-50 rounded-xl p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-lg">🔍</span>
+            <h3 class="font-bold text-gray-900">AI가 발견한 내용</h3>
+          </div>
           <p class="text-gray-700 leading-relaxed"><%= @inspection.analysis_summary %></p>
         </div>
 
@@ -50,45 +111,63 @@
           <% details = detail[:details] || {} %>
 
           <% if details[:observed_symptoms].present? %>
-            <div>
-              <h3 class="font-semibold text-gray-900 mb-2">관찰된 증상</h3>
-              <ul class="list-disc list-inside text-gray-600 space-y-1">
+            <div class="bg-white rounded-xl p-5 border border-gray-200">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="text-lg">👀</span>
+                <h3 class="font-bold text-gray-900">이런 증상이 보여요</h3>
+              </div>
+              <ul class="space-y-2">
                 <% details[:observed_symptoms].each do |symptom| %>
-                  <li><%= symptom %></li>
+                  <li class="flex items-start gap-2 text-gray-700">
+                    <span class="text-blue-500 mt-0.5">•</span>
+                    <span><%= symptom %></span>
+                  </li>
                 <% end %>
               </ul>
             </div>
           <% end %>
 
           <% if details[:possible_causes].present? %>
-            <div>
-              <h3 class="font-semibold text-gray-900 mb-2">가능한 원인</h3>
-              <ul class="list-disc list-inside text-gray-600 space-y-1">
+            <div class="bg-white rounded-xl p-5 border border-gray-200">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="text-lg">💭</span>
+                <h3 class="font-bold text-gray-900">이런 원인일 수 있어요</h3>
+              </div>
+              <ul class="space-y-2">
                 <% details[:possible_causes].each do |cause| %>
-                  <li><%= cause %></li>
+                  <li class="flex items-start gap-2 text-gray-700">
+                    <span class="text-amber-500 mt-0.5">•</span>
+                    <span><%= cause %></span>
+                  </li>
                 <% end %>
               </ul>
             </div>
           <% end %>
 
           <% if details[:affected_area].present? %>
-            <div>
-              <h3 class="font-semibold text-gray-900 mb-2">영향 범위</h3>
-              <p class="text-gray-600"><%= details[:affected_area] %></p>
+            <div class="bg-white rounded-xl p-5 border border-gray-200">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="text-lg">📏</span>
+                <h3 class="font-bold text-gray-900">영향을 받은 범위</h3>
+              </div>
+              <p class="text-gray-700"><%= details[:affected_area] %></p>
             </div>
           <% end %>
         <% end %>
 
         <!-- 추천 조치 -->
         <% if @inspection.recommended_action.present? %>
-          <div class="bg-blue-50 rounded-xl p-4">
-            <h3 class="font-semibold text-blue-900 mb-2">추천 조치</h3>
-            <p class="text-blue-800"><%= @inspection.recommended_action %></p>
+          <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-5 border-2 border-indigo-200">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-xl">💡</span>
+              <h3 class="font-bold text-indigo-900">다음 단계</h3>
+            </div>
+            <p class="text-indigo-900 leading-relaxed font-medium"><%= @inspection.recommended_action %></p>
           </div>
         <% end %>
 
         <!-- 분석 메타 정보 -->
-        <div class="text-xs text-gray-400 flex items-center gap-4">
+        <div class="text-xs text-gray-500 flex items-center gap-4">
           <span>분석 시간: <%= @inspection.analysis_duration_seconds %>초</span>
           <% if @inspection.location_description.present? %>
             <span>위치: <%= @inspection.location_description %></span>
@@ -96,34 +175,236 @@
         </div>
 
         <!-- CTA: 정식 신고 유도 -->
-        <div class="border-t pt-6 text-center space-y-3">
-          <p class="text-gray-600">전문가에게 정확한 진단을 받아보세요</p>
-          <div class="flex flex-col sm:flex-row gap-3 justify-center">
-            <% if user_signed_in? && current_user.is_a?(Customer) %>
-              <%= link_to new_customers_request_path, class: "inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition" do %>
-                정식 누수 신고하기
+        <div class="border-t-2 border-gray-100 pt-8 mt-2">
+          <% if @inspection.leak_detected? && ["critical", "high", "medium"].include?(@inspection.severity) %>
+            <!-- 심각한 경우 -->
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white text-center">
+              <div class="text-3xl mb-3">👷</div>
+              <h3 class="text-2xl font-bold mb-2">전문가를 만나보세요</h3>
+              <p class="text-blue-100 mb-6">검증된 누수 전문가가 정확한 진단과 해결책을 제공해드려요</p>
+              <% if user_signed_in? && current_user.is_a?(Customer) %>
+                <%= link_to new_customers_request_path, class: "inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 rounded-xl font-bold text-lg hover:bg-gray-100 transition shadow-lg" do %>
+                  <span>정식 누수 신고하기</span>
+                  <span>→</span>
+                <% end %>
+              <% else %>
+                <%= link_to new_user_registration_path, class: "inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 rounded-xl font-bold text-lg hover:bg-gray-100 transition shadow-lg" do %>
+                  <span>회원가입하고 신고하기</span>
+                  <span>→</span>
+                <% end %>
               <% end %>
-            <% else %>
-              <%= link_to new_user_registration_path, class: "inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition" do %>
-                회원가입 후 신고하기
+              <p class="text-xs text-blue-200 mt-4">무료 상담 • 투명한 견적 • 에스크로 결제</p>
+            </div>
+          <% else %>
+            <!-- 경미하거나 누수 미감지 -->
+            <div class="text-center space-y-4">
+              <p class="text-gray-600">그래도 걱정되시나요?</p>
+              <p class="text-sm text-gray-500">전문가의 정확한 진단을 받아보세요</p>
+              <% if user_signed_in? && current_user.is_a?(Customer) %>
+                <%= link_to new_customers_request_path, class: "inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition" do %>
+                  <span>정식 누수 신고하기</span>
+                  <span>→</span>
+                <% end %>
+              <% else %>
+                <%= link_to new_user_registration_path, class: "inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition" do %>
+                  <span>회원가입하고 신고하기</span>
+                  <span>→</span>
+                <% end %>
               <% end %>
-            <% end %>
-          </div>
+            </div>
+          <% end %>
         </div>
 
       <% elsif @inspection.failed? %>
-        <div class="text-center py-8">
+        <div class="text-center py-8" role="alert">
           <p class="text-red-600 font-medium mb-4">분석 중 오류가 발생했습니다.</p>
           <%= link_to "다시 시도하기", new_leak_inspection_path,
-                class: "px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" %>
+                class: btn_classes(:primary, :md) %>
         </div>
 
       <% else %>
-        <div class="text-center py-8">
-          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <div class="text-center py-8" aria-live="polite">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" aria-hidden="true"></div>
           <p class="text-gray-600">분석 중입니다...</p>
         </div>
       <% end %>
     </div>
   </div>
+
+  <!-- 교육 정보 섹션 -->
+  <% if @inspection.completed? %>
+    <div class="mt-8 space-y-6">
+      <!-- 예상 비용 정보 -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-2xl">💰</span>
+          <h3 class="text-xl font-bold text-gray-900">예상 비용이 궁금하신가요?</h3>
+        </div>
+        <p class="text-sm text-gray-600 mb-4">일반적인 누수 처리 비용 범위예요 (실제 비용은 상황에 따라 달라질 수 있어요)</p>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="bg-blue-50 rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-lg">🔍</span>
+              <h4 class="font-bold text-gray-900">정밀 탐지</h4>
+            </div>
+            <p class="text-2xl font-bold text-blue-600">10~15만원</p>
+            <p class="text-xs text-gray-600 mt-1">적외선 카메라, 음파 탐지 등</p>
+          </div>
+          <div class="bg-green-50 rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-lg">🔧</span>
+              <h4 class="font-bold text-gray-900">간단한 보수</h4>
+            </div>
+            <p class="text-2xl font-bold text-green-600">30~80만원</p>
+            <p class="text-xs text-gray-600 mt-1">배관 교체, 실리콘 처리 등</p>
+          </div>
+          <div class="bg-orange-50 rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-lg">🏗️</span>
+              <h4 class="font-bold text-gray-900">중규모 공사</h4>
+            </div>
+            <p class="text-2xl font-bold text-orange-600">100~300만원</p>
+            <p class="text-xs text-gray-600 mt-1">타일 교체, 방수 공사 등</p>
+          </div>
+          <div class="bg-red-50 rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-lg">🚨</span>
+              <h4 class="font-bold text-gray-900">대규모 공사</h4>
+            </div>
+            <p class="text-2xl font-bold text-red-600">300만원 이상</p>
+            <p class="text-xs text-gray-600 mt-1">벽체 해체, 전면 방수 등</p>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 mt-4 p-3 bg-gray-50 rounded-lg">
+          💡 <strong>Tip:</strong> 조기에 발견할수록 비용이 적게 들어요. 의심되면 바로 점검받으세요!
+        </p>
+      </div>
+
+      <!-- 누수 잘 생기는 곳 -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-2xl">📍</span>
+          <h3 class="text-xl font-bold text-gray-900">이런 곳을 주의 깊게 봐주세요</h3>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-4">
+          <div class="p-4 bg-gray-50 rounded-xl">
+            <div class="text-3xl mb-2">🚽</div>
+            <h4 class="font-bold text-gray-900 mb-1">화장실</h4>
+            <p class="text-sm text-gray-600">변기 주변, 타일 사이, 샤워부스</p>
+          </div>
+          <div class="p-4 bg-gray-50 rounded-xl">
+            <div class="text-3xl mb-2">🍳</div>
+            <h4 class="font-bold text-gray-900 mb-1">주방</h4>
+            <p class="text-sm text-gray-600">싱크대 아래, 수도꼭지 연결부</p>
+          </div>
+          <div class="p-4 bg-gray-50 rounded-xl">
+            <div class="text-3xl mb-2">🏠</div>
+            <h4 class="font-bold text-gray-900 mb-1">거실/방</h4>
+            <p class="text-sm text-gray-600">천장, 벽면 모서리, 창문 주변</p>
+          </div>
+          <div class="p-4 bg-gray-50 rounded-xl">
+            <div class="text-3xl mb-2">🌧️</div>
+            <h4 class="font-bold text-gray-900 mb-1">외벽</h4>
+            <p class="text-sm text-gray-600">크랙, 코킹 벗겨진 곳, 베란다</p>
+          </div>
+          <div class="p-4 bg-gray-50 rounded-xl">
+            <div class="text-3xl mb-2">🏢</div>
+            <h4 class="font-bold text-gray-900 mb-1">지하/옥상</h4>
+            <p class="text-sm text-gray-600">배수구, 방수층, 이음새</p>
+          </div>
+          <div class="p-4 bg-gray-50 rounded-xl">
+            <div class="text-3xl mb-2">🔧</div>
+            <h4 class="font-bold text-gray-900 mb-1">배관 주변</h4>
+            <p class="text-sm text-gray-600">연결부, 밸브, 계량기 근처</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 셀프 체크 가이드 -->
+      <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border-2 border-purple-200 p-6">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-2xl">✅</span>
+          <h3 class="text-xl font-bold text-gray-900">이런 증상이 있다면 누수를 의심하세요</h3>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-3">
+          <div class="flex items-start gap-3 bg-white/70 rounded-lg p-3">
+            <span class="text-xl">💧</span>
+            <div>
+              <h4 class="font-semibold text-gray-900">물방울, 물 자국</h4>
+              <p class="text-sm text-gray-600">벽이나 천장에 물이 맺혀있어요</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 bg-white/70 rounded-lg p-3">
+            <span class="text-xl">🟫</span>
+            <div>
+              <h4 class="font-semibold text-gray-900">변색, 얼룩</h4>
+              <p class="text-sm text-gray-600">노랗거나 갈색으로 변했어요</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 bg-white/70 rounded-lg p-3">
+            <span class="text-xl">🦠</span>
+            <div>
+              <h4 class="font-semibold text-gray-900">곰팡이, 이끼</h4>
+              <p class="text-sm text-gray-600">검은 점이나 녹색 이끼가 생겼어요</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 bg-white/70 rounded-lg p-3">
+            <span class="text-xl">👃</span>
+            <div>
+              <h4 class="font-semibold text-gray-900">퀴퀴한 냄새</h4>
+              <p class="text-sm text-gray-600">습한 냄새나 곰팡이 냄새가 나요</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 bg-white/70 rounded-lg p-3">
+            <span class="text-xl">📄</span>
+            <div>
+              <h4 class="font-semibold text-gray-900">벽지 들뜸</h4>
+              <p class="text-sm text-gray-600">벽지가 부풀어오르거나 벗겨져요</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 bg-white/70 rounded-lg p-3">
+            <span class="text-xl">💸</span>
+            <div>
+              <h4 class="font-semibold text-gray-900">수도 요금 증가</h4>
+              <p class="text-sm text-gray-600">사용량은 같은데 요금이 올랐어요</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 방치 시 위험성 -->
+      <div class="bg-red-50 rounded-2xl border-2 border-red-200 p-6">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-2xl">⚠️</span>
+          <h3 class="text-xl font-bold text-red-900">누수를 방치하면 이런 일이 생겨요</h3>
+        </div>
+        <div class="space-y-3">
+          <div class="flex items-start gap-3">
+            <span class="flex-shrink-0 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold">!</span>
+            <p class="text-gray-700"><strong class="text-red-900">구조적 손상:</strong> 벽체, 천장이 약해져서 무너질 수 있어요</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="flex-shrink-0 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold">!</span>
+            <p class="text-gray-700"><strong class="text-red-900">곰팡이 확산:</strong> 건강에 해로운 곰팡이가 빠르게 번져요</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="flex-shrink-0 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold">!</span>
+            <p class="text-gray-700"><strong class="text-red-900">이웃 피해:</strong> 아래층에 피해를 주면 배상 책임이 생겨요</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="flex-shrink-0 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold">!</span>
+            <p class="text-gray-700"><strong class="text-red-900">비용 증가:</strong> 시간이 지날수록 수리 비용이 몇 배로 늘어나요</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="flex-shrink-0 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold">!</span>
+            <p class="text-gray-700"><strong class="text-red-900">전기 위험:</strong> 누전, 합선으로 화재가 발생할 수 있어요</p>
+          </div>
+        </div>
+        <div class="mt-4 p-4 bg-white rounded-xl">
+          <p class="text-sm text-gray-900 font-semibold">💡 <strong>빠를수록 좋아요!</strong></p>
+          <p class="text-sm text-gray-600 mt-1">조기 발견하면 간단한 보수로 해결할 수 있어요. 망설이지 마세요!</p>
+        </div>
+      </div>
+    </div>
+  <% end %>
 </div>

@@ -2,12 +2,12 @@
   <h1 class="text-2xl font-bold text-gray-900">전체 신고 관리</h1>
 
   <!-- 검색/필터 -->
-  <div class="bg-white rounded-lg shadow p-4">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
     <%= search_form_for @q, url: admin_requests_path, html: { method: :get, class: "flex flex-col sm:flex-row gap-3" } do |f| %>
       <div class="flex-1">
         <%= f.search_field :customer_name_or_address_cont,
               placeholder: "고객명 또는 주소 검색...",
-              class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" %>
+              class: input_classes(:text) %>
       </div>
       <div class="flex-1">
         <%= f.select :status_eq,
@@ -27,19 +27,19 @@
                 ["종료", "closed"],
                 ["취소", "cancelled"]
               ], params.dig(:q, :status_eq)),
-              {}, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" %>
+              {}, class: input_classes(:select) %>
       </div>
       <div class="flex gap-2">
-        <%= f.submit "검색", class: "px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-900 text-sm font-medium cursor-pointer" %>
-        <%= link_to "초기화", admin_requests_path, class: "px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 text-sm font-medium" %>
+        <%= f.submit "검색", class: btn_classes(:primary, :md) %>
+        <%= link_to "초기화", admin_requests_path, class: btn_classes(:secondary, :md) %>
       </div>
     <% end %>
   </div>
 
-  <!-- 테이블 -->
-  <div class="bg-white rounded-lg shadow overflow-hidden">
+  <!-- 데스크톱 테이블 -->
+  <div class="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200">
+      <table class="min-w-full divide-y divide-gray-200" aria-label="신고 목록">
         <thead class="bg-gray-50">
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">접수번호</th>
@@ -51,13 +51,6 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
-          <%
-            symptom_labels = {
-              "wall_leak" => "벽면 누수", "ceiling_leak" => "천장 누수",
-              "floor_leak" => "바닥 누수", "pipe_leak" => "배관 누수",
-              "toilet_leak" => "화장실 누수", "outdoor_leak" => "외부 누수"
-            }
-          %>
           <% @requests.each do |request| %>
             <tr class="hover:bg-gray-50">
               <td class="px-6 py-4 whitespace-nowrap">
@@ -65,7 +58,7 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%= request.customer&.name || "-" %></td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><%= request.master&.name || "-" %></td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><%= symptom_labels[request.symptom_type] || request.symptom_type %></td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><%= symptom_label(request.symptom_type) %></td>
               <td class="px-6 py-4 whitespace-nowrap"><%= render "shared/status_badge", status: request.status %></td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= request.created_at.strftime("%Y-%m-%d %H:%M") %></td>
             </tr>
@@ -73,6 +66,24 @@
         </tbody>
       </table>
     </div>
+  </div>
+
+  <!-- 모바일 카드 목록 -->
+  <div class="md:hidden space-y-3">
+    <% @requests.each do |request| %>
+      <%= link_to admin_request_path(request), class: "block bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition" do %>
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-sm font-mono text-gray-500 font-medium">#<%= request.id %></span>
+          <%= render "shared/status_badge", status: request.status %>
+        </div>
+        <p class="text-sm font-medium text-gray-900"><%= request.customer&.name || "-" %></p>
+        <p class="text-sm text-blue-600 mt-1"><%= symptom_label(request.symptom_type) %></p>
+        <div class="flex items-center justify-between mt-2 text-xs text-gray-500">
+          <span>마스터: <%= request.master&.name || "미배정" %></span>
+          <span><%= request.created_at.strftime("%m/%d %H:%M") %></span>
+        </div>
+      <% end %>
+    <% end %>
   </div>
 
   <!-- 페이지네이션 -->

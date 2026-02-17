@@ -4,7 +4,7 @@ class RequestPolicy < ApplicationPolicy
   end
 
   def show?
-    user.admin? || owner? || assigned_master?
+    user.admin? || owner? || assigned_master? || (user.master? && record.open?)
   end
 
   def create?
@@ -15,8 +15,16 @@ class RequestPolicy < ApplicationPolicy
     (owner? || user.admin?) && record.may_cancel?
   end
 
+  def publish?
+    user.admin? && record.may_publish?
+  end
+
   def assign_master?
-    user.admin? && record.may_assign?
+    user.admin? && (record.may_assign? || record.open?)
+  end
+
+  def claim?
+    user.master? && record.may_claim?
   end
 
   def accept_estimate?

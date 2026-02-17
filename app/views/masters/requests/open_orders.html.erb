@@ -1,0 +1,131 @@
+<div class="space-y-6 py-8">
+  <!-- 헤더 -->
+  <div class="text-center mb-8">
+    <div class="inline-flex items-center px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium mb-3">
+      선착순 오더
+    </div>
+    <h1 class="text-3xl font-bold text-gray-900">공개 오더 목록</h1>
+    <p class="mt-2 text-gray-600">먼저 수락하는 전문가가 배정됩니다</p>
+  </div>
+
+  <!-- 탭 네비게이션 -->
+  <div class="flex border-b border-gray-200 mb-6">
+    <%= link_to masters_requests_path, class: "px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300 transition-colors" do %>
+      내 진행 중 작업
+    <% end %>
+    <span class="px-4 py-2 text-sm font-medium text-emerald-700 border-b-2 border-emerald-500">
+      공개 오더
+      <span class="ml-1.5 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold bg-emerald-500 text-white rounded-full">
+        <%= @requests.total_count %>
+      </span>
+    </span>
+  </div>
+
+  <!-- 필터 -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+    <%= search_form_for @q, url: open_orders_masters_requests_path, html: { method: :get, class: "flex flex-col sm:flex-row gap-3" } do |f| %>
+      <div class="flex-1">
+        <%= f.select :symptom_type_eq,
+              options_for_select([
+                ["전체 증상", ""],
+                ["벽면 누수", "wall_leak"],
+                ["천장 누수", "ceiling_leak"],
+                ["바닥 누수", "floor_leak"],
+                ["배관 누수", "pipe_leak"],
+                ["화장실 누수", "toilet_leak"],
+                ["외부 누수", "outdoor_leak"]
+              ], params.dig(:q, :symptom_type_eq)),
+              {}, class: input_classes(:select) %>
+      </div>
+      <div class="flex-1">
+        <%= f.select :building_type_eq,
+              options_for_select([
+                ["전체 건물 유형", ""],
+                ["아파트", "apartment"],
+                ["빌라/다세대", "villa"],
+                ["단독주택", "house"],
+                ["사무실", "office"],
+                ["상가", "retail_store"],
+                ["공장", "factory"],
+                ["기타", "other_building"]
+              ], params.dig(:q, :building_type_eq)),
+              {}, class: input_classes(:select) %>
+      </div>
+      <div class="flex gap-2">
+        <%= f.submit "필터 적용", class: btn_classes(:primary, :md) %>
+        <%= link_to "초기화", open_orders_masters_requests_path, class: btn_classes(:secondary, :md) %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 오더 목록 -->
+  <% if @requests.any? %>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <% @requests.each do |request| %>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition flex flex-col">
+          <div class="p-5 flex-1">
+            <!-- 오더 번호 + 등록 시간 -->
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-mono text-gray-500">#<%= request.id %></span>
+              <span class="text-xs text-gray-400">
+                <%= time_ago_in_words(request.created_at) %> 전
+              </span>
+            </div>
+
+            <!-- 증상 유형 -->
+            <p class="text-base font-bold text-blue-700 mb-2"><%= symptom_label(request.symptom_type) %></p>
+
+            <!-- 건물 유형 -->
+            <% if request.building_type.present? %>
+              <span class="inline-block px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full mb-2">
+                <%= t("activerecord.enums.request.building_type.#{request.building_type}", default: request.building_type) %>
+              </span>
+            <% end %>
+
+            <!-- 주소 -->
+            <div class="flex items-start text-sm text-gray-600 mb-2">
+              <svg class="w-4 h-4 mr-1.5 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              <span><%= truncate(request.address, length: 30) %></span>
+            </div>
+
+            <!-- 설명 -->
+            <% if request.description.present? %>
+              <p class="text-sm text-gray-500 line-clamp-2"><%= truncate(request.description, length: 80) %></p>
+            <% end %>
+          </div>
+
+          <!-- 액션 버튼 -->
+          <div class="p-4 border-t border-gray-100 flex gap-2">
+            <%= link_to "상세 보기",
+                  masters_request_path(request),
+                  class: "flex-1 text-center px-3 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors" %>
+            <%= button_to "수락하기",
+                  claim_masters_request_path(request),
+                  method: :post,
+                  class: "flex-1 text-center px-3 py-2 bg-emerald-600 text-white text-sm font-bold rounded-lg hover:bg-emerald-700 transition-colors",
+                  data: { confirm: "이 오더를 수락하시겠습니까? 선착순이므로 이미 다른 전문가가 수락했을 수 있습니다." } %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="mt-6">
+      <%= paginate @requests %>
+    </div>
+  <% else %>
+    <%= render "shared/empty_state",
+          icon: "document",
+          title: "현재 공개된 오더가 없어요",
+          description: "새로운 오더가 등록되면 바로 알려드릴게요" %>
+
+    <div class="mt-6 bg-emerald-50 rounded-xl p-6 border border-emerald-100 text-center">
+      <p class="text-emerald-700 text-sm font-medium">
+        고객이 누수 체크를 신청하면 관리자가 검토 후 공개 등록합니다.
+        <br>등록 즉시 알림을 받으실 수 있도록 알림을 켜두세요.
+      </p>
+    </div>
+  <% end %>
+</div>

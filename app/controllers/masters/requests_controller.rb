@@ -2,13 +2,34 @@ class Masters::RequestsController < ApplicationController
   include MasterAccessible
 
   before_action :set_request, only: [
-    :show, :visit, :arrive, :detection_complete, :detection_fail,
+    :show, :claim, :visit, :arrive, :detection_complete, :detection_fail,
     :submit_estimate, :start_construction, :complete_construction
   ]
 
   def index
     @q = current_user.assigned_requests.ransack(params[:q])
     @requests = @q.result.recent.page(params[:page])
+    @open_count = Request.open_orders.count
+  end
+
+  def open_orders
+    @q = Request.open_orders.ransack(params[:q])
+    @requests = @q.result.includes(:customer).recent.page(params[:page])
+  end
+
+  def claim
+    authorize @request
+    ActiveRecord::Base.transaction do
+      @request.reload  # 선착순 경쟁 방지
+      raise AASM::InvalidTransition.new(@request, :claim) unless @request.may_claim?
+      @request.claim!(master: current_user)
+    end
+    NotificationService.notify_request_assigned(@request) rescue nil
+    redirect_to masters_request_path(@request), notice: "오더를 수락했습니다! 방문 일정을 잡아주세요."
+  rescue AASM::InvalidTransition
+    redirect_to open_orders_masters_requests_path, alert: "이미 다른 전문가가 선택한 오더입니다."
+  rescue ActiveRecord::RecordInvalid
+    redirect_to open_orders_masters_requests_path, alert: "처리 중 오류가 발생했습니다."
   end
 
   def show
@@ -75,6 +96,11 @@ class Masters::RequestsController < ApplicationController
   private
 
   def set_request
-    @request = current_user.assigned_requests.find(params[:id])
+    # claim 액션은 아직 배정 전이므로 전체 오더에서 찾음
+    if action_name == "claim"
+      @request = Request.find(params[:id])
+    else
+      @request = current_user.assigned_requests.find(params[:id])
+    end
   end
 end

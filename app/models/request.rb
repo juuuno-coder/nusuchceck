@@ -47,9 +47,12 @@ class Request < ApplicationRecord
   scope :recent, -> { order(created_at: :desc) }
   scope :for_master, ->(master) { where(master: master) }
 
-  # AASM State Machine - 13 states, 15+ transitions
+  scope :open_orders, -> { where(status: :open) }
+
+  # AASM State Machine - 14 states
   aasm column: :status, whiny_transitions: true do
     state :reported, initial: true
+    state :open          # 공개 오더 풀 (전문가 선착순 선택 가능)
     state :assigned
     state :visiting
     state :detecting
@@ -63,13 +66,27 @@ class Request < ApplicationRecord
     state :closed
     state :cancelled
 
-    # 마스터 배정
+    # 공개 오더 풀에 등록 (Admin이 실행)
+    event :publish do
+      transitions from: :reported, to: :open
+    end
+
+    # 전문가가 선착순으로 선택 (클레임)
+    event :claim do
+      before do |master:|
+        self.master = master
+        self.assigned_at = Time.current
+      end
+      transitions from: :open, to: :assigned, guard: :master_present?
+    end
+
+    # 관리자 직접 배정 (수동 오버라이드)
     event :assign do
       before do |master:|
         self.master = master
         self.assigned_at = Time.current
       end
-      transitions from: :reported, to: :assigned, guard: :master_present?
+      transitions from: [:reported, :open], to: :assigned, guard: :master_present?
     end
 
     # 방문 시작
@@ -146,7 +163,7 @@ class Request < ApplicationRecord
     # 취소 (공사 진행 전 단계에서만 가능)
     event :cancel do
       before { self.closed_at = Time.current }
-      transitions from: [:reported, :assigned, :visiting, :detecting,
+      transitions from: [:reported, :open, :assigned, :visiting, :detecting,
                          :no_leak_found, :estimate_pending, :estimate_submitted,
                          :construction_agreed],
                   to: :cancelled

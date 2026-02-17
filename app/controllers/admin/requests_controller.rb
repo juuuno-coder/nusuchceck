@@ -1,7 +1,7 @@
 class Admin::RequestsController < ApplicationController
   include AdminAccessible
 
-  before_action :set_request, only: [:show, :assign_master, :close_no_charge, :finalize]
+  before_action :set_request, only: [:show, :publish, :assign_master, :close_no_charge, :finalize]
 
   def index
     @q = Request.ransack(params[:q])
@@ -9,18 +9,25 @@ class Admin::RequestsController < ApplicationController
   end
 
   def show
-    @available_masters = Master.joins(:master_profile).where(master_profiles: { verified: true })
+    @available_masters = Master.joins(:master_profile)
+                               .where(master_profiles: { verified: true })
+                               .order(:name)
+  end
+
+  def publish
+    authorize @request
+    @request.publish!
+    redirect_to admin_request_path(@request), notice: "공개 오더 풀에 등록했습니다. 전문가가 선택할 수 있습니다."
+  rescue AASM::InvalidTransition => e
+    redirect_to admin_request_path(@request), alert: "공개 등록 실패: #{e.message}"
   end
 
   def assign_master
     authorize @request
     master = Master.find(params[:master_id])
     @request.assign!(master: master)
-
-    # 실시간 알림 발송
-    NotificationService.notify_request_assigned(@request)
-
-    redirect_to admin_request_path(@request), notice: "#{master.name} 마스터가 배정되었습니다."
+    NotificationService.notify_request_assigned(@request) rescue nil
+    redirect_to admin_request_path(@request), notice: "#{master.name} 마스터가 직접 배정되었습니다."
   rescue AASM::InvalidTransition => e
     redirect_to admin_request_path(@request), alert: "마스터 배정 실패: #{e.message}"
   rescue ActiveRecord::RecordNotFound

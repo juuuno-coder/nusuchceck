@@ -57,7 +57,11 @@ Rails.application.routes.draw do
   # Master namespace
   namespace :masters do
     resources :requests, only: [:index, :show] do
+      collection do
+        get :open_orders   # 공개 오더 목록
+      end
       member do
+        post :claim        # 선착순 선택
         post :visit
         post :arrive
         post :detection_complete
@@ -85,7 +89,8 @@ Rails.application.routes.draw do
     resources :dashboard, only: [:index]
     resources :requests, only: [:index, :show] do
       member do
-        post :assign_master
+        post :publish        # 공개 오더 풀에 등록
+        post :assign_master  # 관리자 직접 배정 (수동)
         post :close_no_charge
         post :finalize
       end

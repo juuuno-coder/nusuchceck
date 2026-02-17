@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body style="font-family: 'Apple SD Gothic Neo', sans-serif; background: #f8fafc; margin: 0; padding: 0;">
+  <div style="max-width: 560px; margin: 40px auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 8px rgba(0,0,0,0.08);">
+    <div style="background: linear-gradient(135deg, #059669, #10b981); padding: 32px 24px; text-align: center;">
+      <p style="color: rgba(255,255,255,0.8); font-size: 13px; margin: 0 0 6px;">누수체크</p>
+      <h1 style="color: white; font-size: 22px; font-weight: 800; margin: 0;">전문가가 배정되었어요!</h1>
+    </div>
+    <div style="padding: 32px 24px;">
+      <p style="color: #374151; font-size: 15px; margin: 0 0 20px;">
+        안녕하세요, <strong><%= @customer.name %></strong>님!<br>
+        <strong><%= @master.name %></strong> 전문가가 방문 예정입니다.
+      </p>
+      <div style="background: #ecfdf5; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+        <p style="color: #065f46; font-size: 13px; font-weight: 700; margin: 0 0 12px;">👨‍🔧 배정 전문가</p>
+        <table style="width: 100%; font-size: 13px;">
+          <tr>
+            <td style="color: #6b7280; padding: 4px 0; width: 90px;">이름</td>
+            <td style="color: #111827; font-weight: 600;"><%= @master.name %></td>
+          </tr>
+          <% if @master.experience_years.to_i > 0 %>
+          <tr>
+            <td style="color: #6b7280; padding: 4px 0;">경력</td>
+            <td style="color: #111827;"><%= @master.experience_years %>년</td>
+          </tr>
+          <% end %>
+          <% if @master.average_rating > 0 %>
+          <tr>
+            <td style="color: #6b7280; padding: 4px 0;">평점</td>
+            <td style="color: #111827;">⭐ <%= @master.average_rating %></td>
+          </tr>
+          <% end %>
+        </table>
+      </div>
+      <div style="text-align: center;">
+        <a href="<%= customers_request_url(@request) %>"
+           style="display: inline-block; background: #059669; color: white; font-size: 14px; font-weight: 700;
+                  padding: 12px 28px; border-radius: 10px; text-decoration: none;">
+          체크 현황 확인하기
+        </a>
+      </div>
+    </div>
+    <div style="background: #f9fafb; padding: 16px 24px; text-align: center; border-top: 1px solid #e5e7eb;">
+      <p style="color: #9ca3af; font-size: 11px; margin: 0;">누수체크 · support@nusucheck.com</p>
+    </div>
+  </div>
+</body>
+</html>

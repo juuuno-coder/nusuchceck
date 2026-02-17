@@ -217,22 +217,23 @@
       <% if @request.master.present? %>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <h2 class="text-lg font-semibold text-gray-900 mb-4">담당 전문가</h2>
-          <div class="flex items-center space-x-3">
-            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+          <%= link_to master_path(@request.master), class: "flex items-center space-x-3 hover:opacity-80 transition" do %>
+            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
               <span class="text-blue-600 font-bold text-lg"><%= @request.master.name&.first %></span>
             </div>
-            <div>
+            <div class="flex-1 min-w-0">
               <p class="font-medium text-gray-900"><%= @request.master.name %></p>
               <% if @request.master.master_profile %>
                 <p class="text-sm text-gray-500">
                   경력 <%= @request.master.experience_years || 0 %>년
                   <% if @request.master.average_rating > 0 %>
-                    | 평점 <%= @request.master.average_rating %>
+                    | ⭐ <%= @request.master.average_rating %>
                   <% end %>
                 </p>
               <% end %>
+              <p class="text-xs text-blue-600 mt-1">프로필 보기 →</p>
             </div>
-          </div>
+          <% end %>
         </div>
       <% end %>
 

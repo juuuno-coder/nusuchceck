@@ -34,12 +34,14 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: "nusucheck.com", protocol: "https" }
   config.action_mailer.delivery_method = ENV.fetch("MAILER_DELIVERY_METHOD", "smtp").to_sym
   config.action_mailer.smtp_settings = {
-    address: ENV.fetch("SMTP_ADDRESS", "smtp.gmail.com"),
-    port: ENV.fetch("SMTP_PORT", 587).to_i,
-    domain: "nusucheck.com",
-    user_name: ENV["SMTP_USERNAME"],
-    password: ENV["SMTP_PASSWORD"],
-    authentication: "plain",
+    # Resend.com: SMTP_ADDRESS=smtp.resend.com, SMTP_USERNAME=resend, SMTP_PASSWORD=API_KEY
+    # Gmail: SMTP_ADDRESS=smtp.gmail.com, SMTP_USERNAME=email, SMTP_PASSWORD=앱비밀번호
+    address:              ENV.fetch("SMTP_ADDRESS", "smtp.resend.com"),
+    port:                 ENV.fetch("SMTP_PORT", 587).to_i,
+    domain:               "nusucheck.com",
+    user_name:            ENV.fetch("SMTP_USERNAME", "resend"),
+    password:             ENV["SMTP_PASSWORD"],
+    authentication:       "plain",
     enable_starttls_auto: true
   }
 

@@ -24,7 +24,8 @@ class Customers::RequestsController < ApplicationController
     @request = current_user.requests.build(request_params)
 
     if @request.save
-      redirect_to customers_request_path(@request), notice: "누수 신고가 접수되었습니다."
+      RequestMailer.request_received(@request).deliver_later rescue nil
+      redirect_to customers_request_path(@request), notice: "누수 체크 접수가 완료되었습니다."
     else
       render :new, status: :unprocessable_entity
     end

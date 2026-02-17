@@ -17,7 +17,7 @@ class NotificationService
     notification
   end
 
-  # 신고 배정 알림
+  # 신고 배정 알림 (+ 이메일)
   def self.notify_request_assigned(request)
     return unless request.master
 
@@ -28,9 +28,12 @@ class NotificationService
       actor: request.customer,
       notifiable: request
     )
+
+    # 고객에게 이메일 알림
+    RequestMailer.master_assigned(request).deliver_later rescue nil
   end
 
-  # 견적 제출 알림
+  # 견적 제출 알림 (+ 이메일)
   def self.notify_estimate_submitted(estimate)
     notify(
       recipient: estimate.request.customer,
@@ -39,6 +42,9 @@ class NotificationService
       actor: estimate.master,
       notifiable: estimate
     )
+
+    # 고객에게 이메일 알림
+    RequestMailer.estimate_submitted(estimate.request).deliver_later rescue nil
   end
 
   # 견적 수락 알림
@@ -52,7 +58,7 @@ class NotificationService
     )
   end
 
-  # 공사 완료 알림
+  # 공사 완료 알림 (+ 이메일)
   def self.notify_construction_completed(request)
     notify(
       recipient: request.customer,
@@ -61,6 +67,9 @@ class NotificationService
       actor: request.master,
       notifiable: request
     )
+
+    # 고객에게 이메일 알림
+    RequestMailer.construction_completed(request).deliver_later rescue nil
   end
 
   # 보험청구 검토 요청 알림

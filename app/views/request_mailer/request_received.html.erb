@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<body style="font-family: 'Apple SD Gothic Neo', sans-serif; background: #f8fafc; margin: 0; padding: 0;">
+  <div style="max-width: 560px; margin: 40px auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 8px rgba(0,0,0,0.08);">
+    <!-- 헤더 -->
+    <div style="background: linear-gradient(135deg, #1d4ed8, #3b82f6); padding: 32px 24px; text-align: center;">
+      <p style="color: rgba(255,255,255,0.8); font-size: 13px; margin: 0 0 6px;">누수하면</p>
+      <h1 style="color: white; font-size: 22px; font-weight: 800; margin: 0;">누수체크 ✓</h1>
+    </div>
+    <!-- 본문 -->
+    <div style="padding: 32px 24px;">
+      <p style="color: #374151; font-size: 15px; margin: 0 0 20px;">
+        안녕하세요, <strong><%= @customer.name %></strong>님!<br>
+        <strong>누수 체크 접수가 완료</strong>되었습니다. 곧 전문가를 배정해드릴게요.
+      </p>
+      <!-- 접수 정보 박스 -->
+      <div style="background: #eff6ff; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+        <p style="color: #1e40af; font-size: 13px; font-weight: 700; margin: 0 0 12px;">📋 접수 정보</p>
+        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+          <tr>
+            <td style="color: #6b7280; padding: 4px 0; width: 90px;">접수번호</td>
+            <td style="color: #111827; font-weight: 600; font-family: monospace;">#<%= @request.id %></td>
+          </tr>
+          <tr>
+            <td style="color: #6b7280; padding: 4px 0;">증상</td>
+            <td style="color: #111827; font-weight: 600;"><%= symptom_label(@request.symptom_type) rescue @request.symptom_type %></td>
+          </tr>
+          <tr>
+            <td style="color: #6b7280; padding: 4px 0;">주소</td>
+            <td style="color: #111827;"><%= @request.address %></td>
+          </tr>
+          <tr>
+            <td style="color: #6b7280; padding: 4px 0;">접수일</td>
+            <td style="color: #111827;"><%= @request.created_at.strftime("%Y년 %m월 %d일 %H:%M") %></td>
+          </tr>
+        </table>
+      </div>
+      <!-- 다음 단계 -->
+      <div style="margin-bottom: 24px;">
+        <p style="color: #374151; font-size: 13px; margin: 0 0 8px; font-weight: 600;">다음 단계</p>
+        <p style="color: #6b7280; font-size: 13px; margin: 0; line-height: 1.6;">
+          ① 관리자 검토 (1시간 이내)<br>
+          ② 전문가 배정 (배정 즉시 알림)<br>
+          ③ 전문가 현장 방문 및 점검
+        </p>
+      </div>
+      <!-- CTA 버튼 -->
+      <div style="text-align: center;">
+        <a href="<%= customers_request_url(@request) %>"
+           style="display: inline-block; background: #2563eb; color: white; font-size: 14px; font-weight: 700;
+                  padding: 12px 28px; border-radius: 10px; text-decoration: none;">
+          접수 현황 확인하기
+        </a>
+      </div>
+    </div>
+    <!-- 푸터 -->
+    <div style="background: #f9fafb; padding: 16px 24px; text-align: center; border-top: 1px solid #e5e7eb;">
+      <p style="color: #9ca3af; font-size: 11px; margin: 0;">
+        누수체크 · 문의: support@nusucheck.com<br>
+        이 메일은 서비스 알림 메일로, 수신 거부가 불가합니다.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,4 +1,4 @@
-class AddWarrantyToRequests < ActiveRecord::Migration[7.2]
+class AddWarrantyToRequests < ActiveRecord::Migration[7.1]
   def change
     add_column :requests, :warranty_period_months, :integer, default: 0
     add_column :requests, :warranty_expires_at, :datetime

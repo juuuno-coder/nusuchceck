@@ -147,7 +147,7 @@ class Customers::RequestsController < ApplicationController
   def request_params
     params.require(:request).permit(
       :symptom_type, :building_type, :address, :detailed_address,
-      :floor_info, :description, :preferred_date, photos: []
+      :floor_info, :description, :preferred_date, photos: [], videos: []
     )
   end
 end

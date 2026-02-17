@@ -8,10 +8,14 @@ class Request < ApplicationRecord
   has_one :review, dependent: :destroy
   has_many :insurance_claims, dependent: :nullify
   has_many_attached :photos
+  has_many_attached :videos
 
   validates :symptom_type, presence: true
   validates :address, presence: true
   validates :customer, presence: true
+  validates :videos,
+    content_type: { in: %w[video/mp4 video/quicktime video/avi video/x-msvideo video/webm video/3gpp video/3gpp2], message: "은 동영상 파일이어야 합니다 (MP4, MOV, AVI, WebM)" },
+    size: { less_than: 500.megabytes, message: "는 500MB 이하여야 합니다" }
 
   enum :symptom_type, {
     wall_leak: 0,

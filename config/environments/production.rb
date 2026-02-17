@@ -20,7 +20,9 @@ Rails.application.configure do
     "expert.nusucheck.com",
     "app.nusucheck.com",
     "nusucheck.fly.dev",
-    /.*\.nusucheck\.com/  # 모든 서브도메인 허용
+    /.*\.nusucheck\.com/,  # 모든 서브도메인 허용
+    /\A[\d.]+\z/,          # Fly.io 헬스체크용 내부 IP 허용
+    /\A[0-9a-f:]+\z/       # IPv6 허용
   ]
 
   # Action Mailer

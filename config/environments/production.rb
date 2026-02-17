@@ -9,6 +9,8 @@ Rails.application.configure do
   config.assets.compile = false
   config.active_storage.service = :local
   config.force_ssl = true
+  # /up 헬스체크는 SSL 리디렉션에서 제외 (Fly.io 내부 HTTP 체크용)
+  config.ssl_options = { redirect: { exclude: -> request { request.path == "/up" } } }
   config.logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
   config.log_tags = [:request_id]
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")

@@ -21,9 +21,42 @@
     </span>
   </div>
 
+  <!-- 지역 필터 토글 -->
+  <% if @my_areas.any? %>
+    <div class="flex items-center gap-3 p-3 bg-blue-50 border border-blue-100 rounded-xl">
+      <svg class="w-5 h-5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+      </svg>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm text-blue-800">
+          <strong>내 서비스 지역:</strong>
+          <%= @my_areas.join(", ") %>
+        </p>
+      </div>
+      <% if @filter_my_area %>
+        <%= link_to open_orders_masters_requests_path(params.permit(:q).to_h),
+              class: "flex-shrink-0 px-3 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg" do %>
+          내 지역만 보는 중
+        <% end %>
+        <%= link_to open_orders_masters_requests_path(params.permit(:q).merge(my_area: "0").to_h),
+              class: "flex-shrink-0 px-3 py-1.5 bg-white text-blue-700 border border-blue-300 text-xs font-medium rounded-lg" do %>
+          전체 보기
+        <% end %>
+      <% else %>
+        <%= link_to open_orders_masters_requests_path(params.permit(:q).merge(my_area: "1").to_h),
+              class: "flex-shrink-0 px-3 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition" do %>
+          내 지역만 보기
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
   <!-- 필터 -->
   <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
     <%= search_form_for @q, url: open_orders_masters_requests_path, html: { method: :get, class: "flex flex-col sm:flex-row gap-3" } do |f| %>
+      <% if @filter_my_area %>
+        <%= hidden_field_tag :my_area, "1" %>
+      <% end %>
       <div class="flex-1">
         <%= f.select :symptom_type_eq,
               options_for_select([

@@ -137,6 +137,9 @@ Rails.application.routes.draw do
     end
   end
 
+  # 전문가 공개 프로필 (비로그인 접근 가능)
+  resources :masters, only: [:show]
+
   # PDF downloads
   resources :requests, only: [] do
     member do

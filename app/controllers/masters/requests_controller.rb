@@ -13,7 +13,20 @@ class Masters::RequestsController < ApplicationController
   end
 
   def open_orders
-    @q = Request.open_orders.ransack(params[:q])
+    base_scope = Request.open_orders
+
+    # 내 지역 필터 (my_area=1 파라미터 또는 기본값)
+    @my_areas = current_user.master_profile&.service_areas_list || []
+    @filter_my_area = params[:my_area] == "1"
+
+    if @filter_my_area && @my_areas.any?
+      # service_areas_list에 포함된 지역 주소가 address에 포함된 오더만 필터
+      area_conditions = @my_areas.map { |area| "requests.address ILIKE ?" }.join(" OR ")
+      area_values     = @my_areas.map { |area| "%#{area}%" }
+      base_scope = base_scope.where(area_conditions, *area_values)
+    end
+
+    @q = base_scope.ransack(params[:q])
     @requests = @q.result.includes(:customer).recent.page(params[:page])
   end
 

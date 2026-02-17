@@ -14,6 +14,9 @@ ENV RAILS_ENV="production" \
 
 FROM base AS build
 
+# 빌드 스테이지에서는 새 gem 추가 허용 (Gemfile.lock 업데이트 가능)
+ENV BUNDLE_DEPLOYMENT=""
+
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libpq-dev pkg-config curl && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives

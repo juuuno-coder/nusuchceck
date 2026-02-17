@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
+  include HotwireNativeApp
 
   before_action :authenticate_user!
 

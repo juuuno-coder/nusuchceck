@@ -1,0 +1,30 @@
+{
+  "settings": {},
+  "rules": [
+    {
+      "patterns": ["/users/sign_in", "/users/sign_up"],
+      "properties": {
+        "context": "modal"
+      }
+    },
+    {
+      "patterns": ["/customers/requests/new"],
+      "properties": {
+        "context": "modal"
+      }
+    },
+    {
+      "patterns": ["/customers/requests/[0-9]+/reviews/new"],
+      "properties": {
+        "context": "modal"
+      }
+    },
+    {
+      "patterns": [".+"],
+      "properties": {
+        "context": "default",
+        "pull_to_refresh_enabled": true
+      }
+    }
+  ]
+}

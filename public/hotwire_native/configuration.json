@@ -1,0 +1,95 @@
+{
+  "settings": {
+    "screenshots_enabled": false
+  },
+  "rules": [
+    {
+      "patterns": ["/users/sign_in", "/users/sign_up", "/users/password"],
+      "properties": {
+        "context": "modal",
+        "pull_to_refresh_enabled": false,
+        "title": "로그인"
+      }
+    },
+    {
+      "patterns": ["/customers/requests/new"],
+      "properties": {
+        "context": "modal",
+        "pull_to_refresh_enabled": false,
+        "title": "누수 체크 접수"
+      }
+    },
+    {
+      "patterns": ["/customers/requests/[0-9]+/reviews/new"],
+      "properties": {
+        "context": "modal",
+        "pull_to_refresh_enabled": false,
+        "title": "리뷰 작성"
+      }
+    },
+    {
+      "patterns": ["/customers/requests/[0-9]+/insurance_claims/new"],
+      "properties": {
+        "context": "modal",
+        "pull_to_refresh_enabled": false,
+        "title": "보험 신청"
+      }
+    },
+    {
+      "patterns": ["/customers/requests/[0-9]+"],
+      "properties": {
+        "context": "default",
+        "pull_to_refresh_enabled": true,
+        "title": "체크 상세"
+      }
+    },
+    {
+      "patterns": ["/customers/requests"],
+      "properties": {
+        "context": "default",
+        "pull_to_refresh_enabled": true,
+        "title": "내 체크"
+      }
+    },
+    {
+      "patterns": ["/customers/insurance_claims/[0-9]+"],
+      "properties": {
+        "context": "default",
+        "pull_to_refresh_enabled": true,
+        "title": "보험청구 상세"
+      }
+    },
+    {
+      "patterns": ["/customers/insurance_claims"],
+      "properties": {
+        "context": "default",
+        "pull_to_refresh_enabled": true,
+        "title": "보험청구"
+      }
+    },
+    {
+      "patterns": ["/notifications"],
+      "properties": {
+        "context": "default",
+        "pull_to_refresh_enabled": true,
+        "title": "알림"
+      }
+    },
+    {
+      "patterns": ["/leak_inspections/new"],
+      "properties": {
+        "context": "modal",
+        "pull_to_refresh_enabled": false,
+        "title": "AI 누수 점검"
+      }
+    },
+    {
+      "patterns": ["/leak_inspections/[0-9]+"],
+      "properties": {
+        "context": "default",
+        "pull_to_refresh_enabled": false,
+        "title": "점검 결과"
+      }
+    }
+  ]
+}

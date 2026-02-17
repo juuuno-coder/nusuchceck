@@ -12,13 +12,14 @@
   <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
   <%= javascript_importmap_tags %>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans<%= ' native-app' if hotwire_native_app? %>">
   <!-- Loading Progress Bar -->
   <div data-controller="loading">
     <div data-loading-target="bar" class="loading-bar hidden"></div>
   </div>
 
-  <!-- Navigation -->
+  <!-- Navigation (네이티브 앱에서는 숨김 - 앱 자체 네비게이션 사용) -->
+  <% unless hotwire_native_app? %>
   <nav class="bg-blue-700 text-white shadow-lg" aria-label="주 메뉴" data-controller="mobile-menu">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
@@ -50,9 +51,7 @@
 
         <div class="flex items-center space-x-3">
           <% if user_signed_in? %>
-            <!-- 알림 -->
             <%= render "shared/notifications_dropdown" %>
-
             <span class="hidden sm:inline text-sm"><%= current_user.name %> (<%= current_user.display_role %>)</span>
             <%= button_to "로그아웃", destroy_user_session_path, method: :delete, class: "hidden md:inline-flex px-3 py-2 rounded-md text-sm font-medium bg-blue-800 hover:bg-blue-900" %>
           <% else %>
@@ -60,18 +59,15 @@
             <%= link_to "회원가입", new_user_registration_path, class: "hidden sm:inline-flex px-3 py-2 rounded-md text-sm font-medium bg-white text-blue-700 hover:bg-gray-100" %>
           <% end %>
 
-          <!-- 모바일 햄버거 버튼 -->
           <button type="button"
                   class="md:hidden inline-flex items-center justify-center p-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-white"
                   data-action="mobile-menu#toggle"
                   data-mobile-menu-target="button"
                   aria-expanded="false"
                   aria-label="메뉴 열기">
-            <!-- 햄버거 아이콘 -->
             <svg class="h-6 w-6" data-mobile-menu-target="iconOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
-            <!-- X 아이콘 (닫기) -->
             <svg class="h-6 w-6 hidden" data-mobile-menu-target="iconClose" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
@@ -80,16 +76,13 @@
       </div>
     </div>
 
-    <!-- 모바일 메뉴 패널 -->
     <div class="md:hidden hidden" data-mobile-menu-target="panel">
       <div class="px-4 pt-2 pb-4 space-y-1 border-t border-blue-600 mobile-menu-enter">
         <%= link_to "AI 점검", new_leak_inspection_path, class: "block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-600" %>
-
         <% if user_signed_in? %>
           <div class="border-t border-blue-600 my-2 pt-2">
             <p class="px-3 py-1 text-blue-200 text-sm"><%= current_user.name %> (<%= current_user.display_role %>)</p>
           </div>
-
           <% if current_user.customer? %>
             <%= link_to "내 체크", customers_requests_path, class: "block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-600" %>
             <%= link_to "보험 신청", customers_insurance_claims_path, class: "block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-600" %>
@@ -103,7 +96,6 @@
             <%= link_to "에스크로", admin_escrow_transactions_path, class: "block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-600" %>
             <%= link_to "보험관리", admin_insurance_claims_path, class: "block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-600" %>
           <% end %>
-
           <div class="border-t border-blue-600 my-2 pt-2">
             <%= button_to "로그아웃", destroy_user_session_path, method: :delete, class: "w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-blue-600" %>
           </div>
@@ -116,21 +108,24 @@
       </div>
     </div>
   </nav>
+  <% end %>
 
   <!-- Flash messages -->
   <%= render "shared/flash_messages" %>
 
   <!-- Main content -->
-  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+  <main class="flex-grow<%= hotwire_native_app? ? ' px-4 py-4' : ' max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8' %> w-full">
     <%= yield %>
   </main>
 
-  <!-- Footer -->
+  <!-- Footer (네이티브 앱에서는 숨김) -->
+  <% unless hotwire_native_app? %>
   <footer class="bg-gray-800 text-gray-300 py-8 mt-auto">
     <div class="max-w-7xl mx-auto px-4 text-center">
       <p class="text-sm">&copy; <%= Date.current.year %> 누수체크. All rights reserved.</p>
       <p class="text-xs mt-2 text-gray-500">누수 전문 매칭 플랫폼 - 투명한 가격, 검증된 전문가</p>
     </div>
   </footer>
+  <% end %>
 </body>
 </html>

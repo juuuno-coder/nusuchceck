@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/requestsFragment">
+
+    <!-- 고객 체크 목록 (홈 탭) -->
+    <fragment
+        android:id="@+id/requestsFragment"
+        android:name="com.nusucheck.app.features.requests.RequestsFragment"
+        android:label="내 체크" />
+
+    <!-- 알림 탭 -->
+    <fragment
+        android:id="@+id/notificationsFragment"
+        android:name="com.nusucheck.app.features.notifications.NotificationsFragment"
+        android:label="알림" />
+
+</navigation>

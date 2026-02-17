@@ -5,7 +5,14 @@ class Expert::RegistrationsController < Devise::RegistrationsController
   protected
 
   def configure_sign_up_params
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :phone, :address, :type])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [
+      :name, :phone, :address, :type,
+      master_profile_attributes: [
+        :experience_years, :bio,
+        specialty_types: [],
+        service_areas: []
+      ]
+    ])
   end
 
   # 전문가(마스터)로 강제 설정

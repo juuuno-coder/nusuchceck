@@ -1,4 +1,6 @@
 class MasterProfile < ApplicationRecord
+  SPECIALTY_OPTIONS = %w[수도배관 방수 욕실 옥상 바닥 외벽].freeze
+
   belongs_to :user, class_name: "Master", inverse_of: :master_profile
 
   validates :user_id, uniqueness: true
@@ -23,5 +25,9 @@ class MasterProfile < ApplicationRecord
 
   def service_areas_list
     service_areas.is_a?(Array) ? service_areas : []
+  end
+
+  def specialty_types_list
+    specialty_types.is_a?(Array) ? specialty_types : []
   end
 end

@@ -5,6 +5,12 @@ Rails.application.routes.draw do
     sessions: "users/sessions"
   }
 
+  # === app.nusucheck.com → 고객 앱 진입점 ===
+  # 루트만 지정, 나머지 라우트는 모든 도메인에서 공유
+  constraints(SubdomainConstraint.new("app")) do
+    root to: "customers/requests#index", as: :app_subdomain_root
+  end
+
   # === 전문가 전용 라우트 ===
   # expert.nusucheck.com 서브도메인 또는 /expert 경로로 접근
   constraints(subdomain: "expert") do

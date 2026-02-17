@@ -8,7 +8,7 @@ class EscrowTransaction < ApplicationRecord
   validates :amount, presence: true, numericality: { greater_than: 0 }
   validates :request_id, uniqueness: true
 
-  PLATFORM_FEE_RATE = 0.05 # 5%
+  PLATFORM_FEE_RATE = ENV.fetch("PLATFORM_FEE_RATE", "0.15").to_f
 
   before_save :calculate_fees
 

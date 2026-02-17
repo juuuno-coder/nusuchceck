@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_02_15_234107) do
+ActiveRecord::Schema[7.1].define(version: 2026_02_17_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -153,9 +153,11 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_15_234107) do
     t.boolean "verified", default: false
     t.datetime "verified_at"
     t.text "bio"
+    t.text "specialty_types", default: [], array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_master_profiles_on_user_id", unique: true
+    t.index ["specialty_types"], name: "index_master_profiles_on_specialty_types", using: :gin
   end
 
   create_table "notifications", force: :cascade do |t|

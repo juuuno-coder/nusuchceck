@@ -7,4 +7,12 @@ class Customer < User
   def active_requests
     requests.where.not(status: [:closed, :cancelled])
   end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[id name email phone address created_at]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[requests]
+  end
 end

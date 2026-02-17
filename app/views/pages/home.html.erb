@@ -198,10 +198,26 @@
     <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">지금 바로 시작하세요</h2>
     <p class="text-gray-600 mb-8">누수 걱정, 더 이상 혼자 고민하지 마세요.</p>
     <% unless user_signed_in? %>
-      <%= link_to new_user_registration_path, class: "inline-flex items-center px-8 py-4 text-lg font-semibold rounded-xl bg-blue-700 text-white hover:bg-blue-800 shadow-lg hover:shadow-xl transition-all duration-200" do %>
-        무료 회원가입
-        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-      <% end %>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <%= link_to new_user_registration_path, class: "inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-xl bg-blue-700 text-white hover:bg-blue-800 shadow-lg hover:shadow-xl transition-all duration-200" do %>
+          무료 회원가입
+          <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        <% end %>
+      </div>
     <% end %>
   </div>
 </section>
+
+<!-- 전문가 초대 섹션 -->
+<% unless user_signed_in? %>
+<section class="py-12 bg-emerald-50 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-3xl mx-auto text-center">
+    <h3 class="text-xl font-bold text-gray-900 mb-2">누수 전문가이신가요?</h3>
+    <p class="text-gray-600 mb-6">누수체크 파트너 전문가로 등록하고, 안정적인 고객 매칭과 투명한 정산을 경험하세요.</p>
+    <%= link_to expert_root_path, class: "inline-flex items-center px-6 py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-all" do %>
+      전문가 등록 알아보기
+      <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    <% end %>
+  </div>
+</section>
+<% end %>

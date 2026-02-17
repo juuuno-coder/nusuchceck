@@ -105,8 +105,8 @@
 
       <!-- 상세 주소 -->
       <div>
-        <%= f.label :address_detail, "상세 주소", class: "block text-sm font-medium text-gray-900 mb-1" %>
-        <%= f.text_field :address_detail,
+        <%= f.label :detailed_address, "상세 주소", class: "block text-sm font-medium text-gray-900 mb-1" %>
+        <%= f.text_field :detailed_address,
               placeholder: "101동 502호",
               class: input_classes(:text), data: { action: "blur->form-validation#validate" } %>
         <p class="text-xs text-gray-500 mt-1">동·호수를 정확히 알려주시면 빠르게 찾아갈 수 있어요</p>

@@ -49,7 +49,7 @@
           </div>
           <div>
             <dt class="text-sm font-medium text-gray-500">상세 주소 / 층수</dt>
-            <dd class="mt-1 text-sm text-gray-900"><%= [@request.address_detail, @request.floor].compact_blank.join(" / ").presence || "-" %></dd>
+            <dd class="mt-1 text-sm text-gray-900"><%= [@request.detailed_address, @request.floor_info].compact_blank.join(" / ").presence || "-" %></dd>
           </div>
           <div class="sm:col-span-2">
             <dt class="text-sm font-medium text-gray-500">상세 설명</dt>

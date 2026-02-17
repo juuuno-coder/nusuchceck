@@ -12,6 +12,8 @@ kill_timeout = "5s"
   RAILS_ENV = "production"
   RAILS_LOG_TO_STDOUT = "true"
   RAILS_SERVE_STATIC_FILES = "true"
+  APP_DOMAIN = "nusucheck.com"
+  EXPERT_DOMAIN = "expert.nusucheck.com"
 
 [processes]
   app = "bin/rails server -b 0.0.0.0"
@@ -36,21 +38,15 @@ kill_timeout = "5s"
     hard_limit = 25
     soft_limit = 20
 
-  # Health checks 임시 비활성화
-  # [[services.tcp_checks]]
-  #   interval = "15s"
-  #   timeout = "2s"
-  #   grace_period = "10s"
-
-  # [[services.http_checks]]
-  #   interval = "10s"
-  #   timeout = "2s"
-  #   grace_period = "5s"
-  #   method = "get"
-  #   path = "/up"
-  #   protocol = "http"
+  [[services.http_checks]]
+    interval = "15s"
+    timeout = "5s"
+    grace_period = "15s"
+    method = "get"
+    path = "/up"
+    protocol = "http"
 
 [[vm]]
   cpu_kind = "shared"
   cpus = 1
-  memory_mb = 256
+  memory_mb = 512

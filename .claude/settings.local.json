@@ -52,7 +52,12 @@
       "Bash(fly logs:*)",
       "Bash(fly ssh console:*)",
       "Bash(openssl rand:*)",
-      "Bash(fly secrets set:*)"
+      "Bash(fly secrets set:*)",
+      "Bash(fly redis list:*)",
+      "Bash(fly redis plans:*)",
+      "Bash(Start-Process \"C:\\\\Program Files\\\\Docker\\\\Docker\\\\Docker Desktop.exe\")",
+      "Bash(cmd.exe /c \"start \"\"\"\" \"\"C:\\\\Program Files\\\\Docker\\\\Docker\\\\Docker Desktop.exe\"\"\")",
+      "Bash(flyctl status:*)"
     ]
   }
 }

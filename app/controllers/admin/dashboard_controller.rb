@@ -23,7 +23,8 @@ class Admin::DashboardController < ApplicationController
 
     # 주간 신고 추이
     @weekly_requests = Request.where("created_at >= ?", 7.days.ago)
-                              .group_by_day(:created_at)
+                              .group("DATE(created_at)")
+                              .order("DATE(created_at)")
                               .count
   end
 end

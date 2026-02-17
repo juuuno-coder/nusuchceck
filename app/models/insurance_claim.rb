@@ -97,7 +97,7 @@ class InsuranceClaim < ApplicationRecord
   def prefill_from_request!
     return unless request.present?
     self.incident_address ||= request.address
-    self.incident_detail_address ||= request.address_detail
+    self.incident_detail_address ||= request.detailed_address
     self.incident_description ||= request.description
     self.applicant_name ||= customer.name
     self.applicant_phone ||= customer.phone
@@ -114,5 +114,13 @@ class InsuranceClaim < ApplicationRecord
 
   def generate_claim_number
     self.claim_number = "INS-#{Time.current.strftime('%Y%m')}-#{SecureRandom.hex(4).upcase}"
+  end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[id status claim_number customer_id request_id applicant_name insurance_company created_at]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[customer request prepared_by_master]
   end
 end

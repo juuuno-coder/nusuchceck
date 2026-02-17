@@ -1,8 +1,28 @@
 Rails.application.routes.draw do
+  # === Devise (고객 전용 회원가입) ===
   devise_for :users, controllers: {
     registrations: "users/registrations",
     sessions: "users/sessions"
   }
+
+  # === 전문가 전용 라우트 ===
+  # expert.nusucheck.com 서브도메인 또는 /expert 경로로 접근
+  constraints(subdomain: "expert") do
+    get "/", to: "expert/pages#index"
+    devise_scope :user do
+      get  "sign_up", to: "expert/registrations#new"
+      post "sign_up", to: "expert/registrations#create"
+    end
+  end
+
+  # /expert 경로 (서브도메인 없을 때도 접근 가능)
+  scope "/expert", as: "expert" do
+    get "/", to: "expert/pages#index", as: :root
+    devise_scope :user do
+      get  "sign_up", to: "expert/registrations#new",    as: :sign_up
+      post "sign_up", to: "expert/registrations#create",  as: :registration
+    end
+  end
 
   # Customer namespace
   namespace :customers do
@@ -113,6 +133,9 @@ Rails.application.routes.draw do
 
   # AI 누수 빠른 점검 (비로그인 허용)
   resources :leak_inspections, only: [:new, :create, :show]
+
+  # Health check (Fly.io)
+  get "up", to: proc { [200, {}, ["OK"]] }
 
   # Static pages
   root "pages#home"

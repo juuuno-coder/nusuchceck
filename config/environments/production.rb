@@ -12,7 +12,31 @@ Rails.application.configure do
   config.logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
   config.log_tags = [:request_id]
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
+
+  # 허용 호스트 설정
+  config.hosts = [
+    "nusucheck.com",
+    "www.nusucheck.com",
+    "expert.nusucheck.com",
+    "app.nusucheck.com",
+    "nusucheck.fly.dev",
+    /.*\.nusucheck\.com/  # 모든 서브도메인 허용
+  ]
+
+  # Action Mailer
   config.action_mailer.perform_caching = false
+  config.action_mailer.default_url_options = { host: "nusucheck.com", protocol: "https" }
+  config.action_mailer.delivery_method = ENV.fetch("MAILER_DELIVERY_METHOD", "smtp").to_sym
+  config.action_mailer.smtp_settings = {
+    address: ENV.fetch("SMTP_ADDRESS", "smtp.gmail.com"),
+    port: ENV.fetch("SMTP_PORT", 587).to_i,
+    domain: "nusucheck.com",
+    user_name: ENV["SMTP_USERNAME"],
+    password: ENV["SMTP_PASSWORD"],
+    authentication: "plain",
+    enable_starttls_auto: true
+  }
+
   config.i18n.fallbacks = true
   config.active_support.report_deprecations = false
   config.active_record.dump_schema_after_migration = false

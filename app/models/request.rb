@@ -189,6 +189,14 @@ class Request < ApplicationRecord
 
   def release_escrow_payment
     self.closed_at = Time.current
-    EscrowService.new(escrow_transaction).release! if escrow_transaction&.deposited?
+    EscrowService.new(self).release! if escrow_transaction&.deposited?
+  end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[id status symptom_type building_type address customer_id master_id created_at]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[customer master estimates]
   end
 end

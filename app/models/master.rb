@@ -24,6 +24,14 @@ class Master < User
     assigned_requests.where.not(status: [:closed, :cancelled])
   end
 
+  def self.ransackable_attributes(auth_object = nil)
+    %w[id name email phone address created_at]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[master_profile assigned_requests]
+  end
+
   private
 
   def create_default_profile

@@ -82,4 +82,12 @@ class EscrowTransaction < ApplicationRecord
     self.platform_fee = fee_amount
     self.master_payout = payout_amount
   end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[id status amount customer_id master_id request_id created_at]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[customer master request]
+  end
 end

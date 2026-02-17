@@ -12,11 +12,13 @@ class Users::RegistrationsController < Devise::RegistrationsController
     devise_parameter_sanitizer.permit(:account_update, keys: [:name, :phone, :address])
   end
 
+  # 고객 전용 가입 - type을 Customer로 강제
+  def build_resource(hash = {})
+    hash[:type] = "Customer"
+    super
+  end
+
   def after_sign_up_path_for(resource)
-    if resource.master?
-      edit_masters_profile_path
-    else
-      customers_requests_path
-    end
+    customers_requests_path
   end
 end

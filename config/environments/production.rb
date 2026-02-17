@@ -23,7 +23,8 @@ Rails.application.configure do
     "app.nusucheck.com",
     "nusucheck.fly.dev",
     /.*\.nusucheck\.com/,  # 모든 서브도메인 허용
-    /\A[\d.]+\z/,          # Fly.io 헬스체크용 내부 IP 허용
+    /\A[\d.]+\z/,          # Fly.io 헬스체크용 내부 IP 허용 (172.x.x.x)
+    /\A[\d.]+:\d+\z/,      # IP:port 형식 허용 (172.x.x.x:3000)
     /\A[0-9a-f:]+\z/       # IPv6 허용
   ]
 

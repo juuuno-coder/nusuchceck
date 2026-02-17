@@ -5,3 +5,22 @@ test:
 local:
   service: Disk
   root: <%= Rails.root.join("storage") %>
+
+# Cloudflare R2 (운영 환경)
+# Amazon S3와 동일한 API - 이그레스(다운로드) 비용 없음
+cloudflare_r2:
+  service: S3
+  access_key_id: <%= ENV["R2_ACCESS_KEY_ID"] %>
+  secret_access_key: <%= ENV["R2_SECRET_ACCESS_KEY"] %>
+  endpoint: <%= ENV["R2_ENDPOINT"] %>
+  bucket: <%= ENV["R2_BUCKET_NAME"] %>
+  region: auto
+  force_path_style: true
+
+# Amazon S3 (대안)
+amazon_s3:
+  service: S3
+  access_key_id: <%= ENV["AWS_ACCESS_KEY_ID"] %>
+  secret_access_key: <%= ENV["AWS_SECRET_ACCESS_KEY"] %>
+  region: <%= ENV.fetch("AWS_REGION", "ap-northeast-2") %>
+  bucket: <%= ENV["AWS_BUCKET_NAME"] %>

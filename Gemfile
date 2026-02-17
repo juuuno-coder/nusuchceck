@@ -39,6 +39,9 @@ gem "geocoder"
 # JSON
 gem "jbuilder"
 
+# Cloud Storage (Cloudflare R2 / Amazon S3 compatible)
+gem "aws-sdk-s3", require: false
+
 # AI (Claude Vision API)
 gem "anthropic"
 

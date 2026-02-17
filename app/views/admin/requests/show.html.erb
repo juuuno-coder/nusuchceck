@@ -98,29 +98,31 @@
         </div>
       <% end %>
 
-      <!-- 에스크로 -->
-      <% if @request.escrow_transaction.present? %>
+      <!-- 단계별 에스크로 -->
+      <% if @request.escrow_transactions.any? %>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-4">에스크로 거래</h2>
-          <% escrow = @request.escrow_transaction %>
-          <dl class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-            <div>
-              <dt class="font-medium text-gray-500">금액</dt>
-              <dd class="mt-1 font-semibold text-gray-900"><%= number_to_currency(escrow.amount, unit: "₩", precision: 0) %></dd>
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">에스크로 거래 내역</h2>
+          <div class="space-y-3">
+            <% @request.escrow_transactions.each do |escrow| %>
+              <div class="border rounded-lg p-3">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-medium text-sm text-gray-800">
+                    <%= { "trip" => "🚗 출장비", "detection" => "🔍 검사비", "construction" => "🔧 공사비" }[escrow.escrow_type] || escrow.escrow_type %>
+                  </span>
+                  <%= render "shared/status_badge", status: escrow.status %>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-xs text-gray-600">
+                  <div>결제: <span class="font-medium text-gray-900"><%= number_to_currency(escrow.amount, unit: "₩", precision: 0) %></span></div>
+                  <div>수수료: <span class="text-red-600">-<%= number_to_currency(escrow.platform_fee, unit: "₩", precision: 0) %></span></div>
+                  <div>지급액: <span class="font-medium text-green-700"><%= number_to_currency(escrow.master_payout, unit: "₩", precision: 0) %></span></div>
+                </div>
+              </div>
+            <% end %>
+            <div class="pt-2 border-t flex justify-between text-sm font-medium">
+              <span class="text-gray-600">총 결제</span>
+              <span class="text-blue-600"><%= number_to_currency(@request.escrow_transactions.sum(:amount), unit: "₩", precision: 0) %></span>
             </div>
-            <div>
-              <dt class="font-medium text-gray-500">수수료</dt>
-              <dd class="mt-1 text-gray-900"><%= number_to_currency(escrow.platform_fee, unit: "₩", precision: 0) %></dd>
-            </div>
-            <div>
-              <dt class="font-medium text-gray-500">마스터 지급액</dt>
-              <dd class="mt-1 text-gray-900"><%= number_to_currency(escrow.master_payout, unit: "₩", precision: 0) %></dd>
-            </div>
-            <div>
-              <dt class="font-medium text-gray-500">상태</dt>
-              <dd class="mt-1"><%= render "shared/status_badge", status: escrow.status %></dd>
-            </div>
-          </dl>
+          </div>
         </div>
       <% end %>
     </div>
@@ -206,6 +208,47 @@
           <% end %>
         </div>
       </div>
+
+      <!-- 하자보수 보증기간 설정 -->
+      <% if @request.closed? %>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">하자보수 보증</h2>
+          <% if @request.warranty_expires_at.present? %>
+            <div class="p-3 bg-orange-50 rounded-lg border border-orange-100 mb-3">
+              <p class="text-sm font-medium text-orange-800">보증기간: <%= @request.warranty_period_months %>개월</p>
+              <p class="text-xs text-orange-600">만료: <%= @request.warranty_expires_at.strftime("%Y년 %m월 %d일") %></p>
+              <% if @request.under_warranty? %>
+                <span class="inline-block mt-1 text-xs font-bold text-green-600">✓ 보증 유효</span>
+              <% else %>
+                <span class="inline-block mt-1 text-xs font-bold text-red-600">✗ 보증 만료</span>
+              <% end %>
+            </div>
+          <% end %>
+
+          <%= form_with url: set_warranty_admin_request_path(@request), method: :post, class: "flex gap-2" do |f| %>
+            <%= f.number_field :warranty_months, min: 0, max: 24, placeholder: "개월",
+                  class: "flex-1 #{input_classes(:text)}" %>
+            <%= f.submit "보증 설정",
+                  class: "#{btn_classes(:warning, :sm)} whitespace-nowrap" %>
+          <% end %>
+        </div>
+
+        <!-- 고객 불만 CS -->
+        <% if @request.has_complaint? %>
+          <div class="bg-red-50 rounded-xl shadow-sm border border-red-200 p-6">
+            <h2 class="text-lg font-semibold text-red-900 mb-3">🚨 고객 불만 접수</h2>
+            <div class="bg-white rounded-lg p-3 mb-3 border border-red-100">
+              <p class="text-sm text-gray-800 whitespace-pre-wrap"><%= @request.customer_complaint %></p>
+              <p class="text-xs text-gray-400 mt-2">접수일: <%= @request.complaint_submitted_at&.strftime("%Y-%m-%d %H:%M") %></p>
+            </div>
+            <%= button_to "처리 완료",
+                  resolve_complaint_admin_request_path(@request),
+                  method: :post,
+                  class: "#{btn_classes(:danger, :sm)} w-full",
+                  data: { turbo_confirm: "고객 불만을 처리 완료로 표시하시겠습니까?" } %>
+          </div>
+        <% end %>
+      <% end %>
 
       <!-- 일시 정보 -->
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">

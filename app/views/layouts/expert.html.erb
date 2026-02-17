@@ -30,8 +30,10 @@
 
           <% if user_signed_in? && current_user.master? %>
             <div class="hidden md:flex ml-4 space-x-1">
-              <%= link_to "배정된 체크", masters_requests_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-emerald-600" %>
-              <%= link_to "보험청구", masters_insurance_claims_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-emerald-600" %>
+              <%= link_to "대시보드", expert_dashboard_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-emerald-600" %>
+              <%= link_to "공개 오더", open_orders_masters_requests_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-emerald-600" %>
+              <%= link_to "내 오더", masters_requests_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-emerald-600" %>
+              <%= link_to "정산", expert_settlements_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-emerald-600" %>
               <%= link_to "내 프로필", masters_profile_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-emerald-600" %>
             </div>
           <% end %>
@@ -72,8 +74,10 @@
           <div class="border-b border-emerald-600 pb-2 mb-2">
             <p class="px-3 py-1 text-emerald-200 text-sm"><%= current_user.name %> (전문가)</p>
           </div>
-          <%= link_to "배정된 체크", masters_requests_path, class: "block px-3 py-2 rounded-md text-base font-medium hover:bg-emerald-600" %>
-          <%= link_to "보험청구", masters_insurance_claims_path, class: "block px-3 py-2 rounded-md text-base font-medium hover:bg-emerald-600" %>
+          <%= link_to "대시보드", expert_dashboard_path, class: "block px-3 py-2 rounded-md text-base font-medium hover:bg-emerald-600" %>
+          <%= link_to "공개 오더", open_orders_masters_requests_path, class: "block px-3 py-2 rounded-md text-base font-medium hover:bg-emerald-600" %>
+          <%= link_to "내 오더", masters_requests_path, class: "block px-3 py-2 rounded-md text-base font-medium hover:bg-emerald-600" %>
+          <%= link_to "정산", expert_settlements_path, class: "block px-3 py-2 rounded-md text-base font-medium hover:bg-emerald-600" %>
           <%= link_to "내 프로필", masters_profile_path, class: "block px-3 py-2 rounded-md text-base font-medium hover:bg-emerald-600" %>
           <div class="border-t border-emerald-600 my-2 pt-2">
             <%= button_to "로그아웃", destroy_user_session_path, method: :delete, class: "w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-emerald-600" %>

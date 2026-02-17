@@ -4,7 +4,7 @@ class Request < ApplicationRecord
   belongs_to :customer, class_name: "Customer", inverse_of: :requests
   belongs_to :master, class_name: "Master", optional: true, inverse_of: :assigned_requests
   has_many :estimates, dependent: :destroy
-  has_one :escrow_transaction, dependent: :destroy
+  has_many :escrow_transactions, dependent: :destroy
   has_one :review, dependent: :destroy
   has_many :insurance_claims, dependent: :nullify
   has_many_attached :photos
@@ -174,6 +174,22 @@ class Request < ApplicationRecord
     estimates.find_by(status: "accepted")
   end
 
+  def under_warranty?
+    warranty_expires_at.present? && warranty_expires_at > Time.current
+  end
+
+  def set_warranty!(months)
+    return unless months.to_i > 0
+    update!(
+      warranty_period_months: months.to_i,
+      warranty_expires_at: Time.current + months.to_i.months
+    )
+  end
+
+  def has_complaint?
+    customer_complaint.present?
+  end
+
   def calculate_total_fee
     self.total_fee = trip_fee.to_d + detection_fee.to_d + construction_fee.to_d
   end
@@ -201,12 +217,29 @@ class Request < ApplicationRecord
   end
 
   def escrow_deposited_check?
-    escrow_transaction&.deposited?
+    construction_escrow&.deposited? || trip_escrow&.deposited?
+  end
+
+  def trip_escrow
+    escrow_transactions.find_by(escrow_type: "trip")
+  end
+
+  def detection_escrow
+    escrow_transactions.find_by(escrow_type: "detection")
+  end
+
+  def construction_escrow
+    escrow_transactions.find_by(escrow_type: "construction")
+  end
+
+  # 하위 호환성 (기존 코드 대응)
+  def escrow_transaction
+    construction_escrow || escrow_transactions.first
   end
 
   def release_escrow_payment
     self.closed_at = Time.current
-    EscrowService.new(self).release! if escrow_transaction&.deposited?
+    EscrowService.new(self).release_construction! if construction_escrow&.deposited?
   end
 
   def self.ransackable_attributes(auth_object = nil)

@@ -1,7 +1,7 @@
 class Admin::RequestsController < ApplicationController
   include AdminAccessible
 
-  before_action :set_request, only: [:show, :publish, :assign_master, :close_no_charge, :finalize]
+  before_action :set_request, only: [:show, :publish, :assign_master, :close_no_charge, :finalize, :set_warranty, :resolve_complaint]
 
   def index
     @q = Request.ransack(params[:q])
@@ -48,6 +48,25 @@ class Admin::RequestsController < ApplicationController
     redirect_to admin_request_path(@request), notice: "최종 종료 처리되었습니다."
   rescue AASM::InvalidTransition => e
     redirect_to admin_request_path(@request), alert: "종료 실패: #{e.message}"
+  end
+
+  # ─── 하자보수 보증기간 설정 ──────────────────────────────────
+  def set_warranty
+    authorize @request, :finalize?
+    months = params[:warranty_months].to_i
+    if months > 0
+      @request.set_warranty!(months)
+      redirect_to admin_request_path(@request), notice: "하자보수 보증기간이 #{months}개월로 설정되었습니다."
+    else
+      redirect_to admin_request_path(@request), alert: "보증기간을 입력해주세요."
+    end
+  end
+
+  # ─── 고객 불만 처리 ──────────────────────────────────────────
+  def resolve_complaint
+    authorize @request, :finalize?
+    @request.update!(customer_complaint: nil, complaint_submitted_at: nil)
+    redirect_to admin_request_path(@request), notice: "고객 불만이 처리 완료 처리되었습니다."
   end
 
   private

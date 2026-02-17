@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_02_17_000001) do
+ActiveRecord::Schema[7.1].define(version: 2026_02_17_000003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -51,6 +51,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_17_000001) do
     t.decimal "master_payout", precision: 10, scale: 2, default: "0.0"
     t.string "payment_method"
     t.string "pg_transaction_id"
+    t.string "escrow_type", default: "construction", null: false
     t.string "status", default: "pending"
     t.datetime "deposited_at"
     t.datetime "released_at"
@@ -59,7 +60,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_17_000001) do
     t.datetime "updated_at", null: false
     t.index ["customer_id"], name: "index_escrow_transactions_on_customer_id"
     t.index ["master_id"], name: "index_escrow_transactions_on_master_id"
-    t.index ["request_id"], name: "index_escrow_transactions_on_request_id", unique: true
+    t.index ["request_id", "escrow_type"], name: "index_escrow_transactions_on_request_id_and_type", unique: true
   end
 
   create_table "estimates", force: :cascade do |t|
@@ -204,6 +205,11 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_17_000001) do
     t.decimal "detection_fee", precision: 10, scale: 2, default: "0.0"
     t.decimal "construction_fee", precision: 10, scale: 2, default: "0.0"
     t.decimal "total_fee", precision: 10, scale: 2, default: "0.0"
+    t.integer "warranty_period_months", default: 0
+    t.datetime "warranty_expires_at"
+    t.text "warranty_notes"
+    t.text "customer_complaint"
+    t.datetime "complaint_submitted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["customer_id"], name: "index_requests_on_customer_id"

@@ -1,0 +1,144 @@
+<div class="space-y-6">
+  <!-- 헤더 -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">정산 내역</h1>
+      <p class="text-gray-600 mt-1">에스크로 수령 및 정산 현황을 확인하세요</p>
+    </div>
+    <%= link_to expert_dashboard_path, class: "text-sm text-blue-600 hover:text-blue-800 flex items-center" do %>
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      대시보드로
+    <% end %>
+  </div>
+
+  <!-- 정산 요약 카드 -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <p class="text-sm font-medium text-gray-500 mb-2">입금 대기</p>
+      <p class="text-xl font-bold text-yellow-600"><%= number_to_currency(@total_pending, unit: "₩", precision: 0) %></p>
+      <p class="text-xs text-gray-400 mt-1">deposited + held</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <p class="text-sm font-medium text-gray-500 mb-2">지급 예정</p>
+      <p class="text-xl font-bold text-blue-600"><%= number_to_currency(@total_released, unit: "₩", precision: 0) %></p>
+      <p class="text-xs text-gray-400 mt-1">미수령 금액</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <p class="text-sm font-medium text-gray-500 mb-2">이번 달 정산</p>
+      <p class="text-xl font-bold text-green-600"><%= number_to_currency(@this_month_settled, unit: "₩", precision: 0) %></p>
+      <p class="text-xs text-gray-400 mt-1"><%= Time.current.strftime("%Y년 %m월") %></p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <p class="text-sm font-medium text-gray-500 mb-2">누적 정산</p>
+      <p class="text-xl font-bold text-purple-600"><%= number_to_currency(@total_settled, unit: "₩", precision: 0) %></p>
+      <p class="text-xs text-gray-400 mt-1">전체 기간</p>
+    </div>
+  </div>
+
+  <!-- 필터 탭 -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-1 flex space-x-1">
+    <%
+      tabs = [
+        { label: "전체", value: nil },
+        { label: "입금 완료", value: "deposited" },
+        { label: "지급 예정", value: "released" },
+        { label: "정산 완료", value: "settled" },
+        { label: "환불", value: "refunded" },
+        { label: "분쟁 중", value: "disputed" }
+      ]
+      current_status = params[:status]
+    %>
+    <% tabs.each do |tab| %>
+      <%= link_to expert_settlements_path(status: tab[:value]),
+            class: "flex-1 text-center text-sm font-medium py-2 px-3 rounded-lg transition-colors #{current_status == tab[:value].to_s ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}" do %>
+        <%= tab[:label] %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <!-- 정산 목록 -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <% if @escrow_transactions.empty? %>
+      <div class="text-center py-16">
+        <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <p class="text-gray-500">정산 내역이 없습니다</p>
+      </div>
+    <% else %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">오더</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">에스크로 구분</th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">결제금액</th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">플랫폼 수수료</th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">수령 금액</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">상태</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">입금일</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <% @escrow_transactions.each do |escrow| %>
+              <%
+                status_badge = case escrow.status
+                  when "pending"   then "bg-gray-100 text-gray-700"
+                  when "deposited" then "bg-blue-100 text-blue-700"
+                  when "held"      then "bg-yellow-100 text-yellow-700"
+                  when "released"  then "bg-indigo-100 text-indigo-700"
+                  when "settled"   then "bg-green-100 text-green-700"
+                  when "refunded"  then "bg-red-100 text-red-700"
+                  when "disputed"  then "bg-orange-100 text-orange-700"
+                  else "bg-gray-100 text-gray-700"
+                end
+                type_icon = { "trip" => "🚗", "detection" => "🔍", "construction" => "🔧" }[escrow.escrow_type] || "💳"
+              %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 text-sm">
+                  <%= link_to "##{escrow.request_id} #{symptom_label(escrow.request.symptom_type) rescue ''}",
+                        masters_request_path(escrow.request),
+                        class: "text-blue-600 hover:text-blue-800 font-medium" %>
+                  <p class="text-xs text-gray-400 mt-0.5"><%= escrow.request.address.truncate(30) rescue '' %></p>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-700">
+                  <%= type_icon %> <%= escrow.escrow_type_label %>
+                </td>
+                <td class="px-6 py-4 text-sm text-right font-medium text-gray-900">
+                  <%= number_to_currency(escrow.amount, unit: "₩", precision: 0) %>
+                </td>
+                <td class="px-6 py-4 text-sm text-right text-red-600">
+                  -<%= number_to_currency(escrow.platform_fee, unit: "₩", precision: 0) %>
+                  <span class="text-xs text-gray-400">(<%= (EscrowTransaction::PLATFORM_FEE_RATE * 100).to_i %>%)</span>
+                </td>
+                <td class="px-6 py-4 text-sm text-right font-bold text-green-700">
+                  <%= number_to_currency(escrow.master_payout, unit: "₩", precision: 0) %>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium <%= status_badge %>">
+                    <%= escrow.status_label %>
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500">
+                  <%= escrow.deposited_at&.strftime("%Y-%m-%d") || "-" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 페이지네이션 -->
+      <% if @escrow_transactions.respond_to?(:total_pages) && @escrow_transactions.total_pages > 1 %>
+        <div class="px-6 py-4 border-t">
+          <%= paginate @escrow_transactions %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

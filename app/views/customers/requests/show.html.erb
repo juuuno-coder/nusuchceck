@@ -157,33 +157,56 @@
         </div>
       <% end %>
 
-      <!-- 에스크로 상태 (있을 경우) -->
-      <% if @request.escrow_transaction.present? %>
+      <!-- 단계별 에스크로 상태 -->
+      <% if @request.escrow_transactions.any? %>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-4">결제 (에스크로)</h2>
-          <% escrow = @request.escrow_transaction %>
-          <dl class="grid grid-cols-2 gap-4">
-            <div>
-              <dt class="text-sm font-medium text-gray-500">결제 금액</dt>
-              <dd class="mt-1 text-lg font-semibold text-gray-900"><%= number_to_currency(escrow.amount, unit: "₩", precision: 0) %></dd>
-            </div>
-            <div>
-              <dt class="text-sm font-medium text-gray-500">상태</dt>
-              <dd class="mt-1"><%= render "shared/status_badge", status: escrow.status %></dd>
-            </div>
-            <% if escrow.deposited_at.present? %>
-              <div>
-                <dt class="text-sm font-medium text-gray-500">입금일</dt>
-                <dd class="mt-1 text-sm text-gray-900"><%= escrow.deposited_at.strftime("%Y-%m-%d %H:%M") %></dd>
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">결제 내역 (에스크로)</h2>
+          <div class="space-y-3">
+            <% @request.escrow_transactions.each do |escrow| %>
+              <%
+                type_icon = case escrow.escrow_type
+                  when "trip"         then "🚗"
+                  when "detection"    then "🔍"
+                  when "construction" then "🔧"
+                  else "💳"
+                end
+                status_color = case escrow.status
+                  when "pending"   then "bg-yellow-50 border-yellow-200"
+                  when "deposited", "held" then "bg-blue-50 border-blue-200"
+                  when "released", "settled" then "bg-green-50 border-green-200"
+                  when "refunded"  then "bg-gray-50 border-gray-200"
+                  when "disputed"  then "bg-red-50 border-red-200"
+                  else "bg-gray-50 border-gray-200"
+                end
+              %>
+              <div class="rounded-lg border p-4 <%= status_color %>">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="font-medium text-gray-900">
+                    <%= type_icon %> <%= escrow.escrow_type_label %>
+                  </span>
+                  <span class="text-lg font-bold text-gray-900">
+                    <%= number_to_currency(escrow.amount, unit: "₩", precision: 0) %>
+                  </span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-gray-600"><%= escrow.status_label %></span>
+                  <% if escrow.deposited_at %>
+                    <span class="text-gray-500">입금: <%= escrow.deposited_at.strftime("%m/%d %H:%M") %></span>
+                  <% end %>
+                </div>
               </div>
             <% end %>
-            <% if escrow.released_at.present? %>
-              <div>
-                <dt class="text-sm font-medium text-gray-500">지급일</dt>
-                <dd class="mt-1 text-sm text-gray-900"><%= escrow.released_at.strftime("%Y-%m-%d %H:%M") %></dd>
+
+            <!-- 합계 -->
+            <% if @request.escrow_transactions.count > 1 %>
+              <div class="border-t pt-3 flex justify-between items-center">
+                <span class="text-sm font-medium text-gray-600">총 결제 금액</span>
+                <span class="text-lg font-bold text-blue-600">
+                  <%= number_to_currency(@request.escrow_transactions.sum(:amount), unit: "₩", precision: 0) %>
+                </span>
               </div>
             <% end %>
-          </dl>
+          </div>
         </div>
       <% end %>
     </div>
@@ -217,12 +240,31 @@
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">가능한 작업</h2>
         <div class="space-y-3">
+          <%# 출장비 입금 (배정 후, 출장비가 아직 없을 때) %>
+          <% if @request.assigned? && @request.trip_escrow.nil? && @request.trip_fee.to_d > 0 %>
+            <%= button_to "출장비 입금 #{number_to_currency(@request.trip_fee, unit: "₩", precision: 0)}",
+                  deposit_trip_fee_customers_request_path(@request),
+                  method: :post,
+                  class: "#{btn_classes(:primary, :md)} w-full",
+                  data: { turbo_confirm: "출장비를 선납하시겠습니까? 전문가가 방문 후 시작합니다." } %>
+          <% end %>
+
+          <%# 검사비 입금 (현장 탐지 중, 검사비가 아직 없을 때) %>
+          <% if @request.detecting? && @request.detection_escrow.nil? && @request.detection_fee.to_d > 0 %>
+            <%= button_to "검사비 입금 #{number_to_currency(@request.detection_fee, unit: "₩", precision: 0)}",
+                  deposit_detection_fee_customers_request_path(@request),
+                  method: :post,
+                  class: "#{btn_classes(:primary, :md)} w-full",
+                  data: { turbo_confirm: "검사비를 입금하시겠습니까?" } %>
+          <% end %>
+
+          <%# 공사비 에스크로 입금 (견적 합의 후) %>
           <% if @request.construction_agreed? %>
-            <%= button_to "에스크로 입금",
+            <%= button_to "공사비 에스크로 입금",
                   deposit_escrow_customers_request_path(@request),
                   method: :post,
                   class: "#{btn_classes(:success, :md)} w-full",
-                  data: { turbo_confirm: "에스크로에 입금하시겠습니까?" } %>
+                  data: { turbo_confirm: "공사비를 에스크로에 입금하시겠습니까? 공사 완료 확인 후 전문가에게 지급됩니다." } %>
           <% end %>
 
           <% if @request.construction_completed? %>
@@ -273,6 +315,31 @@
           <% end %>
         </div>
       </div>
+
+      <!-- 하자보수 불만 접수 (완료 후, 보증기간 중) -->
+      <% if @request.closed? && @request.under_warranty? %>
+        <div class="bg-orange-50 rounded-xl shadow-sm border border-orange-200 p-6">
+          <h2 class="text-lg font-semibold text-orange-900 mb-2">하자보수 신청</h2>
+          <p class="text-sm text-orange-700 mb-3">
+            보증기간: ~<%= @request.warranty_expires_at&.strftime("%Y년 %m월 %d일") %>
+          </p>
+          <% if @request.has_complaint? %>
+            <div class="bg-orange-100 rounded-lg p-3">
+              <p class="text-xs font-medium text-orange-800">접수된 불만 내용:</p>
+              <p class="text-sm text-orange-900 mt-1"><%= @request.customer_complaint %></p>
+              <p class="text-xs text-orange-600 mt-1">접수일: <%= @request.complaint_submitted_at&.strftime("%Y-%m-%d") %></p>
+            </div>
+          <% else %>
+            <%= form_with url: submit_complaint_customers_request_path(@request), method: :post do |f| %>
+              <%= f.text_area :complaint, rows: 3,
+                    placeholder: "하자 내용을 구체적으로 설명해주세요...",
+                    class: "w-full text-sm border border-orange-300 rounded-lg p-2 mb-3 focus:ring-2 focus:ring-orange-500" %>
+              <%= f.submit "하자보수 접수",
+                    class: "w-full py-2 px-4 bg-orange-600 text-white text-sm font-medium rounded-lg hover:bg-orange-700 cursor-pointer" %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
 
       <!-- 보험 신청 -->
       <% if @request.detection_leak_confirmed? || @request.closed? %>

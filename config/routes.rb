@@ -28,6 +28,10 @@ Rails.application.routes.draw do
       get  "sign_up", to: "expert/registrations#new",    as: :sign_up
       post "sign_up", to: "expert/registrations#create",  as: :registration
     end
+
+    # 전문가 대시보드 (로그인 후)
+    get "dashboard", to: "expert/dashboard#index", as: :dashboard
+    get "settlements", to: "expert/settlements#index", as: :settlements
   end
 
   # Customer namespace
@@ -36,8 +40,11 @@ Rails.application.routes.draw do
       member do
         post :cancel
         post :accept_estimate
-        post :deposit_escrow
+        post :deposit_trip_fee       # 1단계: 출장비
+        post :deposit_detection_fee  # 2단계: 검사비
+        post :deposit_escrow         # 3단계: 공사비
         post :confirm_completion
+        post :submit_complaint       # 하자보수 불만 접수
       end
       resources :reviews, only: [:new, :create]
       resources :insurance_claims, only: [:new, :create], controller: "insurance_claims"
@@ -93,6 +100,8 @@ Rails.application.routes.draw do
         post :assign_master  # 관리자 직접 배정 (수동)
         post :close_no_charge
         post :finalize
+        post :set_warranty        # 하자보수 보증기간 설정
+        post :resolve_complaint   # 고객 불만 처리 완료
       end
     end
     resources :masters, only: [:index, :show] do

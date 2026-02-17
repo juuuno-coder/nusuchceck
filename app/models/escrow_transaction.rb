@@ -5,8 +5,14 @@ class EscrowTransaction < ApplicationRecord
   belongs_to :customer, class_name: "Customer", inverse_of: :escrow_transactions
   belongs_to :master, class_name: "Master", inverse_of: :escrow_transactions
 
+  enum :escrow_type, {
+    trip: "trip",               # 출장비 (방문 전 선납)
+    detection: "detection",     # 검사비 (현장 동의 후)
+    construction: "construction" # 공사비 (공사 전 입금)
+  }, prefix: :type
+
   validates :amount, presence: true, numericality: { greater_than: 0 }
-  validates :request_id, uniqueness: true
+  validates :request_id, uniqueness: { scope: :escrow_type }
 
   PLATFORM_FEE_RATE = ENV.fetch("PLATFORM_FEE_RATE", "0.15").to_f
 
@@ -61,6 +67,15 @@ class EscrowTransaction < ApplicationRecord
 
   def payout_amount
     (amount - fee_amount).round(2)
+  end
+
+  def escrow_type_label
+    case escrow_type
+    when "trip"         then "출장비"
+    when "detection"    then "검사비"
+    when "construction" then "공사비"
+    else escrow_type
+    end
   end
 
   def status_label

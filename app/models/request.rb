@@ -13,9 +13,7 @@ class Request < ApplicationRecord
   validates :symptom_type, presence: true
   validates :address, presence: true
   validates :customer, presence: true
-  validates :videos,
-    content_type: { in: %w[video/mp4 video/quicktime video/avi video/x-msvideo video/webm video/3gpp video/3gpp2], message: "은 동영상 파일이어야 합니다 (MP4, MOV, AVI, WebM)" },
-    size: { less_than: 500.megabytes, message: "는 500MB 이하여야 합니다" }
+  validate :videos_content_type_and_size
 
   enum :symptom_type, {
     wall_leak: 0,
@@ -207,6 +205,18 @@ class Request < ApplicationRecord
   end
 
   private
+
+  def videos_content_type_and_size
+    allowed_types = %w[video/mp4 video/quicktime video/avi video/x-msvideo video/webm video/3gpp video/3gpp2]
+    videos.each do |video|
+      unless allowed_types.include?(video.content_type)
+        errors.add(:videos, "은 동영상 파일이어야 합니다 (MP4, MOV, AVI, WebM)")
+      end
+      if video.byte_size > 500.megabytes
+        errors.add(:videos, "는 500MB 이하여야 합니다")
+      end
+    end
+  end
 
   def master_present?
     master.present?

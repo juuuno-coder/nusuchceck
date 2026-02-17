@@ -240,31 +240,55 @@
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">가능한 작업</h2>
         <div class="space-y-3">
-          <%# 출장비 입금 (배정 후, 출장비가 아직 없을 때) %>
+          <%# 출장비 결제 (배정 후, 출장비가 아직 없을 때) %>
           <% if @request.assigned? && @request.trip_escrow.nil? && @request.trip_fee.to_d > 0 %>
-            <%= button_to "출장비 입금 #{number_to_currency(@request.trip_fee, unit: "₩", precision: 0)}",
-                  deposit_trip_fee_customers_request_path(@request),
-                  method: :post,
-                  class: "#{btn_classes(:primary, :md)} w-full",
-                  data: { turbo_confirm: "출장비를 선납하시겠습니까? 전문가가 방문 후 시작합니다." } %>
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+              <p class="text-sm font-semibold text-blue-900 mb-1">출장비 선납 안내</p>
+              <p class="text-xs text-blue-700 mb-3">전문가 방문 전 출장비를 에스크로에 선납해주세요. 방문 취소 시 전액 환불됩니다.</p>
+              <%= link_to checkout_customers_toss_payments_path(
+                    request_id:  @request.id,
+                    escrow_type: "trip",
+                    amount:      @request.trip_fee.to_i
+                  ),
+                  class: "block text-center #{btn_classes(:primary, :md)} w-full" do %>
+                출장비 결제 <%= number_to_currency(@request.trip_fee, unit: "₩", precision: 0) %>
+              <% end %>
+            </div>
           <% end %>
 
-          <%# 검사비 입금 (현장 탐지 중, 검사비가 아직 없을 때) %>
+          <%# 검사비 결제 (현장 탐지 중, 검사비가 아직 없을 때) %>
           <% if @request.detecting? && @request.detection_escrow.nil? && @request.detection_fee.to_d > 0 %>
-            <%= button_to "검사비 입금 #{number_to_currency(@request.detection_fee, unit: "₩", precision: 0)}",
-                  deposit_detection_fee_customers_request_path(@request),
-                  method: :post,
-                  class: "#{btn_classes(:primary, :md)} w-full",
-                  data: { turbo_confirm: "검사비를 입금하시겠습니까?" } %>
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+              <p class="text-sm font-semibold text-blue-900 mb-1">탐지비 결제 안내</p>
+              <p class="text-xs text-blue-700 mb-3">정밀 탐지 작업을 위한 탐지비를 결제해주세요.</p>
+              <%= link_to checkout_customers_toss_payments_path(
+                    request_id:  @request.id,
+                    escrow_type: "detection",
+                    amount:      @request.detection_fee.to_i
+                  ),
+                  class: "block text-center #{btn_classes(:primary, :md)} w-full" do %>
+                탐지비 결제 <%= number_to_currency(@request.detection_fee, unit: "₩", precision: 0) %>
+              <% end %>
+            </div>
           <% end %>
 
-          <%# 공사비 에스크로 입금 (견적 합의 후) %>
+          <%# 공사비 에스크로 결제 (견적 합의 후) %>
           <% if @request.construction_agreed? %>
-            <%= button_to "공사비 에스크로 입금",
-                  deposit_escrow_customers_request_path(@request),
-                  method: :post,
-                  class: "#{btn_classes(:success, :md)} w-full",
-                  data: { turbo_confirm: "공사비를 에스크로에 입금하시겠습니까? 공사 완료 확인 후 전문가에게 지급됩니다." } %>
+            <% construction_amount = @request.accepted_estimate&.total_amount.to_d %>
+            <% if construction_amount > 0 %>
+              <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+                <p class="text-sm font-semibold text-green-900 mb-1">공사비 에스크로 결제</p>
+                <p class="text-xs text-green-700 mb-3">공사 완료 확인 전까지 에스크로에 안전하게 보관됩니다.</p>
+                <%= link_to checkout_customers_toss_payments_path(
+                      request_id:  @request.id,
+                      escrow_type: "construction",
+                      amount:      construction_amount.to_i
+                    ),
+                    class: "block text-center #{btn_classes(:success, :md)} w-full" do %>
+                  공사비 결제 <%= number_to_currency(construction_amount, unit: "₩", precision: 0) %>
+                <% end %>
+              </div>
+            <% end %>
           <% end %>
 
           <% if @request.construction_completed? %>

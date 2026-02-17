@@ -57,6 +57,41 @@ class EscrowService
     end
   end
 
+  # ─── 토스페이먼츠 결제 완료 후 DB 확정 ────────────────────────
+  # TossPaymentsController#success에서 호출
+  def finalize_payment!(escrow_type:, amount:, payment_key:, order_id:, payment_method: "card")
+    ActiveRecord::Base.transaction do
+      escrow = request.escrow_transactions.find_or_initialize_by(escrow_type: escrow_type)
+
+      # 이미 deposited 상태라면 중복 처리 방지 (웹훅 재시도 대응)
+      if escrow.persisted? && escrow.deposited?
+        Rails.logger.warn "[EscrowService] 이미 처리된 결제: #{order_id}"
+        return escrow
+      end
+
+      escrow.assign_attributes(
+        customer:          request.customer,
+        master:            request.master,
+        amount:            amount,
+        payment_method:    payment_method,
+        pg_transaction_id: payment_key,
+        toss_order_id:     order_id,
+        toss_payment_key:  payment_key
+      )
+      escrow.save!
+      escrow.deposit!
+
+      # Request 상태 자동 전이 (공사비 에스크로인 경우)
+      if escrow_type == "construction" && request.may_deposit_escrow?
+        request.deposit_escrow!
+      end
+
+      escrow
+    end
+  rescue AASM::InvalidTransition => e
+    raise EscrowError, "에스크로 상태 전이 실패: #{e.message}"
+  end
+
   # ─── 하위 호환 메서드 (기존 코드 대응) ───────────────────────
   def create_and_deposit!(amount:, payment_method: "card")
     create_construction_escrow!(amount: amount, payment_method: payment_method)

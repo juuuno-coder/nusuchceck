@@ -1,0 +1,127 @@
+<% content_for :title, "#{@order_name} 결제" %>
+
+<!-- 토스페이먼츠 JS SDK v2 -->
+<script src="https://js.tosspayments.com/v2/standard"></script>
+
+<div class="max-w-xl mx-auto py-8 px-4">
+  <!-- 헤더 -->
+  <div class="mb-6">
+    <%= link_to customers_request_path(@request), class: "text-sm text-blue-600 hover:text-blue-800 flex items-center mb-3" do %>
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      돌아가기
+    <% end %>
+    <h1 class="text-2xl font-bold text-gray-900"><%= @order_name %></h1>
+    <p class="text-gray-600 mt-1">안전한 에스크로 결제로 진행됩니다</p>
+  </div>
+
+  <!-- 결제 정보 요약 -->
+  <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+    <div class="flex justify-between items-center mb-2">
+      <span class="text-sm text-gray-600">체크 번호</span>
+      <span class="text-sm font-mono font-medium text-gray-900">#<%= @request.id %></span>
+    </div>
+    <div class="flex justify-between items-center mb-2">
+      <span class="text-sm text-gray-600">결제 항목</span>
+      <span class="text-sm font-medium text-gray-900"><%= @order_name %></span>
+    </div>
+    <div class="flex justify-between items-center pt-2 border-t border-blue-200">
+      <span class="font-semibold text-gray-900">결제 금액</span>
+      <span class="text-xl font-bold text-blue-700">
+        <%= number_to_currency(@amount, unit: "₩", precision: 0) %>
+      </span>
+    </div>
+  </div>
+
+  <!-- 에스크로 안내 -->
+  <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-6">
+    <p class="text-sm font-semibold text-green-800 mb-1">🔒 안전한 에스크로 결제</p>
+    <p class="text-xs text-green-700 leading-relaxed">
+      결제하신 금액은 에스크로에 안전하게 보관됩니다.
+      서비스 완료 확인 후 전문가에게 지급되며, 문제가 생기면 전액 환불이 가능합니다.
+    </p>
+  </div>
+
+  <!-- 토스페이먼츠 위젯 영역 -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-4">
+    <div id="payment-method" class="mb-4"></div>
+    <div id="agreement" class="mb-4"></div>
+  </div>
+
+  <!-- 결제 버튼 -->
+  <button
+    id="payment-button"
+    class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg rounded-xl transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+    disabled
+  >
+    <span id="payment-button-text">결제 수단 로딩 중...</span>
+  </button>
+
+  <p class="text-center text-xs text-gray-400 mt-3">
+    결제는 토스페이먼츠를 통해 안전하게 처리됩니다
+  </p>
+</div>
+
+<script>
+  (async function() {
+    const clientKey  = "<%= @toss_client_key %>";
+    const customerKey = "user-<%= current_user.id %>";
+    const amount     = <%= @amount.to_i %>;
+    const orderId    = "<%= @order_id %>";
+    const orderName  = "<%= @order_name %>";
+    const successUrl = "<%= @success_url %>";
+    const failUrl    = "<%= @fail_url %>";
+
+    const button       = document.getElementById("payment-button");
+    const buttonText   = document.getElementById("payment-button-text");
+
+    try {
+      const tossPayments = TossPayments(clientKey);
+      const widgets = tossPayments.widgets({ customerKey });
+
+      await widgets.setAmount({ currency: "KRW", value: amount });
+
+      await Promise.all([
+        widgets.renderPaymentMethods({
+          selector: "#payment-method",
+          variantKey: "DEFAULT"
+        }),
+        widgets.renderAgreement({
+          selector: "#agreement",
+          variantKey: "AGREEMENT"
+        })
+      ]);
+
+      button.disabled = false;
+      buttonText.textContent = `${amount.toLocaleString()}원 결제하기`;
+
+      button.addEventListener("click", async () => {
+        button.disabled = true;
+        buttonText.textContent = "결제 처리 중...";
+
+        try {
+          await widgets.requestPayment({
+            orderId,
+            orderName,
+            successUrl,
+            failUrl,
+            customerEmail: "<%= current_user.email %>",
+            customerName:  "<%= current_user.name %>",
+          });
+        } catch (error) {
+          // 사용자가 결제창을 닫거나 취소한 경우
+          button.disabled = false;
+          buttonText.textContent = `${amount.toLocaleString()}원 결제하기`;
+          if (error.code !== "USER_CANCEL") {
+            console.error("결제 오류:", error);
+          }
+        }
+      });
+
+    } catch (error) {
+      console.error("토스 위젯 초기화 오류:", error);
+      buttonText.textContent = "결제 위젯 로드 실패 - 새로고침 해주세요";
+    }
+  })();
+</script>

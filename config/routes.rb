@@ -34,6 +34,16 @@ Rails.application.routes.draw do
     get "settlements", to: "expert/settlements#index", as: :settlements
   end
 
+  # 토스페이먼츠 결제 콜백 (GET - 토스에서 리디렉트)
+  scope "/customers" do
+    get  "toss_payments/checkout", to: "customers/toss_payments#checkout",  as: :checkout_customers_toss_payments
+    get  "toss_payments/success",  to: "customers/toss_payments#success",   as: :customers_toss_payments_success
+    get  "toss_payments/fail",     to: "customers/toss_payments#fail",      as: :customers_toss_payments_fail
+  end
+
+  # 토스페이먼츠 웹훅 (POST - CSRF 제외)
+  post "pg/webhooks/toss", to: "pg_webhooks#toss"
+
   # Customer namespace
   namespace :customers do
     resources :requests, only: [:index, :show, :new, :create] do

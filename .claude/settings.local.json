@@ -57,7 +57,13 @@
       "Bash(fly redis plans:*)",
       "Bash(Start-Process \"C:\\\\Program Files\\\\Docker\\\\Docker\\\\Docker Desktop.exe\")",
       "Bash(cmd.exe /c \"start \"\"\"\" \"\"C:\\\\Program Files\\\\Docker\\\\Docker\\\\Docker Desktop.exe\"\"\")",
-      "Bash(flyctl status:*)"
+      "Bash(flyctl status:*)",
+      "Bash(flyctl secrets list:*)",
+      "Bash(flyctl redis create:*)",
+      "Bash(flyctl ssh console:*)"
+    ],
+    "additionalDirectories": [
+      "d:\\dev\\nusucheck"
     ]
   }
 }

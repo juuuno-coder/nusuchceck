@@ -439,15 +439,13 @@ if request3.reported?
   estimate3.accept!
   request3.accept_estimate!
 
-  # 에스크로
-  escrow = request3.create_escrow_transaction!(
-    customer: customer2,
-    master: master2,
+  # 에스크로 (EscrowService 사용)
+  escrow_service = EscrowService.new(request3)
+  escrow = escrow_service.create_construction_escrow!(
     amount: estimate3.total_amount,
-    payment_method: "card",
-    pg_transaction_id: "PG_DEMO_#{SecureRandom.hex(8)}"
+    payment_method: "card"
   )
-  escrow.deposit!
+  escrow.update!(pg_transaction_id: "PG_DEMO_#{SecureRandom.hex(8)}")
   request3.deposit_escrow!
 
   request3.start_construction!
@@ -552,14 +550,13 @@ puts "   ✓ 공개 오더 3건 생성"
   est.accept!
   completed_req.accept_estimate!
 
-  esc = completed_req.create_escrow_transaction!(
-    customer: completed_req.customer,
-    master: completed_req.master,
+  # 에스크로 (EscrowService 사용)
+  escrow_svc = EscrowService.new(completed_req)
+  esc = escrow_svc.create_construction_escrow!(
     amount: est.total_amount,
-    payment_method: "card",
-    pg_transaction_id: "PG_SEED_#{SecureRandom.hex(8)}"
+    payment_method: "card"
   )
-  esc.deposit!
+  esc.update!(pg_transaction_id: "PG_SEED_#{SecureRandom.hex(8)}")
   completed_req.deposit_escrow!
   completed_req.start_construction!
   completed_req.complete_construction!

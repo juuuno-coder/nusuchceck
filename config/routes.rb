@@ -46,6 +46,8 @@ Rails.application.routes.draw do
 
   # Customer namespace
   namespace :customers do
+    get "dashboard", to: "dashboard#index", as: :dashboard
+
     resources :requests, only: [:index, :show, :new, :create] do
       member do
         post :cancel

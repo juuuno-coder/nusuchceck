@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 puts "🌱 === 누수체크 시드 데이터 생성 시작 ==="
-puts "⚠️  주의: 기존 데이터를 모두 삭제하고 새로 생성합니다 (개발 환경만)"
+puts "⚠️  주의: 기존 데이터를 모두 삭제하고 새로 생성합니다"
 puts ""
 
-if Rails.env.production?
-  puts "❌ 프로덕션 환경에서는 시드를 실행할 수 없습니다!"
+# 프로덕션 환경에서는 환경변수 ALLOW_SEED=true 설정 필요 (데모 환경용)
+if Rails.env.production? && ENV["ALLOW_SEED"] != "true"
+  puts "❌ 프로덕션 환경에서는 ALLOW_SEED=true 환경변수가 필요합니다!"
+  puts "💡 데모 환경이라면: flyctl secrets set ALLOW_SEED=true"
   exit
 end
 

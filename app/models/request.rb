@@ -204,6 +204,24 @@ class Request < ApplicationRecord
     I18n.t("activerecord.enums.request.status.#{status}", default: status.humanize)
   end
 
+  # 에스크로 조회 메서드들 (외부 접근 필요)
+  def trip_escrow
+    escrow_transactions.find_by(escrow_type: "trip")
+  end
+
+  def detection_escrow
+    escrow_transactions.find_by(escrow_type: "detection")
+  end
+
+  def construction_escrow
+    escrow_transactions.find_by(escrow_type: "construction")
+  end
+
+  # 하위 호환성 (기존 코드 대응)
+  def escrow_transaction
+    construction_escrow || escrow_transactions.first
+  end
+
   private
 
   def videos_content_type_and_size
@@ -232,23 +250,6 @@ class Request < ApplicationRecord
 
   def escrow_deposited_check?
     construction_escrow&.deposited? || trip_escrow&.deposited?
-  end
-
-  def trip_escrow
-    escrow_transactions.find_by(escrow_type: "trip")
-  end
-
-  def detection_escrow
-    escrow_transactions.find_by(escrow_type: "detection")
-  end
-
-  def construction_escrow
-    escrow_transactions.find_by(escrow_type: "construction")
-  end
-
-  # 하위 호환성 (기존 코드 대응)
-  def escrow_transaction
-    construction_escrow || escrow_transactions.first
   end
 
   def release_escrow_payment

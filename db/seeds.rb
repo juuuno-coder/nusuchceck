@@ -1,9 +1,30 @@
 # frozen_string_literal: true
 
-puts "=== 누수체크 시드 데이터 생성 시작 ==="
+puts "🌱 === 누수체크 시드 데이터 생성 시작 ==="
+puts "⚠️  주의: 기존 데이터를 모두 삭제하고 새로 생성합니다 (개발 환경만)"
+puts ""
+
+if Rails.env.production?
+  puts "❌ 프로덕션 환경에서는 시드를 실행할 수 없습니다!"
+  exit
+end
+
+# 기존 데이터 삭제
+puts "🗑️  기존 데이터 삭제 중..."
+Review.destroy_all
+InsuranceClaim.destroy_all
+EscrowTransaction.destroy_all
+Estimate.destroy_all
+Notification.destroy_all
+Request.destroy_all
+MasterProfile.destroy_all
+User.destroy_all
+StandardEstimateItem.destroy_all
+puts "   ✓ 삭제 완료"
+puts ""
 
 # 1. 표준 견적 항목 (22개)
-puts "표준 견적 항목 생성 중..."
+puts "📋 표준 견적 항목 생성 중..."
 
 StandardEstimateItem.destroy_all
 
@@ -444,23 +465,143 @@ if request3.reported?
   end
 end
 
-puts "  -> 데모 신고 #{Request.count}개 생성 완료"
+puts "   ✓ 데모 신고 #{Request.count}개 생성 완료"
+
+# 6. 추가 데모 데이터 (공개 오더, 더 많은 리뷰 등)
+puts "🎯 추가 데모 데이터 생성 중..."
+
+# 고객 2명 더 추가
+customer3 = Customer.create!(email: "customer3@test.com", name: "정민수", password: "password123", phone: "010-3333-4444", address: "서울시 송파구 올림픽로 333")
+customer4 = Customer.create!(email: "customer4@test.com", name: "한소영", password: "password123", phone: "010-4444-5555", address: "서울시 강동구 천호대로 444")
+
+# 공개 오더 3건 (선착순 대기)
+open_order1 = Request.create!(
+  customer: customer3,
+  symptom_type: :pipe_leak,
+  building_type: :apartment,
+  address: "서울시 송파구 잠실동 123-45",
+  detailed_address: "아파트 1502호",
+  floor_info: "15층",
+  description: "주방 싱크대 아래에서 물이 계속 새고 있어요. 급해요!",
+  preferred_date: 2.days.from_now,
+  status: :reported
+)
+open_order1.publish!
+
+open_order2 = Request.create!(
+  customer: customer4,
+  symptom_type: :ceiling_leak,
+  building_type: :villa,
+  address: "서울시 마포구 상암동 789-12",
+  detailed_address: "빌라 302호",
+  floor_info: "3층",
+  description: "거실 천장에서 물이 떨어져요. 윗집 문제인 것 같습니다.",
+  preferred_date: 1.day.from_now,
+  status: :reported
+)
+open_order2.publish!
+
+open_order3 = Request.create!(
+  customer: customer,
+  symptom_type: :wall_leak,
+  building_type: :apartment,
+  address: "서울시 서초구 방배동 456-78",
+  detailed_address: "오피스텔 805호",
+  floor_info: "8층",
+  description: "화장실 벽면에 물이 차오르고 있습니다.",
+  preferred_date: 3.days.from_now,
+  status: :reported
+)
+open_order3.publish!
+
+puts "   ✓ 공개 오더 3건 생성"
+
+# 더 많은 완료 + 리뷰 추가
+2.times do |i|
+  completed_req = Request.create!(
+    customer: [customer3, customer4][i],
+    symptom_type: [:floor_leak, :outdoor_leak][i],
+    building_type: :apartment,
+    address: ["서울시 강남구 논현동 111-22", "서울시 용산구 이촌동 333-44"][i],
+    detailed_address: "#{rand(5..20)}층 #{rand(501..2005)}호",
+    floor_info: "#{rand(5..20)}층",
+    description: ["바닥 난방에서 물이 새는 것 같아요", "발코니 외벽에서 누수가 있습니다"][i],
+    preferred_date: 15.days.ago
+  )
+
+  completed_req.assign!(master: [master, master2][i])
+  completed_req.visit!
+  completed_req.arrive!
+  completed_req.update!(detection_result: :leak_confirmed, detection_notes: "정밀 탐지 완료")
+  completed_req.detection_complete!
+
+  est = completed_req.estimates.create!(
+    master: [master, master2][i],
+    line_items: [
+      { category: "trip", name: "기본 출장비", unit: "건", quantity: 1, unit_price: 50_000, amount: 50_000 },
+      { category: "detection", name: "열화상 카메라 탐지", unit: "건", quantity: 1, unit_price: 100_000, amount: 100_000 },
+      { category: "construction", name: "방수 공사", unit: "㎡", quantity: 10, unit_price: 80_000, amount: 800_000 }
+    ],
+    notes: "방수 공사 필요",
+    valid_until: 7.days.from_now
+  )
+
+  completed_req.submit_estimate!
+  est.accept!
+  completed_req.accept_estimate!
+
+  esc = completed_req.create_escrow_transaction!(
+    customer: completed_req.customer,
+    master: completed_req.master,
+    amount: est.total_amount,
+    payment_method: "card",
+    pg_transaction_id: "PG_SEED_#{SecureRandom.hex(8)}"
+  )
+  esc.deposit!
+  completed_req.deposit_escrow!
+  completed_req.start_construction!
+  completed_req.complete_construction!
+  completed_req.confirm_completion!
+
+  Review.create!(
+    request: completed_req,
+    customer: completed_req.customer,
+    master: completed_req.master,
+    punctuality_rating: [4, 5][i],
+    skill_rating: [5, 4][i],
+    kindness_rating: 5,
+    cleanliness_rating: [4, 5][i],
+    price_rating: 4,
+    comment: ["정말 만족스러웠어요! 추천합니다.", "꼼꼼하고 친절하셨습니다."][i]
+  )
+end
+
+puts "   ✓ 완료 + 리뷰 2건 추가"
 
 puts ""
-puts "=== 누수체크 시드 데이터 생성 완료 ==="
+puts "🎉 === 누수체크 시드 데이터 생성 완료 ==="
 puts ""
-puts "계정 정보:"
-puts "  관리자: admin@nusucheck.kr / password123"
-puts "  고객1:  customer@example.com / password123"
-puts "  고객2:  customer2@example.com / password123"
-puts "  마스터1: master@example.com / password123 (인증됨)"
-puts "  마스터2: master2@example.com / password123 (인증됨)"
-puts "  마스터3: master3@example.com / password123 (미인증)"
+puts "🔑 테스트 계정 정보:"
+puts "   👑 관리자: admin@nusucheck.kr / password123"
+puts "   👤 고객1:  customer@example.com / password123"
+puts "   👤 고객2:  customer2@example.com / password123"
+puts "   👤 고객3:  customer3@test.com / password123"
+puts "   👤 고객4:  customer4@test.com / password123"
+puts "   👨‍🔧 전문가1 (박누수): master@example.com / password123 ✓인증됨"
+puts "   👨‍🔧 전문가2 (최배관): master2@example.com / password123 ✓인증됨"
+puts "   👨‍🔧 전문가3 (정미인증): master3@example.com / password123 ⚠️미인증"
 puts ""
-puts "데이터 요약:"
-puts "  표준 견적 항목: #{StandardEstimateItem.count}개"
-puts "  사용자: #{User.count}명 (고객 #{Customer.count}, 마스터 #{Master.count})"
-puts "  누수 신고: #{Request.count}건"
-puts "  견적: #{Estimate.count}건"
-puts "  에스크로: #{EscrowTransaction.count}건"
-puts "  리뷰: #{Review.count}건"
+puts "📊 생성된 데이터 요약:"
+puts "   - 표준 견적 항목: #{StandardEstimateItem.count}개"
+puts "   - 전체 사용자: #{User.count}명 (고객 #{Customer.count}명, 전문가 #{Master.count}명)"
+puts "   - 누수 체크: #{Request.count}건"
+puts "     • 완료 (리뷰 포함): #{Request.where(status: 'closed').count}건"
+puts "     • 공개 오더 (선착순): #{Request.where(status: 'open').count}건"
+puts "     • 진행 중: #{Request.where.not(status: ['open', 'closed', 'cancelled']).count}건"
+puts "   - 견적서: #{Estimate.count}건"
+puts "   - 에스크로: #{EscrowTransaction.count}건"
+puts "   - 리뷰: #{Review.count}건"
+puts ""
+puts "🌐 배포 URL: https://nusucheck.fly.dev"
+puts "✨ 이제 로그인해서 모든 기능을 체험하실 수 있습니다!"
+puts ""

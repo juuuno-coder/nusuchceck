@@ -11,6 +11,10 @@ if Rails.env.production? && ENV["ALLOW_SEED"] != "true"
   exit
 end
 
+# Geocoding 비활성화 (시드 데이터 생성 속도 향상 + 타임아웃 방지)
+puts "🚫 Geocoding 임시 비활성화 (시드 데이터 생성 중)..."
+Request.skip_callback(:validation, :after, :geocode)
+
 # 기존 데이터 삭제
 puts "🗑️  기존 데이터 삭제 중..."
 Review.destroy_all

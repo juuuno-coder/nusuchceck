@@ -63,12 +63,69 @@ ko:
           closed: "종료"
           cancelled: "취소"
   devise:
+    confirmations:
+      confirmed: "이메일 주소가 확인되었습니다."
+      send_instructions: "이메일 확인 방법을 담은 메일을 발송했습니다. 확인해주세요."
+      send_paranoid_instructions: "이메일 주소가 저희 데이터베이스에 존재한다면, 이메일 확인 방법을 담은 메일을 발송했습니다."
+    failure:
+      already_authenticated: "이미 로그인되어 있습니다."
+      inactive: "계정이 아직 활성화되지 않았습니다."
+      invalid: "이메일 또는 비밀번호가 올바르지 않습니다."
+      locked: "계정이 잠겨 있습니다."
+      last_attempt: "한 번 더 실패하시면 계정이 잠기게 됩니다."
+      not_found_in_database: "이메일 또는 비밀번호가 올바르지 않습니다."
+      timeout: "세션이 만료되었습니다. 다시 로그인해주세요."
+      unauthenticated: "로그인이 필요합니다."
+      unconfirmed: "이메일 확인이 필요합니다."
+    mailer:
+      confirmation_instructions:
+        subject: "이메일 확인"
+      reset_password_instructions:
+        subject: "비밀번호 재설정"
+      unlock_instructions:
+        subject: "계정 잠금해제"
+      email_changed:
+        subject: "이메일 변경됨"
+      password_change:
+        subject: "비밀번호 변경됨"
+    omniauth_callbacks:
+      failure: "%{kind}에서 인증에 실패했습니다. 이유: \"%{reason}\""
+      success: "%{kind} 계정으로 인증에 성공했습니다."
+    passwords:
+      no_token: "비밀번호 재설정 이메일을 통해서만 이 페이지에 접근하실 수 있습니다. 비밀번호 재설정 이메일에서 오셨다면, 전체 URL을 사용하고 계신지 확인해주세요."
+      send_instructions: "비밀번호 재설정 방법을 담은 메일을 발송했습니다."
+      send_paranoid_instructions: "이메일 주소가 저희 데이터베이스에 존재한다면, 비밀번호 재설정 링크를 담은 메일을 발송했습니다."
+      updated: "비밀번호가 성공적으로 변경되었습니다. 로그인되었습니다."
+      updated_not_active: "비밀번호가 성공적으로 변경되었습니다."
     registrations:
+      destroyed: "안녕히 가세요! 회원 등록이 취소되었습니다. 또 뵙기를 바랍니다."
+      signed_up: "회원가입을 환영합니다!"
+      signed_up_but_inactive: "회원가입되었습니다. 하지만 계정이 아직 활성화되지 않아 로그인하실 수 없습니다."
+      signed_up_but_locked: "회원가입되었습니다. 하지만 계정이 잠겨있어 로그인하실 수 없습니다."
+      signed_up_but_unconfirmed: "확인 링크를 담은 메일을 발송했습니다. 링크를 클릭하여 계정을 활성화해주세요."
+      update_needs_confirmation: "회원정보가 성공적으로 변경되었습니다. 하지만 이메일 변경사항을 확인하셔야 합니다. 이메일을 확인하신 후 확인 링크를 클릭해주세요."
+      updated: "회원정보가 성공적으로 변경되었습니다."
+      updated_but_not_signed_in: "회원정보가 성공적으로 변경되었습니다. 비밀번호가 변경되어 다시 로그인해주세요."
       new:
         sign_up: "회원가입"
     sessions:
+      signed_in: "로그인했습니다."
+      signed_out: "로그아웃했습니다."
+      already_signed_out: "이미 로그아웃했습니다."
       new:
         sign_in: "로그인"
+    unlocks:
+      send_instructions: "계정 잠금해제 방법을 담은 메일을 발송했습니다."
+      send_paranoid_instructions: "계정이 존재한다면, 계정 잠금해제 방법을 담은 메일을 발송했습니다."
+      unlocked: "계정 잠금이 해제되었습니다. 로그인되었습니다."
+    shared:
+      links:
+        sign_in: "로그인"
+        sign_up: "회원가입"
+        forgot_password: "비밀번호를 잊으셨나요?"
+        no_confirmation: "확인 이메일을 받지 못하셨나요?"
+        no_unlock: "잠금해제 방법을 받지 못하셨나요?"
+        sign_in_with: "%{provider}로 로그인"
   helpers:
     submit:
       create: "등록"

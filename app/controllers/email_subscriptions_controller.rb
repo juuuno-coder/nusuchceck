@@ -5,8 +5,8 @@ class EmailSubscriptionsController < ApplicationController
     @subscription = EmailSubscription.new(email: params[:email])
 
     if @subscription.save
-      # juuuno@naver.com으로 알림 발송
-      SubscriptionMailer.new_subscriber(@subscription).deliver_later
+      # juuuno@naver.com으로 알림 발송 (즉시 전송)
+      SubscriptionMailer.new_subscriber(@subscription).deliver_now
 
       redirect_to root_path, notice: "출시 알림 신청이 완료되었습니다! 🎉"
     else

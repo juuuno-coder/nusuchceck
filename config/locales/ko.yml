@@ -1,5 +1,13 @@
 ko:
   activerecord:
+    errors:
+      messages:
+        taken: "이미 사용중입니다"
+        blank: "을(를) 입력해주세요"
+        invalid: "이(가) 올바르지 않습니다"
+        too_short: "이(가) 너무 짧습니다 (최소 %{count}자)"
+        too_long: "이(가) 너무 깁니다 (최대 %{count}자)"
+        confirmation: "이(가) 일치하지 않습니다"
     models:
       user: "사용자"
       customer: "고객"
@@ -10,6 +18,7 @@ ko:
       review: "리뷰"
       master_profile: "마스터 프로필"
       standard_estimate_item: "표준 견적 항목"
+      email_subscription: "이메일 구독"
     attributes:
       user:
         email: "이메일"
@@ -31,6 +40,8 @@ ko:
       review:
         overall_rating: "총점"
         comment: "리뷰 내용"
+      email_subscription:
+        email: "이메일"
     enums:
       request:
         symptom_type:

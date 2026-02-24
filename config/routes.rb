@@ -173,6 +173,7 @@ Rails.application.routes.draw do
   get "up", to: proc { [200, {}, ["OK"]] }
 
   # Static pages
-  root "pages#home"
+  root "pages#coming_soon"
+  get "home", to: "pages#home"
   get "about", to: "pages#about"
 end

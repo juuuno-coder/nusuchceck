@@ -172,6 +172,9 @@ Rails.application.routes.draw do
   # Health check (Fly.io)
   get "up", to: proc { [200, {}, ["OK"]] }
 
+  # Email subscriptions (임시 랜딩페이지)
+  resources :email_subscriptions, only: [:create]
+
   # Static pages
   root "pages#coming_soon"
   get "home", to: "pages#home"

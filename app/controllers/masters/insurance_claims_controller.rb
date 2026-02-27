@@ -64,7 +64,7 @@ class Masters::InsuranceClaimsController < ApplicationController
       @insurance_claim.send_to_customer!
 
       # 이메일 발송
-      InsuranceClaimMailer.review_request(@insurance_claim).deliver_later
+      InsuranceClaimMailerJob.perform_later("review_request", @insurance_claim.id)
 
       # 실시간 알림 발송
       NotificationService.notify_insurance_review_requested(@insurance_claim)

@@ -24,7 +24,8 @@ class Customers::RequestsController < ApplicationController
     @request = current_user.requests.build(request_params)
 
     if @request.save
-      RequestMailer.request_received(@request).deliver_later rescue nil
+      # 백그라운드에서 이메일 발송 (자동 재시도 3회)
+      RequestMailerJob.perform_later("request_received", @request.id)
       redirect_to customers_request_path(@request), notice: "누수 체크 접수가 완료되었습니다."
     else
       render :new, status: :unprocessable_entity
@@ -49,8 +50,14 @@ class Customers::RequestsController < ApplicationController
       @request.accept_estimate!
     end
     redirect_to customers_request_path(@request), notice: "견적을 수락했습니다."
+  rescue ActiveRecord::RecordNotFound
+    redirect_to customers_request_path(@request), alert: "견적을 찾을 수 없습니다."
+  rescue ActiveRecord::RecordInvalid => e
+    Rails.logger.error "견적 수락 실패: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
+    redirect_to customers_request_path(@request), alert: "견적 수락에 실패했습니다. 잠시 후 다시 시도해주세요."
   rescue => e
-    redirect_to customers_request_path(@request), alert: "견적 수락에 실패했습니다: #{e.message}"
+    Rails.logger.error "견적 수락 중 알 수 없는 오류: #{e.class} - #{e.message}\n#{e.backtrace.first(10).join("\n")}"
+    redirect_to customers_request_path(@request), alert: "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
   end
 
   # ─── 1단계: 출장비 에스크로 ───────────────────────────────────
@@ -67,8 +74,15 @@ class Customers::RequestsController < ApplicationController
       payment_method: params[:payment_method] || "card"
     )
     redirect_to customers_request_path(@request), notice: "출장비 #{number_to_currency(escrow.amount, unit: "₩", precision: 0)} 입금 완료"
+  rescue EscrowService::EscrowError => e
+    Rails.logger.error "출장비 에스크로 오류: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
+    redirect_to customers_request_path(@request), alert: "결제 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+  rescue TossPaymentsService::PaymentError => e
+    Rails.logger.error "토스 결제 오류: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
+    redirect_to customers_request_path(@request), alert: "결제 처리 중 오류가 발생했습니다. 카드 정보를 확인하고 다시 시도해주세요."
   rescue => e
-    redirect_to customers_request_path(@request), alert: "출장비 결제 오류: #{e.message}"
+    Rails.logger.error "출장비 결제 중 알 수 없는 오류: #{e.class} - #{e.message}\n#{e.backtrace.first(10).join("\n")}"
+    redirect_to customers_request_path(@request), alert: "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
   end
 
   # ─── 2단계: 검사비 에스크로 ───────────────────────────────────
@@ -85,8 +99,15 @@ class Customers::RequestsController < ApplicationController
       payment_method: params[:payment_method] || "card"
     )
     redirect_to customers_request_path(@request), notice: "검사비 #{number_to_currency(escrow.amount, unit: "₩", precision: 0)} 입금 완료"
+  rescue EscrowService::EscrowError => e
+    Rails.logger.error "검사비 에스크로 오류: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
+    redirect_to customers_request_path(@request), alert: "결제 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+  rescue TossPaymentsService::PaymentError => e
+    Rails.logger.error "토스 결제 오류: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
+    redirect_to customers_request_path(@request), alert: "결제 처리 중 오류가 발생했습니다. 카드 정보를 확인하고 다시 시도해주세요."
   rescue => e
-    redirect_to customers_request_path(@request), alert: "검사비 결제 오류: #{e.message}"
+    Rails.logger.error "검사비 결제 중 알 수 없는 오류: #{e.class} - #{e.message}\n#{e.backtrace.first(10).join("\n")}"
+    redirect_to customers_request_path(@request), alert: "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
   end
 
   # ─── 3단계: 공사비 에스크로 (기존) ───────────────────────────
@@ -109,8 +130,15 @@ class Customers::RequestsController < ApplicationController
     else
       redirect_to customers_request_path(@request), alert: "에스크로 입금에 실패했습니다."
     end
+  rescue EscrowService::EscrowError => e
+    Rails.logger.error "공사비 에스크로 오류: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
+    redirect_to customers_request_path(@request), alert: "결제 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+  rescue TossPaymentsService::PaymentError => e
+    Rails.logger.error "토스 결제 오류: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
+    redirect_to customers_request_path(@request), alert: "결제 처리 중 오류가 발생했습니다. 카드 정보를 확인하고 다시 시도해주세요."
   rescue => e
-    redirect_to customers_request_path(@request), alert: "결제 처리 중 오류: #{e.message}"
+    Rails.logger.error "공사비 결제 중 알 수 없는 오류: #{e.class} - #{e.message}\n#{e.backtrace.first(10).join("\n")}"
+    redirect_to customers_request_path(@request), alert: "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
   end
 
   def confirm_completion

@@ -1,0 +1,95 @@
+<div class="max-w-2xl mx-auto px-4 py-8">
+  <div class="bg-white rounded-lg shadow-lg p-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-gray-900 mb-2"><%= @order_name %> 결제</h1>
+      <p class="text-gray-600">안전한 에스크로 결제 시스템으로 보호됩니다.</p>
+    </div>
+
+    <!-- 주문 정보 -->
+    <div class="bg-gray-50 rounded-lg p-6 mb-8">
+      <h2 class="font-semibold text-gray-900 mb-4">주문 정보</h2>
+      <dl class="space-y-2">
+        <div class="flex justify-between">
+          <dt class="text-gray-600">상품명</dt>
+          <dd class="font-semibold text-gray-900"><%= @order_name %></dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-gray-600">주문번호</dt>
+          <dd class="text-sm text-gray-500 font-mono"><%= @merchant_uid %></dd>
+        </div>
+        <div class="flex justify-between text-lg font-bold border-t border-gray-200 pt-2 mt-2">
+          <dt class="text-gray-900">결제 금액</dt>
+          <dd class="text-blue-600"><%= number_to_currency(@amount, unit: "₩", precision: 0) %></dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- 결제 안내 -->
+    <div class="bg-blue-50 rounded-lg p-4 mb-8">
+      <div class="flex items-start">
+        <svg class="w-6 h-6 text-blue-600 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div class="text-sm text-blue-900">
+          <p class="font-semibold mb-1">안전한 에스크로 결제</p>
+          <p>결제하신 금액은 플랫폼이 안전하게 보관하며, 작업 완료 확인 후 전문가에게 정산됩니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 결제 버튼 -->
+    <div class="space-y-4">
+      <button
+        id="payment-button"
+        type="button"
+        class="w-full bg-blue-600 text-white font-semibold py-4 rounded-lg hover:bg-blue-700 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      >
+        <span class="flex items-center justify-center">
+          <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+          </svg>
+          <%= number_to_currency(@amount, unit: "₩", precision: 0) %> 결제하기
+        </span>
+      </button>
+
+      <%= link_to "취소", customers_request_path(@request), class: "block w-full text-center bg-gray-200 text-gray-700 font-semibold py-4 rounded-lg hover:bg-gray-300 transition" %>
+    </div>
+  </div>
+</div>
+
+<!-- 포트원 SDK 로드 -->
+<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 포트원 초기화
+    const IMP = window.IMP;
+    IMP.init('<%= @portone_store_id %>'); // 포트원 스토어 ID
+
+    const paymentButton = document.getElementById('payment-button');
+
+    paymentButton.addEventListener('click', function() {
+      // 결제 요청
+      IMP.request_pay({
+        pg: '<%= @portone_channel_key %>', // 토스페이먼츠 채널 키
+        pay_method: 'card',
+        merchant_uid: '<%= @merchant_uid %>',
+        name: '<%= @order_name %>',
+        amount: <%= @amount.to_i %>,
+        buyer_email: '<%= current_user.email %>',
+        buyer_name: '<%= current_user.name || current_user.email.split("@").first %>',
+        m_redirect_url: '<%= @callback_url %>' // 모바일에서 결제 후 리다이렉트 URL
+      }, function(rsp) {
+        if (rsp.success) {
+          // 결제 성공 - callback URL로 이동
+          const callbackUrl = '<%= @callback_url %>&imp_uid=' + rsp.imp_uid;
+          window.location.href = callbackUrl;
+        } else {
+          // 결제 실패
+          alert('결제에 실패했습니다.\n' + rsp.error_msg);
+        }
+      });
+    });
+  });
+</script>

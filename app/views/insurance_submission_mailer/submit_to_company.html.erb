@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      font-family: 'Malgun Gothic', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .content {
+      background: #f9fafb;
+      padding: 25px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .info-row {
+      display: flex;
+      padding: 10px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .info-label {
+      font-weight: bold;
+      width: 150px;
+      color: #4b5563;
+    }
+    .info-value {
+      flex: 1;
+      color: #111827;
+    }
+    .footer {
+      text-align: center;
+      color: #6b7280;
+      font-size: 12px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+    .attachments {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1 style="margin: 0; font-size: 24px;">🏢 일상배상책임보험 청구</h1>
+    <p style="margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">누수체크 플랫폼</p>
+  </div>
+
+  <div class="content">
+    <h2 style="margin-top: 0; color: #111827;">청구 정보</h2>
+
+    <div class="info-row">
+      <div class="info-label">청구 번호:</div>
+      <div class="info-value"><%= @insurance_claim.claim_number %></div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-label">신청자:</div>
+      <div class="info-value"><%= @insurance_claim.applicant_name %></div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-label">연락처:</div>
+      <div class="info-value"><%= @insurance_claim.applicant_phone %></div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-label">이메일:</div>
+      <div class="info-value"><%= @insurance_claim.applicant_email || "-" %></div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-label">사고 발생일:</div>
+      <div class="info-value"><%= @insurance_claim.incident_date.strftime("%Y년 %m월 %d일") %></div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-label">사고 장소:</div>
+      <div class="info-value">
+        <%= @insurance_claim.incident_address %>
+        <%= " #{@insurance_claim.incident_detail_address}" if @insurance_claim.incident_detail_address.present? %>
+      </div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-label">피해 유형:</div>
+      <div class="info-value"><%= @insurance_claim.damage_type_label %></div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-label">예상 피해액:</div>
+      <div class="info-value">
+        <%= @insurance_claim.estimated_damage_amount ? number_to_currency(@insurance_claim.estimated_damage_amount, unit: "₩", precision: 0) : "-" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <h3 style="margin-top: 0; color: #111827;">사고 내용</h3>
+    <p style="white-space: pre-wrap; color: #374151;"><%= @insurance_claim.incident_description %></p>
+  </div>
+
+  <div class="attachments">
+    <h3 style="margin-top: 0; color: #111827;">📎 첨부 서류</h3>
+    <ul style="padding-left: 20px; color: #374151;">
+      <li>보험청구서_<%= @insurance_claim.claim_number %>.pdf</li>
+      <% if @insurance_claim.supporting_documents.attached? %>
+        <% @insurance_claim.supporting_documents.each_with_index do |doc, index| %>
+          <li>피해사진_<%= index + 1 %>.<%= doc.filename.extension %></li>
+        <% end %>
+      <% end %>
+    </ul>
+  </div>
+
+  <div class="footer">
+    <p>본 청구서는 <strong>누수체크</strong> 플랫폼을 통해 자동 발송되었습니다.</p>
+    <p>문의사항: support@nusucheck.com | 1588-0000</p>
+    <p style="margin-top: 10px; font-size: 11px;">© 2026 누수체크. All rights reserved.</p>
+  </div>
+</body>
+</html>

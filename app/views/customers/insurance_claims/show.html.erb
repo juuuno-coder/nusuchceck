@@ -68,13 +68,44 @@
   <% when 'submitted' %>
     <div class="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border-l-4 border-blue-500">
       <div class="flex items-start gap-3">
-        <span class="text-3xl">📤</span>
+        <span class="text-3xl">📥</span>
         <div class="flex-1">
-          <h3 class="font-bold text-gray-900 text-lg mb-1">신청이 완료되었어요</h3>
-          <p class="text-gray-700 text-sm mb-3">보험사에서 검토 중이에요. 곧 연락드릴 거예요</p>
+          <h3 class="font-bold text-gray-900 text-lg mb-1">신청서가 준비되었어요!</h3>
+          <p class="text-gray-700 text-sm mb-4">아래 버튼을 눌러 보험사에 제출해주세요</p>
+
+          <!-- PDF 다운로드 + 보험사 바로가기 버튼 -->
+          <div class="flex flex-col sm:flex-row gap-3 mb-4">
+            <%= link_to download_pdf_customers_insurance_claim_path(@insurance_claim),
+                        class: "inline-flex items-center justify-center px-5 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-sm" do %>
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              📄 신청서 PDF 다운로드
+            <% end %>
+
+            <button type="button" onclick="openInsuranceGuide()"
+                    class="inline-flex items-center justify-center px-5 py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-colors shadow-sm">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+              🏢 보험사 바로가기
+            </button>
+
+            <%= button_to auto_submit_customers_insurance_claim_path(@insurance_claim),
+                          method: :patch,
+                          data: { confirm: "보험사에 신청서를 자동으로 이메일 발송합니다. 계속하시겠습니까?" },
+                          class: "inline-flex items-center justify-center px-5 py-3 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition-colors shadow-sm" do %>
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              ⚡ 자동 제출 (이메일)
+            <% end %>
+          </div>
+
           <div class="text-xs text-gray-600 space-y-1">
-            <p>⏱️ 보통 2~3일 안에 심사가 시작돼요</p>
-            <p>📞 추가 서류가 필요하면 연락드릴 수 있어요</p>
+            <p>📱 <strong>수동 제출:</strong> 보험사 앱/웹에서 1분 안에 완료!</p>
+            <p>⚡ <strong>자동 제출:</strong> 보험사에 즉시 이메일로 발송됩니다</p>
+            <p>💡 제출 후 "심사 시작" 버튼을 눌러주시면 진행 상황을 추적해드려요</p>
           </div>
         </div>
       </div>
@@ -362,3 +393,128 @@
     <% end %>
   </div>
 </div>
+
+<!-- 보험사 제출 가이드 모달 -->
+<div id="insuranceGuideModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onclick="if(event.target === this) closeInsuranceGuide()">
+  <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-900">🏢 보험사 제출 방법</h2>
+        <button onclick="closeInsuranceGuide()" class="text-gray-400 hover:text-gray-600 transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- 보험사별 가이드 -->
+      <div class="space-y-4">
+        <% InsuranceSubmissionService.all_companies_guide.each do |company| %>
+          <div class="border border-gray-200 rounded-xl p-4 hover:border-blue-400 hover:shadow-md transition-all">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-bold text-lg flex items-center gap-2">
+                <span class="text-2xl"><%= company[:logo_emoji] %></span>
+                <%= company[:company_name] %>
+              </h3>
+              <a href="<%= company[:website] %>" target="_blank" rel="noopener"
+                 class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm">
+                바로가기 →
+              </a>
+            </div>
+            <div class="space-y-2 text-sm text-gray-700">
+              <p><strong>📱 앱:</strong> "<%= company[:app_name] %>" → <%= company[:claim_menu] %></p>
+              <p><strong>💻 웹:</strong> <%= company[:website] %></p>
+              <p><strong>☎️ 전화:</strong> <%= company[:phone] %></p>
+              <p class="text-xs text-gray-500 mt-2">💡 필요 서류: 다운로드한 PDF + 피해 사진</p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- 공통 안내 -->
+      <div class="mt-6 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl border border-gray-200">
+        <h4 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+          <span class="text-xl">📌</span>
+          <span>제출 시 유의사항</span>
+        </h4>
+        <ul class="space-y-2 text-sm text-gray-700">
+          <li class="flex items-start gap-2">
+            <span class="text-blue-600 font-bold">•</span>
+            <span>PDF 신청서 + 누수 피해 사진을 함께 제출하세요</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-blue-600 font-bold">•</span>
+            <span>보험사 앱/웹에서 <strong>"일상배상책임보험"</strong> 선택</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-blue-600 font-bold">•</span>
+            <span>사고 날짜: <strong><%= @insurance_claim.incident_date.strftime("%Y년 %m월 %d일") %></strong></span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-blue-600 font-bold">•</span>
+            <span>제출 완료 후 이 페이지에서 <strong>"심사 시작"</strong> 버튼을 눌러주세요</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 제출 후 안내 -->
+      <div class="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-200">
+        <p class="text-sm text-blue-900 flex items-start gap-2">
+          <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+          </svg>
+          <span><strong>보험사에 제출하셨나요?</strong> 아래 "심사 시작" 버튼을 눌러 진행 상황을 추적하세요!</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 심사 시작 버튼 (submitted 상태일 때만) -->
+<% if @insurance_claim.submitted? %>
+  <div class="max-w-3xl mx-auto mt-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div class="flex items-start gap-4">
+        <div class="flex-shrink-0">
+          <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="flex-1">
+          <h3 class="font-bold text-gray-900 mb-2">보험사에 제출을 완료하셨나요?</h3>
+          <p class="text-sm text-gray-600 mb-4">제출하신 후 아래 버튼을 눌러주시면 심사 진행 상황을 추적해드려요</p>
+          <%= button_to start_review_customers_insurance_claim_path(@insurance_claim),
+                        method: :patch,
+                        data: { confirm: "보험사에 제출을 완료하셨나요?\n\n확인하시면 심사 중 상태로 변경됩니다." },
+                        class: "w-full sm:w-auto px-6 py-3 bg-yellow-500 text-white font-semibold rounded-lg hover:bg-yellow-600 transition-colors shadow-sm inline-flex items-center justify-center gap-2" do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            ✅ 보험사 제출 완료 → 심사 시작
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<script>
+function openInsuranceGuide() {
+  document.getElementById('insuranceGuideModal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
+}
+
+function closeInsuranceGuide() {
+  document.getElementById('insuranceGuideModal').classList.add('hidden');
+  document.body.style.overflow = 'auto'; // 배경 스크롤 복원
+}
+
+// ESC 키로 모달 닫기
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeInsuranceGuide();
+  }
+});
+</script>

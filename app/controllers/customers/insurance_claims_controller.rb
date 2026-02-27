@@ -1,7 +1,7 @@
 class Customers::InsuranceClaimsController < ApplicationController
   include CustomerAccessible
 
-  before_action :set_insurance_claim, only: [:show, :edit, :update, :submit_claim, :customer_approve, :customer_request_changes, :download_pdf]
+  before_action :set_insurance_claim, only: [:show, :edit, :update, :submit_claim, :customer_approve, :customer_request_changes, :download_pdf, :start_review, :auto_submit]
   before_action :set_request, only: [:new, :create], if: -> { params[:request_id].present? }
 
   def index
@@ -66,7 +66,7 @@ class Customers::InsuranceClaimsController < ApplicationController
 
       # 마스터에게 승인 알림 이메일 발송
       if @insurance_claim.prepared_by_master?
-        InsuranceClaimMailer.customer_approved(@insurance_claim).deliver_later
+        InsuranceClaimMailerJob.perform_later("customer_approved", @insurance_claim.id)
         # 실시간 알림 발송
         NotificationService.notify_insurance_approved(@insurance_claim)
       end
@@ -89,7 +89,7 @@ class Customers::InsuranceClaimsController < ApplicationController
 
       # 마스터에게 수정 요청 알림 이메일 발송
       if @insurance_claim.prepared_by_master?
-        InsuranceClaimMailer.change_requested(@insurance_claim).deliver_later
+        InsuranceClaimMailerJob.perform_later("change_requested", @insurance_claim.id)
         # 실시간 알림 발송
         NotificationService.notify_insurance_change_requested(@insurance_claim)
       end
@@ -109,6 +109,53 @@ class Customers::InsuranceClaimsController < ApplicationController
               filename: "보험신청서_#{@insurance_claim.claim_number}.pdf",
               type: "application/pdf",
               disposition: "inline"
+  end
+
+  # 사용자가 수동으로 보험사에 제출 완료 후 심사 시작
+  def start_review
+    authorize @insurance_claim
+
+    if @insurance_claim.may_start_review?
+      @insurance_claim.start_review!
+
+      # 실시간 알림
+      NotificationService.create_notification(
+        recipient: @insurance_claim.customer,
+        action: "insurance_under_review",
+        message: "보험 청구서 심사가 시작되었습니다.",
+        notifiable: @insurance_claim
+      )
+
+      redirect_to customers_insurance_claim_path(@insurance_claim),
+                  notice: "심사 중 상태로 변경되었습니다. 보험사 심사 결과를 기다려주세요."
+    else
+      redirect_to customers_insurance_claim_path(@insurance_claim),
+                  alert: "현재 상태에서는 심사를 시작할 수 없습니다."
+    end
+  end
+
+  # 보험사에 자동 제출 (이메일 발송)
+  def auto_submit
+    authorize @insurance_claim
+
+    # 보험사 정보 확인
+    if @insurance_claim.insurance_company.blank?
+      redirect_to customers_insurance_claim_path(@insurance_claim),
+                  alert: "보험사를 먼저 선택해주세요."
+      return
+    end
+
+    # 자동 제출 서비스 실행
+    submission_service = InsuranceSubmissionService.new(@insurance_claim)
+
+    if submission_service.submit_to_insurance_company!
+      redirect_to customers_insurance_claim_path(@insurance_claim),
+                  notice: "#{@insurance_claim.insurance_company}에 보험 청구서가 이메일로 발송되었습니다! 심사 중 상태로 변경되었습니다."
+    else
+      errors = submission_service.errors.join(", ")
+      redirect_to customers_insurance_claim_path(@insurance_claim),
+                  alert: "자동 제출에 실패했습니다: #{errors}"
+    end
   end
 
   private

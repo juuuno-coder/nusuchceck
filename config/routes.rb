@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  # Health check endpoint for Fly.io
+  get "up", to: "rails/health#show", as: :rails_health_check
+
   # === Devise (고객 전용 회원가입) ===
   devise_for :users, controllers: {
     registrations: "users/registrations",
@@ -44,6 +47,17 @@ Rails.application.routes.draw do
   # 토스페이먼츠 웹훅 (POST - CSRF 제외)
   post "pg/webhooks/toss", to: "pg_webhooks#toss"
 
+  # 포트원 결제 (신규)
+  namespace :customers do
+    scope :payments do
+      get  "checkout",  to: "payments#checkout",  as: :payments_checkout
+      get  "callback",  to: "payments#callback",  as: :payments_callback
+    end
+  end
+
+  # 포트원 웹훅 (POST - CSRF 제외)
+  post "payments/webhook", to: "payments/webhooks#portone"
+
   # Customer namespace
   namespace :customers do
     get "dashboard", to: "dashboard#index", as: :dashboard
@@ -69,6 +83,8 @@ Rails.application.routes.draw do
         post :customer_approve
         post :customer_request_changes
         get  :download_pdf
+        patch :start_review          # 사용자가 수동 제출 후 심사 시작
+        patch :auto_submit           # 보험사에 자동 이메일 발송
       end
     end
   end
@@ -129,6 +145,9 @@ Rails.application.routes.draw do
       end
     end
 
+    # 결제 감사 로그 (신규)
+    resources :payment_audit_logs, only: [:index, :show]
+
     resources :insurance_claims, only: [:index, :show] do
       member do
         post :start_review
@@ -179,4 +198,5 @@ Rails.application.routes.draw do
   root "pages#coming_soon"
   get "home", to: "pages#home"
   get "about", to: "pages#about"
+  get "pricing", to: "pages#pricing"
 end

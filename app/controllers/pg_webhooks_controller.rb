@@ -4,6 +4,9 @@ class PgWebhooksController < ApplicationController
   # Devise 인증 우회
   skip_before_action :authenticate_user!, raise: false
 
+  # 웹훅 서명 검증 (보안)
+  before_action :verify_toss_signature, only: :toss
+
   # POST /pg/webhooks/toss
   def toss
     payload = JSON.parse(request.body.read)
@@ -11,6 +14,18 @@ class PgWebhooksController < ApplicationController
 
     event_type = payload["eventType"]
     data       = payload["data"]
+
+    # 감사 로그: 웹훅 수신
+    PaymentAuditLog.log_payment(
+      action: "webhook_received",
+      details: {
+        event_type: event_type,
+        order_id: data&.dig("orderId"),
+        status: data&.dig("status"),
+        payload: payload
+      },
+      ip_address: request.remote_ip
+    )
 
     case event_type
     when "PAYMENT_STATUS_CHANGED"
@@ -20,13 +35,81 @@ class PgWebhooksController < ApplicationController
     head :ok
   rescue JSON::ParserError => e
     Rails.logger.error "[Toss Webhook] JSON 파싱 오류: #{e.message}"
+    # 감사 로그: 파싱 오류
+    PaymentAuditLog.log_payment(
+      action: "fail",
+      details: { error_type: "JSON::ParserError", error_message: e.message },
+      ip_address: request.remote_ip
+    )
     head :bad_request
   rescue => e
     Rails.logger.error "[Toss Webhook] 처리 오류: #{e.message}"
+    # 감사 로그: 처리 오류
+    PaymentAuditLog.log_payment(
+      action: "fail",
+      details: {
+        error_type: e.class.to_s,
+        error_message: e.message,
+        event_type: event_type
+      },
+      ip_address: request.remote_ip
+    )
     head :ok  # 토스는 200이 아니면 재시도하므로 항상 200 응답
   end
 
   private
+
+  # 웹훅 서명 검증 (HMAC SHA256)
+  # 토스페이먼츠에서 보낸 웹훅인지 검증하여 위조 방지
+  def verify_toss_signature
+    # ENV에 TOSS_WEBHOOK_SECRET이 설정되지 않으면 검증 스킵 (개발/테스트 환경)
+    webhook_secret = ENV["TOSS_WEBHOOK_SECRET"]
+    unless webhook_secret.present?
+      Rails.logger.warn "[Toss Webhook] TOSS_WEBHOOK_SECRET 미설정 - 서명 검증 스킵"
+      return
+    end
+
+    # 헤더에서 서명 읽기
+    signature = request.headers["X-TossPayments-Signature"]
+    unless signature.present?
+      Rails.logger.error "[Toss Webhook] 서명 헤더 없음"
+      PaymentAuditLog.log_payment(
+        action: "fail",
+        details: { error_type: "MissingSignature", error_message: "X-TossPayments-Signature header missing" },
+        ip_address: request.remote_ip
+      )
+      render json: { error: "Missing signature" }, status: :unauthorized
+      return
+    end
+
+    # request body 읽기
+    body = request.body.read
+    request.body.rewind  # 다시 읽을 수 있도록 rewind
+
+    # HMAC SHA256으로 서명 계산
+    expected_signature = Base64.strict_encode64(
+      OpenSSL::HMAC.digest("sha256", webhook_secret, body)
+    )
+
+    # 서명 비교
+    unless ActiveSupport::SecurityUtils.secure_compare(signature, expected_signature)
+      Rails.logger.error "[Toss Webhook] 서명 불일치 - 위조된 웹훅 가능성"
+      PaymentAuditLog.log_payment(
+        action: "fail",
+        details: {
+          error_type: "InvalidSignature",
+          error_message: "Signature verification failed",
+          received_signature: signature[0..20] + "...",  # 일부만 로깅 (보안)
+          ip_address: request.remote_ip
+        },
+        ip_address: request.remote_ip
+      )
+      render json: { error: "Invalid signature" }, status: :unauthorized
+      return
+    end
+
+    Rails.logger.info "[Toss Webhook] 서명 검증 성공"
+  end
 
   def handle_payment_status_changed(data)
     return unless data
@@ -49,6 +132,18 @@ class PgWebhooksController < ApplicationController
       ActiveRecord::Base.transaction do
         escrow.refund! if escrow.may_refund?
       end
+      # 감사 로그: 환불 처리
+      PaymentAuditLog.log_payment(
+        escrow_transaction: escrow,
+        action: "refund",
+        details: {
+          order_id: order_id,
+          status: status,
+          payment_key: payment_key,
+          canceled_via: "webhook"
+        },
+        ip_address: "TOSS_WEBHOOK"
+      )
       Rails.logger.info "[Toss Webhook] 취소 처리 완료: #{order_id}"
     when "ABORTED"
       Rails.logger.warn "[Toss Webhook] 결제 중단: #{order_id}"

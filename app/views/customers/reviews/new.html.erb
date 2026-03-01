@@ -1,63 +1,225 @@
-<div class="max-w-2xl mx-auto">
-  <%= render "shared/page_header",
-      title: "리뷰 작성",
-      description: "신고 ##{@request.id} - #{@request.master&.name} 마스터에 대한 리뷰를 작성해 주세요.",
-      back_path: customers_request_path(@request),
-      back_text: "신고 상세로 돌아가기" %>
+<div class="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
+  <!-- 상단 헤더 -->
+  <div class="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
+    <div class="max-w-2xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <%= link_to customers_request_path(@request), class: "text-gray-600 hover:text-gray-900 transition" do %>
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        <% end %>
 
-  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-    <%= form_with(model: [@request, @review], url: customers_request_reviews_path(@request), class: "space-y-6") do |f| %>
+        <span class="text-sm font-medium text-gray-700">리뷰 작성</span>
+        <div class="w-6"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 메인 콘텐츠 -->
+  <div class="max-w-2xl mx-auto px-4 py-8">
+    <!-- 인사말 -->
+    <div class="text-center mb-8 fade-in">
+      <div class="inline-block p-3 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-full mb-4">
+        <svg class="w-8 h-8 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+        </svg>
+      </div>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">서비스 어떠셨나요?</h1>
+      <p class="text-gray-600"><%= @request.master&.name %> 전문가님과의 작업이 완료되었어요</p>
+    </div>
+
+    <!-- 전문가 정보 -->
+    <div class="mb-8 bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+      <div class="flex items-center gap-4">
+        <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center">
+          <span class="text-2xl font-bold text-blue-700"><%= @request.master&.name&.first %></span>
+        </div>
+        <div class="flex-1">
+          <h3 class="font-bold text-gray-900 text-lg"><%= @request.master&.name %> 전문가</h3>
+          <p class="text-sm text-gray-600">누수체크 #<%= @request.id %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 폼 -->
+    <%= form_with(model: [@request, @review],
+                  url: customers_request_reviews_path(@request),
+                  class: "space-y-6",
+                  data: { controller: "button-loading", action: "submit->button-loading#submit" }) do |f| %>
 
       <%= render "shared/form_errors", resource: @review %>
 
-      <%
-        rating_fields = [
-          { field: :punctuality_rating, label: "시간 준수", desc: "약속 시간을 잘 지켰나요?" },
-          { field: :skill_rating, label: "기술력", desc: "전문적인 시공 능력은 어땠나요?" },
-          { field: :kindness_rating, label: "친절도", desc: "친절하고 설명을 잘 해주었나요?" },
-          { field: :cleanliness_rating, label: "뒷정리", desc: "작업 후 정리를 깨끗하게 했나요?" },
-          { field: :price_rating, label: "가격 만족", desc: "가격 대비 만족도는 어떤가요?" }
-        ]
-      %>
-
-      <% rating_fields.each do |rf| %>
-        <div class="border-b pb-5 last:border-b-0 last:pb-0">
-          <label class="block text-sm font-medium text-gray-900 mb-1"><%= rf[:label] %></label>
-          <p class="text-xs text-gray-500 mb-3"><%= rf[:desc] %></p>
-          <div class="flex items-center gap-1" data-controller="star-rating" role="radiogroup" aria-label="<%= rf[:label] %> 평점">
-            <% (1..5).each do |n| %>
-              <label class="cursor-pointer">
-                <%= f.radio_button rf[:field], n,
-                      class: "hidden peer",
-                      data: { star_rating_target: "input", action: "change->star-rating#update" } %>
-                <svg class="w-8 h-8 text-gray-300 peer-checked:text-yellow-400 hover:text-yellow-400 transition"
-                     fill="currentColor" viewBox="0 0 20 20"
-                     tabindex="0" role="radio" aria-label="<%= n %>점"
-                     data-star-rating-target="star" data-value="<%= n %>"
-                     data-action="click->star-rating#select keydown->star-rating#keydown">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                </svg>
-              </label>
-            <% end %>
-            <span class="ml-2 text-sm text-gray-500" data-star-rating-target="label">선택해 주세요</span>
-          </div>
+      <div class="bg-white rounded-3xl shadow-sm border border-gray-200 p-8">
+        <div class="mb-8">
+          <h2 class="text-xl font-bold text-gray-900 mb-2 text-center">솔직한 평가를 부탁드려요</h2>
+          <p class="text-sm text-gray-600 text-center">다른 고객들에게 큰 도움이 돼요</p>
         </div>
-      <% end %>
+
+        <div class="space-y-8">
+          <%
+            rating_fields = [
+              { field: :punctuality_rating, label: "시간 준수", emoji: "⏰", desc: "약속 시간을 잘 지켰나요?" },
+              { field: :skill_rating, label: "기술력", emoji: "🔧", desc: "전문적인 시공 능력은 어땠나요?" },
+              { field: :kindness_rating, label: "친절도", emoji: "😊", desc: "친절하고 설명을 잘 해주었나요?" },
+              { field: :cleanliness_rating, label: "뒷정리", emoji: "✨", desc: "작업 후 정리를 깨끗하게 했나요?" },
+              { field: :price_rating, label: "가격 만족", emoji: "💰", desc: "가격 대비 만족도는 어떤가요?" }
+            ]
+          %>
+
+          <% rating_fields.each_with_index do |rf, index| %>
+            <div class="<%= index < rating_fields.length - 1 ? 'border-b pb-8' : '' %>">
+              <div class="mb-4">
+                <label class="block text-base font-bold text-gray-900 mb-1 flex items-center gap-2">
+                  <span class="text-2xl"><%= rf[:emoji] %></span>
+                  <%= rf[:label] %>
+                </label>
+                <p class="text-sm text-gray-600 ml-9"><%= rf[:desc] %></p>
+              </div>
+
+              <div class="flex items-center justify-between ml-9" data-controller="star-rating">
+                <div class="flex items-center gap-2">
+                  <% (1..5).each do |n| %>
+                    <label class="cursor-pointer group">
+                      <%= f.radio_button rf[:field], n,
+                            class: "hidden peer",
+                            data: { star_rating_target: "input", action: "change->star-rating#update" } %>
+                      <svg class="w-12 h-12 text-gray-200 peer-checked:text-yellow-400 group-hover:text-yellow-300 transition-all duration-200 transform group-hover:scale-110"
+                           fill="currentColor" viewBox="0 0 20 20"
+                           data-star-rating-target="star" data-value="<%= n %>"
+                           data-action="click->star-rating#select">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                      </svg>
+                    </label>
+                  <% end %>
+                </div>
+                <span class="text-sm font-medium text-gray-500 min-w-[80px] text-right" data-star-rating-target="label">선택해주세요</span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
 
       <!-- 코멘트 -->
-      <div>
-        <%= f.label :comment, "후기", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <div class="bg-white rounded-3xl shadow-sm border border-gray-200 p-8">
+        <div class="mb-6">
+          <h2 class="text-xl font-bold text-gray-900 mb-2">한 마디 남겨주세요</h2>
+          <p class="text-sm text-gray-600">어떤 점이 좋았나요? (선택사항)</p>
+        </div>
+
         <%= f.text_area :comment,
-              rows: 4,
-              placeholder: "마스터에 대한 솔직한 후기를 남겨 주세요.",
-              class: input_classes(:textarea) %>
+              rows: 6,
+              placeholder: "예시:\n정확한 시간에 도착해주셨고, 누수 원인을 꼼꼼하게 찾아주셨어요.\n수리 후에도 깨끗하게 정리해주셔서 감사했습니다.\n다음에도 이 전문가님께 부탁하고 싶어요!",
+              class: "w-full px-4 py-4 text-base border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition resize-none" %>
+        <p class="text-xs text-gray-500 mt-2">💡 구체적일수록 다른 고객들에게 도움이 돼요</p>
+      </div>
+
+      <!-- 안내 메시지 -->
+      <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-100">
+        <h3 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+          <span class="text-xl">💜</span>
+          리뷰 작성 감사해요!
+        </h3>
+        <ul class="space-y-2 text-sm text-gray-700">
+          <li class="flex items-start gap-2">
+            <svg class="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>솔직한 리뷰는 다른 고객들의 <strong>현명한 선택</strong>을 돕습니다</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <svg class="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>전문가에게는 <strong>성장의 기회</strong>가 됩니다</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <svg class="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>누수체크가 더 나은 서비스를 제공하는 데 큰 힘이 돼요</span>
+          </li>
+        </ul>
       </div>
 
       <!-- 제출 버튼 -->
-      <div class="flex items-center justify-end gap-3 pt-4 border-t">
-        <%= link_to "취소", customers_request_path(@request), class: btn_classes(:secondary, :md) %>
-        <%= f.submit "리뷰 등록", class: btn_classes(:primary, :md) %>
+      <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-4">
+        <%= link_to customers_request_path(@request),
+              class: "w-full sm:w-auto px-6 py-3 rounded-xl font-semibold text-gray-700 bg-white border-2 border-gray-300 hover:bg-gray-50 transition-all text-center" do %>
+          나중에 할게요
+        <% end %>
+
+        <button type="submit"
+                data-button-loading-target="button"
+                data-button-loading-loading-text-value="등록하는 중..."
+                class="w-full sm:w-auto px-8 py-4 rounded-xl font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-xl inline-flex items-center justify-center gap-2">
+          <span data-button-loading-target="spinner" class="btn-spinner hidden"></span>
+          <span data-button-loading-target="text">⭐ 리뷰 등록하기</span>
+        </button>
       </div>
+
+      <p class="text-xs text-center text-gray-500 mt-3">등록 후에도 수정할 수 있어요</p>
     <% end %>
   </div>
 </div>
+
+<script>
+// 별점 컨트롤러 간단한 구현
+document.addEventListener('turbo:load', function() {
+  const starRatings = document.querySelectorAll('[data-controller="star-rating"]');
+
+  starRatings.forEach(container => {
+    const stars = container.querySelectorAll('[data-star-rating-target="star"]');
+    const label = container.querySelector('[data-star-rating-target="label"]');
+    const inputs = container.querySelectorAll('[data-star-rating-target="input"]');
+
+    const labels = ['선택해주세요', '⭐ 별로예요', '⭐⭐ 그저 그래요', '⭐⭐⭐ 괜찮아요', '⭐⭐⭐⭐ 좋아요', '⭐⭐⭐⭐⭐ 최고예요!'];
+
+    stars.forEach((star, index) => {
+      star.addEventListener('click', function() {
+        inputs[index].checked = true;
+        updateStars(index);
+      });
+
+      star.addEventListener('mouseenter', function() {
+        highlightStars(index);
+      });
+    });
+
+    container.addEventListener('mouseleave', function() {
+      const checkedIndex = Array.from(inputs).findIndex(input => input.checked);
+      if (checkedIndex >= 0) {
+        highlightStars(checkedIndex);
+      } else {
+        highlightStars(-1);
+      }
+    });
+
+    function highlightStars(index) {
+      stars.forEach((star, i) => {
+        if (i <= index) {
+          star.classList.add('text-yellow-400');
+          star.classList.remove('text-gray-200');
+        } else {
+          star.classList.remove('text-yellow-400');
+          star.classList.add('text-gray-200');
+        }
+      });
+    }
+
+    function updateStars(index) {
+      highlightStars(index);
+      if (label) {
+        label.textContent = labels[index + 1];
+        label.classList.remove('text-gray-500');
+        label.classList.add('text-yellow-600', 'font-semibold');
+      }
+    }
+
+    // 초기 상태 설정
+    const checkedIndex = Array.from(inputs).findIndex(input => input.checked);
+    if (checkedIndex >= 0) {
+      updateStars(checkedIndex);
+    }
+  });
+});
+</script>

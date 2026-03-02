@@ -1,0 +1,105 @@
+<% content_for :title, "설문조사" %>
+
+<div class="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 py-12">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- 헤더 -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium mb-3">
+        📊 Survey
+      </div>
+      <h1 class="text-4xl font-bold text-gray-900 mb-3">설문조사</h1>
+      <p class="text-lg text-gray-600">
+        누수체크 앱에 대한 솔직한 의견을 들려주세요
+      </p>
+    </div>
+
+    <!-- 설문 폼 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+      <%= form_with model: @survey, url: surveys_path, html: { class: "space-y-8" } do |f| %>
+        <% if @survey.errors.any? %>
+          <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+            <h3 class="text-sm font-semibold text-red-800 mb-2">입력 오류가 있습니다</h3>
+            <ul class="text-sm text-red-700 space-y-1 list-disc list-inside">
+              <% @survey.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <!-- 질문 1: 앱 필요 여부 -->
+        <div>
+          <label class="block text-base font-bold text-gray-900 mb-4">
+            1. 누수체크 앱이 필요하다고 생각하시나요? *
+          </label>
+          <div class="space-y-3">
+            <% Survey::NEED_APP_OPTIONS.each do |value, label| %>
+              <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-purple-300 cursor-pointer transition">
+                <%= f.radio_button :need_app, value, required: true, class: "w-4 h-4 text-purple-600 focus:ring-purple-500 border-gray-300" %>
+                <span class="ml-3 text-gray-900 font-medium"><%= label %></span>
+              </label>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- 질문 2: 사용자 유형 -->
+        <div>
+          <label class="block text-base font-bold text-gray-900 mb-4">
+            2. 어떤 유형의 사용자이신가요? *
+          </label>
+          <div class="space-y-3">
+            <% Survey::USER_TYPES.each do |value, label| %>
+              <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-purple-300 cursor-pointer transition">
+                <%= f.radio_button :user_type, value, required: true, class: "w-4 h-4 text-purple-600 focus:ring-purple-500 border-gray-300" %>
+                <span class="ml-3 text-gray-900 font-medium"><%= label %></span>
+              </label>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- 질문 3: 이유 (선택) -->
+        <div>
+          <label class="block text-base font-bold text-gray-900 mb-3">
+            3. 그렇게 생각하시는 이유를 알려주세요 (선택사항)
+          </label>
+          <%= f.text_area :reason,
+                rows: 5,
+                placeholder: "예: 누수 문제가 발생했을 때 빠르게 전문가를 찾을 수 있어서 유용할 것 같습니다.",
+                class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition resize-none" %>
+        </div>
+
+        <!-- 질문 4: 연락처 (선택) -->
+        <div>
+          <label class="block text-base font-bold text-gray-900 mb-3">
+            4. 연락처 (이메일 또는 전화번호, 선택사항)
+          </label>
+          <%= f.text_field :contact_info,
+                placeholder: "your@email.com 또는 010-1234-5678",
+                class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition" %>
+          <p class="mt-1 text-xs text-gray-500">후속 질문이나 출시 알림을 받으실 분만 입력해주세요</p>
+        </div>
+
+        <!-- 제출 버튼 -->
+        <div class="flex gap-3 pt-4 border-t border-gray-200">
+          <%= link_to "취소", :back, class: "flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-semibold text-center" %>
+          <%= f.submit "설문 제출", class: "flex-1 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-semibold" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- 안내 -->
+    <div class="mt-6 bg-purple-50 border border-purple-100 rounded-xl p-5">
+      <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+        </svg>
+        <div class="flex-1">
+          <p class="text-sm text-purple-800">
+            <strong>익명으로 참여 가능합니다!</strong><br>
+            여러분의 의견은 서비스 기획에 큰 도움이 됩니다. 소요 시간: 약 1분
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

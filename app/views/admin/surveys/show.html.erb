@@ -1,0 +1,45 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-gray-900">설문조사 상세</h1>
+    <%= link_to "← 목록으로", admin_surveys_path, class: "text-blue-600 hover:text-blue-900" %>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6 space-y-4">
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <p class="text-sm font-semibold text-gray-700">ID</p>
+        <p class="text-gray-900">#<%= @survey.id %></p>
+      </div>
+      <div>
+        <p class="text-sm font-semibold text-gray-700">작성일</p>
+        <p class="text-gray-900"><%= @survey.created_at.strftime("%Y-%m-%d %H:%M") %></p>
+      </div>
+      <div>
+        <p class="text-sm font-semibold text-gray-700">앱 필요 여부</p>
+        <% color = @survey.need_app == 'yes' ? 'green' : (@survey.need_app == 'no' ? 'red' : 'yellow') %>
+        <span class="px-2 py-1 bg-<%= color %>-100 text-<%= color %>-800 text-xs font-medium rounded-full">
+          <%= Survey::NEED_APP_OPTIONS[@survey.need_app] %>
+        </span>
+      </div>
+      <div>
+        <p class="text-sm font-semibold text-gray-700">사용자 유형</p>
+        <span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">
+          <%= Survey::USER_TYPES[@survey.user_type] %>
+        </span>
+      </div>
+      <div class="col-span-2">
+        <p class="text-sm font-semibold text-gray-700">연락처</p>
+        <p class="text-gray-900"><%= @survey.contact_info.present? ? @survey.contact_info : '(미제공)' %></p>
+      </div>
+    </div>
+
+    <% if @survey.reason.present? %>
+      <div class="border-t pt-4">
+        <p class="text-sm font-semibold text-gray-700 mb-2">의견 / 이유</p>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-gray-900 whitespace-pre-wrap"><%= @survey.reason %></p>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

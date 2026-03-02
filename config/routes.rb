@@ -159,6 +159,16 @@ Rails.application.routes.draw do
         post :complete
       end
     end
+
+    # 피드백 및 설문조사 관리
+    resources :feedbacks, only: [:index, :show] do
+      member do
+        post :mark_reviewed
+        post :mark_resolved
+      end
+    end
+
+    resources :surveys, only: [:index, :show]
   end
 
   # 전문가 공개 프로필 (비로그인 접근 가능)
@@ -196,6 +206,12 @@ Rails.application.routes.draw do
 
   # Email subscriptions (임시 랜딩페이지)
   resources :email_subscriptions, only: [:create]
+
+  # 의견 보내기 (Feedback)
+  resources :feedbacks, only: [:new, :create]
+
+  # 설문조사 (Survey)
+  resources :surveys, only: [:new, :create]
 
   # Static pages
   root "pages#coming_soon"

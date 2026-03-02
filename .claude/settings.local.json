@@ -60,7 +60,8 @@
       "Bash(flyctl status:*)",
       "Bash(flyctl secrets list:*)",
       "Bash(flyctl redis create:*)",
-      "Bash(flyctl ssh console:*)"
+      "Bash(flyctl ssh console:*)",
+      "Bash(flyctl console:*)"
     ],
     "additionalDirectories": [
       "d:\\dev\\nusucheck"

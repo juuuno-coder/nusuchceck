@@ -1,0 +1,90 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">설문조사 결과</h1>
+      <p class="mt-1 text-sm text-gray-600">앱 필요성에 대한 설문조사 결과입니다</p>
+    </div>
+  </div>
+
+  <!-- 통계 카드 -->
+  <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
+      <p class="text-sm text-gray-600">전체 응답</p>
+      <p class="text-2xl font-bold text-gray-900"><%= @stats[:total] %></p>
+    </div>
+    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
+      <p class="text-sm text-gray-600">필요 (Yes)</p>
+      <p class="text-2xl font-bold text-gray-900"><%= @stats[:need_yes] %></p>
+      <% if @stats[:total] > 0 %>
+        <p class="text-xs text-gray-500 mt-1"><%= ((@stats[:need_yes].to_f / @stats[:total]) * 100).round(1) %>%</p>
+      <% end %>
+    </div>
+    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-red-500">
+      <p class="text-sm text-gray-600">불필요 (No)</p>
+      <p class="text-2xl font-bold text-gray-900"><%= @stats[:need_no] %></p>
+      <% if @stats[:total] > 0 %>
+        <p class="text-xs text-gray-500 mt-1"><%= ((@stats[:need_no].to_f / @stats[:total]) * 100).round(1) %>%</p>
+      <% end %>
+    </div>
+    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500">
+      <p class="text-sm text-gray-600">모름 (Maybe)</p>
+      <p class="text-2xl font-bold text-gray-900"><%= @stats[:need_maybe] %></p>
+      <% if @stats[:total] > 0 %>
+        <p class="text-xs text-gray-500 mt-1"><%= ((@stats[:need_maybe].to_f / @stats[:total]) * 100).round(1) %>%</p>
+      <% end %>
+    </div>
+    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-purple-500">
+      <p class="text-sm text-gray-600">고객 / 전문가</p>
+      <p class="text-2xl font-bold text-gray-900"><%= @stats[:customers] %> / <%= @stats[:masters] %></p>
+    </div>
+  </div>
+
+  <!-- 목록 -->
+  <div class="bg-white rounded-lg shadow">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">앱 필요 여부</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">사용자 유형</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">연락처</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">작성일</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">액션</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @surveys.each do |survey| %>
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#<%= survey.id %></td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <% color = survey.need_app == 'yes' ? 'green' : (survey.need_app == 'no' ? 'red' : 'yellow') %>
+                <span class="px-2 py-1 bg-<%= color %>-100 text-<%= color %>-800 text-xs font-medium rounded-full">
+                  <%= Survey::NEED_APP_OPTIONS[survey.need_app] %>
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">
+                  <%= Survey::USER_TYPES[survey.user_type] %>
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                <%= survey.contact_info.present? ? survey.contact_info : '-' %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                <%= survey.created_at.strftime("%Y-%m-%d %H:%M") %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <%= link_to "보기", admin_survey_path(survey), class: "text-blue-600 hover:text-blue-900" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="px-6 py-4">
+      <%= paginate @surveys %>
+    </div>
+  </div>
+</div>

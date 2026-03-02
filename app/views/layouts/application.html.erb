@@ -46,6 +46,8 @@
                 <%= link_to "마스터관리", admin_masters_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600" %>
                 <%= link_to "에스크로", admin_escrow_transactions_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600" %>
                 <%= link_to "보험관리", admin_insurance_claims_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600" %>
+                <%= link_to "의견관리", admin_feedbacks_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600" %>
+                <%= link_to "설문조사", admin_surveys_path, class: "px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600" %>
               <% end %>
             </div>
           <% end %>
@@ -99,6 +101,8 @@
             <%= link_to "마스터관리", admin_masters_path, class: "block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-600" %>
             <%= link_to "에스크로", admin_escrow_transactions_path, class: "block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-600" %>
             <%= link_to "보험관리", admin_insurance_claims_path, class: "block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-600" %>
+            <%= link_to "의견관리", admin_feedbacks_path, class: "block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-600" %>
+            <%= link_to "설문조사", admin_surveys_path, class: "block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-600" %>
           <% end %>
           <div class="border-t border-blue-600 my-2 pt-2">
             <%= button_to "로그아웃", destroy_user_session_path, method: :delete, class: "w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-blue-600" %>
@@ -125,9 +129,39 @@
   <!-- Footer (네이티브 앱에서는 숨김) -->
   <% unless hotwire_native_app? %>
   <footer class="bg-gray-800 text-gray-300 py-8 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 text-center">
-      <p class="text-sm">&copy; <%= Date.current.year %> 누수체크. All rights reserved.</p>
-      <p class="text-xs mt-2 text-gray-500">누수 전문 매칭 플랫폼 - 투명한 가격, 검증된 전문가</p>
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
+        <!-- 회사 정보 -->
+        <div>
+          <h3 class="text-white font-bold text-lg mb-3">누수체크</h3>
+          <p class="text-sm text-gray-400">누수 전문 매칭 플랫폼</p>
+          <p class="text-sm text-gray-400">투명한 가격, 검증된 전문가</p>
+        </div>
+
+        <!-- 서비스 -->
+        <div>
+          <h3 class="text-white font-semibold text-sm mb-3">서비스</h3>
+          <ul class="space-y-2 text-sm">
+            <li><%= link_to "누수 진단하기", new_leak_inspection_path, class: "text-gray-400 hover:text-white transition" %></li>
+            <li><%= link_to "전문가 보기", masters_path, class: "text-gray-400 hover:text-white transition" %></li>
+            <li><%= link_to "가격안내", pricing_path, class: "text-gray-400 hover:text-white transition" %></li>
+          </ul>
+        </div>
+
+        <!-- 고객지원 -->
+        <div>
+          <h3 class="text-white font-semibold text-sm mb-3">고객지원</h3>
+          <ul class="space-y-2 text-sm">
+            <li><%= link_to "의견 보내기", new_feedback_path, class: "text-gray-400 hover:text-white transition" %></li>
+            <li><%= link_to "설문 참여하기", new_survey_path, class: "text-gray-400 hover:text-white transition" %></li>
+            <li><a href="mailto:contact@nusucheck.com" class="text-gray-400 hover:text-white transition">contact@nusucheck.com</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-700 pt-6 text-center">
+        <p class="text-sm text-gray-500">&copy; <%= Date.current.year %> 누수체크. All rights reserved.</p>
+      </div>
     </div>
   </footer>
   <% end %>

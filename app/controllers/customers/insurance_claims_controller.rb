@@ -119,7 +119,7 @@ class Customers::InsuranceClaimsController < ApplicationController
       @insurance_claim.start_review!
 
       # 실시간 알림
-      NotificationService.create_notification(
+      NotificationService.notify(
         recipient: @insurance_claim.customer,
         action: "insurance_under_review",
         message: "보험 청구서 심사가 시작되었습니다.",

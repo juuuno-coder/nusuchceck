@@ -130,7 +130,7 @@ class InsuranceSubmissionService
 
   def notify_customer_submission_success
     # 고객에게 실시간 알림
-    NotificationService.create_notification(
+    NotificationService.notify(
       recipient: @insurance_claim.customer,
       action: "insurance_submitted",
       message: "#{@insurance_claim.insurance_company}에 보험 청구서가 제출되었습니다.",

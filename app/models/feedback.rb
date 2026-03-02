@@ -3,10 +3,18 @@ class Feedback < ApplicationRecord
 
   belongs_to :user, optional: true
 
-  validates :name, presence: true
-  validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :category, presence: true, inclusion: { in: CATEGORIES }
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
+  validates :category, inclusion: { in: CATEGORIES }, allow_blank: true
   validates :message, presence: true, length: { minimum: 10 }
+
+  before_validation :set_defaults
+
+  private
+
+  def set_defaults
+    self.category ||= '일반문의'
+    self.name ||= user&.name || '익명'
+  end
 
   enum status: {
     pending: 'pending',

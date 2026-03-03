@@ -11,6 +11,44 @@ export default class extends Controller {
   connect() {
     this.showStep(this.currentStepValue)
     this.updateProgress()
+    this.goToErrorStep()
+  }
+
+  // 서버 검증 오류 시 해당 단계로 자동 이동
+  goToErrorStep() {
+    // 각 필드와 단계 매핑
+    const fieldStepMap = {
+      'symptom_type': 1,
+      'building_type': 1,
+      'address': 2,
+      'detailed_address': 2,
+      'floor': 2,
+      'description': 3,
+      'preferred_date': 3,
+      'photos': 4,
+      'videos': 4
+    }
+
+    // 에러가 있는 필드 찾기
+    const errorFields = document.querySelectorAll('.field_with_errors input, .field_with_errors select, .field_with_errors textarea')
+
+    if (errorFields.length > 0) {
+      // 첫 번째 에러 필드의 이름 추출
+      const firstErrorField = errorFields[0]
+      const fieldName = firstErrorField.name.match(/\[(\w+)\]/)?.[1]
+
+      if (fieldName && fieldStepMap[fieldName]) {
+        this.currentStepValue = fieldStepMap[fieldName]
+        this.showStep(this.currentStepValue)
+        this.updateProgress()
+
+        // 에러 필드로 스크롤
+        setTimeout(() => {
+          firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          firstErrorField.focus()
+        }, 300)
+      }
+    }
   }
 
   next(event) {

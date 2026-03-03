@@ -228,7 +228,7 @@
       </div>
 
       <!-- 단계 4: 자료 첨부 -->
-      <div data-insurance-step-target="step" class="hidden bg-white rounded-3xl shadow-sm border border-gray-200 p-8">
+      <div data-insurance-step-target="step" data-controller="file-counter" class="hidden bg-white rounded-3xl shadow-sm border border-gray-200 p-8">
         <div class="mb-6">
           <h2 class="text-2xl font-bold text-gray-900 mb-2">사진이나 영상이 있나요?</h2>
           <p class="text-gray-600">10초 이상 영상이 가장 효과적이에요</p>
@@ -237,9 +237,12 @@
         <div class="space-y-6">
           <!-- 영상 업로드 (강조) -->
           <div>
-            <div class="flex items-center gap-2 mb-3">
-              <%= f.label :videos, "영상 업로드", class: "block text-base font-bold text-gray-900" %>
-              <span class="px-3 py-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold rounded-full shadow-md animate-pulse">✨ 가장 중요!</span>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <%= f.label :videos, "영상 업로드", class: "block text-base font-bold text-gray-900" %>
+                <span class="px-3 py-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold rounded-full shadow-md animate-pulse">✨ 가장 중요!</span>
+              </div>
+              <span data-file-counter-target="videoCount" class="text-sm text-gray-400">0/10</span>
             </div>
 
             <div class="mb-4 p-5 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border-2 border-blue-300 rounded-2xl shadow-sm">
@@ -270,7 +273,11 @@
                     multiple: true,
                     accept: "video/mp4,video/quicktime,video/avi,video/webm,video/3gpp",
                     class: "hidden",
-                    id: "video-upload" %>
+                    id: "video-upload",
+                    data: {
+                      file_counter_target: "videoInput",
+                      action: "change->file-counter#updateVideoCounts"
+                    } %>
               <label for="video-upload" class="cursor-pointer">
                 <div class="inline-block p-5 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl mb-4 shadow-md">
                   <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -311,9 +318,12 @@
 
           <!-- 사진 업로드 (선택사항) -->
           <div class="mt-8 pt-6 border-t border-gray-200">
-            <div class="flex items-center gap-2 mb-2">
-              <%= f.label :photos, "사진 업로드 (선택)", class: "block text-sm font-semibold text-gray-700" %>
-              <span class="px-2 py-0.5 bg-gray-200 text-gray-600 text-xs rounded-full">선택사항</span>
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <%= f.label :photos, "사진 업로드 (선택)", class: "block text-sm font-semibold text-gray-700" %>
+                <span class="px-2 py-0.5 bg-gray-200 text-gray-600 text-xs rounded-full">선택사항</span>
+              </div>
+              <span data-file-counter-target="photoCount" class="text-sm text-gray-400">0/10</span>
             </div>
             <p class="text-xs text-gray-500 mb-3">💡 영상만으로도 충분하지만, 특정 부위를 강조하고 싶으시면 사진도 함께 올려주세요</p>
 
@@ -322,7 +332,11 @@
                     multiple: true,
                     accept: "image/*",
                     class: "hidden",
-                    id: "photo-upload" %>
+                    id: "photo-upload",
+                    data: {
+                      file_counter_target: "photoInput",
+                      action: "change->file-counter#updatePhotoCounts"
+                    } %>
               <label for="photo-upload" class="cursor-pointer">
                 <div class="inline-block p-3 bg-gray-200 rounded-xl mb-3">
                   <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -375,28 +389,57 @@
             </ol>
           </div>
 
-          <div class="bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl p-6 border border-gray-200">
-            <h3 class="font-semibold text-gray-900 mb-3">✅ 안심하세요</h3>
-            <ul class="space-y-2 text-sm text-gray-700">
-              <li class="flex items-start gap-2">
-                <svg class="w-4 h-4 text-green-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          <!-- 안심 보증 박스 (당근마켓 스타일) -->
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-200 shadow-sm">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="flex-shrink-0 w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
+                <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
-                <span><strong>검증된 전문가</strong>만 활동해요</span>
-              </li>
-              <li class="flex items-start gap-2">
-                <svg class="w-4 h-4 text-green-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-                <span><strong>에스크로 안전 결제</strong>로 보호돼요</span>
-              </li>
-              <li class="flex items-start gap-2">
-                <svg class="w-4 h-4 text-green-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-                <span><strong>하자보수 보증</strong>이 포함돼 있어요</span>
-              </li>
-            </ul>
+              </div>
+              <div>
+                <h3 class="font-bold text-blue-900 text-lg">안심하고 의뢰하세요!</h3>
+                <p class="text-xs text-blue-700">3가지 보증으로 안전하게</p>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <div class="bg-white/70 rounded-xl p-4">
+                <div class="flex items-start gap-3">
+                  <div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <span class="text-lg">💯</span>
+                  </div>
+                  <div class="flex-1">
+                    <p class="font-bold text-gray-900 text-sm mb-1">온전 시 0원</p>
+                    <p class="text-xs text-gray-600">원인을 찾지 못하면 출장비를 받지 않습니다.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-white/70 rounded-xl p-4">
+                <div class="flex items-start gap-3">
+                  <div class="flex-shrink-0 w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                    <span class="text-lg">🔒</span>
+                  </div>
+                  <div class="flex-1">
+                    <p class="font-bold text-gray-900 text-sm mb-1">안전 결제</p>
+                    <p class="text-xs text-gray-600">수리가 완료된 후에 대금이 전문가에게 전달됩니다.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-white/70 rounded-xl p-4">
+                <div class="flex items-start gap-3">
+                  <div class="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <span class="text-lg">🛡️</span>
+                  </div>
+                  <div class="flex-1">
+                    <p class="font-bold text-gray-900 text-sm mb-1">2년 무상 AS 보증</p>
+                    <p class="text-xs text-gray-600">작업 후 하자가 발생하면 무상으로 재시공해드립니다.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="p-4 bg-yellow-50 rounded-xl border border-yellow-200">
@@ -430,13 +473,18 @@
                 data-insurance-step-target="submitBtn"
                 data-button-loading-target="button"
                 data-button-loading-loading-text-value="매칭하는 중..."
-                class="hidden ml-auto px-8 py-4 rounded-xl font-bold text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl inline-flex items-center gap-2">
+                class="hidden w-full px-8 py-5 rounded-2xl font-bold text-white text-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 transition-all shadow-xl hover:shadow-2xl inline-flex items-center justify-center gap-2">
           <span data-button-loading-target="spinner" class="btn-spinner hidden"></span>
-          <span data-button-loading-target="text">🚀 전문가 매칭받기</span>
+          <span data-button-loading-target="text">주변 전문가에게 요청하기</span>
         </button>
       </div>
 
-      <p class="text-xs text-center text-gray-500 mt-4">평균 2시간 이내에 전문가가 배정돼요</p>
+      <p class="text-sm text-center text-gray-600 mt-4 flex items-center justify-center gap-2">
+        <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+        </svg>
+        평균 2시간 이내에 전문가가 배정돼요
+      </p>
     <% end %>
   </div>
 </div>

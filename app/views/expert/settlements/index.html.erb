@@ -5,7 +5,7 @@
       <h1 class="text-2xl font-bold text-gray-900">정산 내역</h1>
       <p class="text-gray-600 mt-1">에스크로 수령 및 정산 현황을 확인하세요</p>
     </div>
-    <%= link_to expert_dashboard_path, class: "text-sm text-blue-600 hover:text-blue-800 flex items-center" do %>
+    <%= link_to expert_dashboard_path, class: "text-sm text-primary-600 hover:text-primary-800 flex items-center" do %>
       <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
       </svg>
@@ -23,7 +23,7 @@
 
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
       <p class="text-sm font-medium text-gray-500 mb-2">지급 예정</p>
-      <p class="text-xl font-bold text-blue-600"><%= number_to_currency(@total_released, unit: "₩", precision: 0) %></p>
+      <p class="text-xl font-bold text-primary-600"><%= number_to_currency(@total_released, unit: "₩", precision: 0) %></p>
       <p class="text-xs text-gray-400 mt-1">미수령 금액</p>
     </div>
 
@@ -55,7 +55,7 @@
     %>
     <% tabs.each do |tab| %>
       <%= link_to expert_settlements_path(status: tab[:value]),
-            class: "flex-1 text-center text-sm font-medium py-2 px-3 rounded-lg transition-colors #{current_status == tab[:value].to_s ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}" do %>
+            class: "flex-1 text-center text-sm font-medium py-2 px-3 rounded-lg transition-colors #{current_status == tab[:value].to_s ? 'bg-primary-600 text-white' : 'text-gray-600 hover:bg-gray-100'}" do %>
         <%= tab[:label] %>
       <% end %>
     <% end %>
@@ -89,7 +89,7 @@
               <%
                 status_badge = case escrow.status
                   when "pending"   then "bg-gray-100 text-gray-700"
-                  when "deposited" then "bg-blue-100 text-blue-700"
+                  when "deposited" then "bg-primary-100 text-primary-700"
                   when "held"      then "bg-yellow-100 text-yellow-700"
                   when "released"  then "bg-indigo-100 text-indigo-700"
                   when "settled"   then "bg-green-100 text-green-700"
@@ -103,7 +103,7 @@
                 <td class="px-6 py-4 text-sm">
                   <%= link_to "##{escrow.request_id} #{symptom_label(escrow.request.symptom_type) rescue ''}",
                         masters_request_path(escrow.request),
-                        class: "text-blue-600 hover:text-blue-800 font-medium" %>
+                        class: "text-primary-600 hover:text-primary-800 font-medium" %>
                   <p class="text-xs text-gray-400 mt-0.5"><%= escrow.request.address.truncate(30) rescue '' %></p>
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-700">

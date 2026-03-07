@@ -3,7 +3,7 @@
   <div class="flex items-center justify-between mb-4">
     <h1 class="text-xl font-bold text-gray-900"><%= current_user.name %></h1>
     <%= link_to open_orders_masters_requests_path,
-          class: "inline-flex items-center px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors" do %>
+          class: "inline-flex items-center px-3 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors" do %>
       공개 오더
       <% if @open_orders_count > 0 %>
         <span class="ml-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full"><%= @open_orders_count %></span>
@@ -12,16 +12,16 @@
   </div>
 
   <!-- 이번 달 누적 수익금 (당근마켓 스타일) -->
-  <div class="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 rounded-3xl p-8 shadow-2xl mb-6">
+  <div class="bg-gradient-to-br from-primary-600 via-primary-700 to-indigo-700 rounded-3xl p-8 shadow-2xl mb-6">
     <div class="text-white">
-      <p class="text-sm font-medium text-blue-100 mb-2">이번 달 누적 수익금</p>
+      <p class="text-sm font-medium text-primary-100 mb-2">이번 달 누적 수익금</p>
       <p class="text-4xl font-extrabold mb-4"><%= number_to_currency(@monthly_settled, unit: "", precision: 0) %> <span class="text-2xl font-bold">원</span></p>
       <div class="flex items-center gap-4 text-sm">
         <div class="flex items-center gap-2">
           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
           </svg>
-          <span class="text-blue-100">완료 <%= @monthly_completed %>건</span>
+          <span class="text-primary-100">완료 <%= @monthly_completed %>건</span>
         </div>
         <% if @pending_payout > 0 %>
           <div class="flex items-center gap-2">
@@ -40,7 +40,7 @@
   <div class="grid grid-cols-3 gap-4">
     <div class="bg-white rounded-2xl shadow-sm border-2 border-gray-100 p-5 text-center">
       <p class="text-sm font-semibold text-gray-600 mb-2">진행중 오더</p>
-      <p class="text-3xl font-extrabold text-blue-600"><%= @active_requests.size %></p>
+      <p class="text-3xl font-extrabold text-primary-600"><%= @active_requests.size %></p>
       <p class="text-xs text-gray-500 mt-1">건</p>
     </div>
 
@@ -72,7 +72,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold text-gray-900">진행 중인 오더</h2>
-        <%= link_to "전체 보기", masters_requests_path, class: "text-sm text-blue-600 hover:text-blue-800" %>
+        <%= link_to "전체 보기", masters_requests_path, class: "text-sm text-primary-600 hover:text-primary-800" %>
       </div>
 
       <% if @active_requests.empty? %>
@@ -81,26 +81,26 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
           </svg>
           <p class="text-gray-500 text-sm">진행 중인 오더가 없습니다</p>
-          <%= link_to "공개 오더 보기", open_orders_masters_requests_path, class: "mt-2 inline-block text-blue-600 text-sm hover:underline" %>
+          <%= link_to "공개 오더 보기", open_orders_masters_requests_path, class: "mt-2 inline-block text-primary-600 text-sm hover:underline" %>
         </div>
       <% else %>
         <div class="space-y-3">
           <% @active_requests.each do |req| %>
             <%
               status_colors = {
-                "assigned" => "bg-blue-100 text-blue-700",
+                "assigned" => "bg-primary-100 text-primary-700",
                 "visiting" => "bg-indigo-100 text-indigo-700",
                 "detecting" => "bg-purple-100 text-purple-700",
                 "estimate_pending" => "bg-yellow-100 text-yellow-700",
                 "estimate_submitted" => "bg-orange-100 text-orange-700",
                 "construction_agreed" => "bg-teal-100 text-teal-700",
                 "escrow_deposited" => "bg-cyan-100 text-cyan-700",
-                "constructing" => "bg-blue-100 text-blue-700",
+                "constructing" => "bg-primary-100 text-primary-700",
                 "construction_completed" => "bg-green-100 text-green-700"
               }
               badge_class = status_colors[req.status] || "bg-gray-100 text-gray-700"
             %>
-            <%= link_to masters_request_path(req), class: "block p-4 rounded-lg border border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-colors" do %>
+            <%= link_to masters_request_path(req), class: "block p-4 rounded-lg border border-gray-100 hover:border-primary-200 hover:bg-primary-50 transition-colors" do %>
               <div class="flex items-center justify-between mb-1">
                 <span class="font-medium text-gray-900 text-sm">#<%= req.id %> <%= symptom_label(req.symptom_type) %></span>
                 <span class="text-xs font-medium px-2 py-0.5 rounded-full <%= badge_class %>">
@@ -121,7 +121,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold text-gray-900">최근 완료 작업</h2>
-        <%= link_to "정산 내역", expert_settlements_path, class: "text-sm text-blue-600 hover:text-blue-800" %>
+        <%= link_to "정산 내역", expert_settlements_path, class: "text-sm text-primary-600 hover:text-primary-800" %>
       </div>
 
       <% if @recent_completed.empty? %>
@@ -160,7 +160,7 @@
   </div>
 
   <!-- 빠른 링크 -->
-  <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white">
+  <div class="bg-gradient-to-r from-primary-600 to-indigo-600 rounded-xl p-6 text-white">
     <h2 class="text-lg font-semibold mb-4">빠른 메뉴</h2>
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
       <%= link_to open_orders_masters_requests_path, class: "flex flex-col items-center p-3 bg-white/10 rounded-lg hover:bg-white/20 transition-colors" do %>

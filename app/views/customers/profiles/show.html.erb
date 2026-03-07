@@ -14,7 +14,7 @@
   <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-6">
     <!-- 프로필 정보 표시 -->
     <div class="flex items-center gap-4">
-      <div class="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center flex-shrink-0">
+      <div class="w-16 h-16 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center flex-shrink-0">
         <span class="text-white font-bold text-2xl"><%= @customer.name&.first || "고" %></span>
       </div>
       <div>
@@ -59,7 +59,7 @@
   <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
       <p class="text-sm text-gray-500 mb-1">누수 체크 접수</p>
-      <p class="text-2xl font-bold text-blue-600"><%= @customer.requests.count %>건</p>
+      <p class="text-2xl font-bold text-primary-600"><%= @customer.requests.count %>건</p>
     </div>
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
       <p class="text-sm text-gray-500 mb-1">완료된 작업</p>

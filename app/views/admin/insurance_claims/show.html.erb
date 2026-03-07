@@ -1,7 +1,7 @@
 <div class="max-w-3xl mx-auto">
   <div class="flex justify-between items-center mb-6">
     <div>
-      <%= link_to admin_insurance_claims_path, class: "text-sm text-blue-600 hover:text-blue-800 flex items-center mb-2" do %>
+      <%= link_to admin_insurance_claims_path, class: "text-sm text-primary-600 hover:text-primary-800 flex items-center mb-2" do %>
         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
@@ -13,7 +13,7 @@
     <span class="px-4 py-2 rounded-full text-sm font-semibold
       <%= case @insurance_claim.status
           when 'draft' then 'bg-gray-100 text-gray-700'
-          when 'submitted' then 'bg-blue-100 text-blue-700'
+          when 'submitted' then 'bg-primary-100 text-primary-700'
           when 'under_review' then 'bg-yellow-100 text-yellow-700'
           when 'approved' then 'bg-green-100 text-green-700'
           when 'rejected' then 'bg-red-100 text-red-700'
@@ -119,7 +119,7 @@
             <span class="ml-2 text-gray-700"><%= @insurance_claim.request.address.truncate(30) %></span>
           </span>
           <%= link_to "상세보기", admin_request_path(@insurance_claim.request),
-                class: "text-sm text-blue-600 hover:text-blue-800" %>
+                class: "text-sm text-primary-600 hover:text-primary-800" %>
         </div>
       </div>
     <% end %>

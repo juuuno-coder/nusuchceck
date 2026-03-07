@@ -9,8 +9,8 @@
     <!-- 전체 신고 -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 card-hover">
       <div class="flex items-center">
-        <div class="flex-shrink-0 bg-blue-100 rounded-lg p-3">
-          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <div class="flex-shrink-0 bg-primary-100 rounded-lg p-3">
+          <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
           </svg>
         </div>
@@ -54,8 +54,8 @@
     <!-- 인증 마스터 -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 card-hover">
       <div class="flex items-center">
-        <div class="flex-shrink-0 bg-emerald-100 rounded-lg p-3">
-          <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <div class="flex-shrink-0 bg-primary-100 rounded-lg p-3">
+          <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
           </svg>
         </div>
@@ -171,7 +171,7 @@
             <span class="font-medium"><%= @total_masters > 0 ? (@verified_masters * 100.0 / @total_masters).round(1) : 0 %>%</span>
           </div>
           <div class="w-full bg-gray-100 rounded-full h-2">
-            <div class="bg-blue-500 h-2 rounded-full" style="width: <%= @total_masters > 0 ? (@verified_masters * 100.0 / @total_masters).round(1) : 0 %>%"></div>
+            <div class="bg-primary-500 h-2 rounded-full" style="width: <%= @total_masters > 0 ? (@verified_masters * 100.0 / @total_masters).round(1) : 0 %>%"></div>
           </div>
         </div>
         <div class="pt-2 border-t border-gray-100 grid grid-cols-2 gap-3 text-center">
@@ -180,7 +180,7 @@
             <p class="text-xs text-gray-500">완료 건</p>
           </div>
           <div>
-            <p class="text-2xl font-bold text-blue-600"><%= @active_requests %></p>
+            <p class="text-2xl font-bold text-primary-600"><%= @active_requests %></p>
             <p class="text-xs text-gray-500">진행 중</p>
           </div>
         </div>
@@ -249,7 +249,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-100">
       <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
         <h2 class="text-lg font-semibold text-gray-900">📋 최근 신고</h2>
-        <%= link_to "전체 보기", admin_requests_path, class: "text-sm text-blue-600 hover:text-blue-800 transition-smooth" %>
+        <%= link_to "전체 보기", admin_requests_path, class: "text-sm text-primary-600 hover:text-primary-800 transition-smooth" %>
       </div>
       <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200" aria-label="최근 신고">
@@ -265,7 +265,7 @@
             <% @recent_requests.each do |request| %>
               <tr class="hover:bg-gray-50 transition-smooth">
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <%= link_to "##{request.id}", admin_request_path(request), class: "text-blue-600 hover:text-blue-800 font-mono text-sm" %>
+                  <%= link_to "##{request.id}", admin_request_path(request), class: "text-primary-600 hover:text-primary-800 font-mono text-sm" %>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%= truncate(request.customer&.name || "-", length: 10) %></td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><%= symptom_label(request.symptom_type) %></td>
@@ -281,7 +281,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-100">
       <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
         <h2 class="text-lg font-semibold text-gray-900">💼 최근 보험청구</h2>
-        <%= link_to "전체 보기", admin_insurance_claims_path, class: "text-sm text-blue-600 hover:text-blue-800 transition-smooth" %>
+        <%= link_to "전체 보기", admin_insurance_claims_path, class: "text-sm text-primary-600 hover:text-primary-800 transition-smooth" %>
       </div>
       <div class="p-6">
         <% if @recent_insurance_claims.any? %>
@@ -290,7 +290,7 @@
               <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-smooth">
                 <div class="flex-1">
                   <%= link_to admin_insurance_claim_path(claim), class: "block" do %>
-                    <p class="font-mono text-sm text-blue-600 hover:text-blue-800"><%= claim.claim_number %></p>
+                    <p class="font-mono text-sm text-primary-600 hover:text-primary-800"><%= claim.claim_number %></p>
                     <p class="text-xs text-gray-600 mt-1"><%= truncate(claim.applicant_name, length: 15) %> • <%= truncate(claim.incident_address, length: 20) %></p>
                   <% end %>
                 </div>
@@ -298,7 +298,7 @@
                   <span class="px-2.5 py-1 rounded-full text-xs font-medium
                     <%= case claim.status
                         when 'draft', 'pending_customer_review' then 'bg-yellow-100 text-yellow-800'
-                        when 'submitted', 'under_review' then 'bg-blue-100 text-blue-800'
+                        when 'submitted', 'under_review' then 'bg-primary-100 text-primary-800'
                         when 'approved' then 'bg-green-100 text-green-800'
                         when 'rejected' then 'bg-red-100 text-red-800'
                         else 'bg-gray-100 text-gray-800'

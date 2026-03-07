@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50" data-controller="insurance-step" data-insurance-step-total-steps-value="5">
+<div class="min-h-screen bg-gradient-to-br from-primary-50 via-white to-indigo-50" data-controller="insurance-step" data-insurance-step-total-steps-value="5">
   <!-- 상단 헤더 -->
   <div class="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
     <div class="max-w-2xl mx-auto px-4 py-4">
@@ -26,7 +26,7 @@
           <span class="text-xs text-gray-500">3분이면 끝나요</span>
         </div>
         <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div data-insurance-step-target="progressBar" class="h-full bg-gradient-to-r from-blue-600 to-indigo-600 progress-bar-animate" style="width: 20%"></div>
+          <div data-insurance-step-target="progressBar" class="h-full bg-gradient-to-r from-primary-600 to-indigo-600 progress-bar-animate" style="width: 20%"></div>
         </div>
       </div>
     </div>
@@ -36,8 +36,8 @@
   <div class="max-w-2xl mx-auto px-4 py-8">
     <!-- 인사말 -->
     <div class="text-center mb-8 fade-in">
-      <div class="inline-block p-3 bg-blue-100 rounded-2xl mb-4">
-        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="inline-block p-3 bg-primary-100 rounded-2xl mb-4">
+        <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
         </svg>
       </div>
@@ -80,10 +80,10 @@
       <div class="flex justify-between mb-8">
         <% ["증상", "위치", "상황", "자료", "확인"].each_with_index do |label, index| %>
           <div class="flex flex-col items-center cursor-pointer" data-step-indicator data-step="<%= index + 1 %>" data-action="click->insurance-step#goToStep">
-            <div class="step-circle w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold mb-1 <%= index == 0 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600' %>">
+            <div class="step-circle w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold mb-1 <%= index == 0 ? 'bg-primary-600 text-white' : 'bg-gray-300 text-gray-600' %>">
               <%= index + 1 %>
             </div>
-            <span class="step-label text-xs text-center <%= index == 0 ? 'text-blue-600 font-semibold' : 'text-gray-600' %>"><%= label %></span>
+            <span class="step-label text-xs text-center <%= index == 0 ? 'text-primary-600 font-semibold' : 'text-gray-600' %>"><%= label %></span>
           </div>
         <% end %>
       </div>
@@ -111,7 +111,7 @@
                   {},
                   required: true,
                   data: { action: "input->insurance-step#validateInput" },
-                  class: "w-full px-4 py-4 text-lg border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" %>
+                  class: "w-full px-4 py-4 text-lg border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition" %>
           </div>
 
           <div>
@@ -131,7 +131,7 @@
                   {},
                   required: true,
                   data: { action: "input->insurance-step#validateInput" },
-                  class: "w-full px-4 py-4 text-lg border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" %>
+                  class: "w-full px-4 py-4 text-lg border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition" %>
           </div>
         </div>
       </div>
@@ -157,11 +157,11 @@
                       action: "input->insurance-step#validateInput",
                       address_search_target: "address"
                     },
-                    class: "flex-1 px-4 py-4 text-lg border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-gray-50" %>
+                    class: "flex-1 px-4 py-4 text-lg border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition bg-gray-50" %>
 
               <button type="button"
                       data-action="click->address-search#open"
-                      class="px-6 py-4 rounded-xl font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2 whitespace-nowrap">
+                      class="px-6 py-4 rounded-xl font-bold text-white bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2 whitespace-nowrap">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
@@ -169,9 +169,9 @@
               </button>
             </div>
 
-            <div class="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-              <p class="text-xs text-blue-900 flex items-start gap-2">
-                <svg class="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <div class="mt-3 p-3 bg-primary-50 rounded-lg border border-primary-200">
+              <p class="text-xs text-primary-900 flex items-start gap-2">
+                <svg class="w-4 h-4 text-primary-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                 </svg>
                 <span><strong>정확한 주소</strong>를 입력하면 전문가가 빠르게 찾아갈 수 있어요. 주소 검색으로 오타 없이 입력하세요!</span>
@@ -185,7 +185,7 @@
             <%= f.text_field :detailed_address,
                   placeholder: "101동 502호",
                   data: { address_search_target: "detailedAddress" },
-                  class: "w-full px-4 py-4 text-lg border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" %>
+                  class: "w-full px-4 py-4 text-lg border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition" %>
             <p class="text-xs text-gray-500 mt-2">정확할수록 빠르게 찾아갈 수 있어요</p>
           </div>
 
@@ -194,7 +194,7 @@
             <%= f.label :floor, "층수 (선택)", class: "block text-sm font-semibold text-gray-900 mb-2" %>
             <%= f.text_field :floor,
                   placeholder: "5층",
-                  class: "w-full px-4 py-4 text-lg border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" %>
+                  class: "w-full px-4 py-4 text-lg border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition" %>
             <p class="text-xs text-gray-500 mt-2">층수 정보가 있으면 원인 파악에 도움이 돼요</p>
           </div>
         </div>
@@ -213,7 +213,7 @@
             <%= f.text_area :description,
                   rows: 6,
                   placeholder: "예시:\n일주일 전부터 천장에 물방울이 떨어지기 시작했어요.\n처음에는 조금씩이었는데 점점 심해지고 있습니다.\n아직 벽지가 들뜨지는 않았지만 천장에 물자국이 생겼어요.",
-                  class: "w-full px-4 py-4 text-base border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition resize-none" %>
+                  class: "w-full px-4 py-4 text-base border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition resize-none" %>
             <p class="text-xs text-gray-500 mt-2">💡 언제부터, 얼마나 심한지 알려주세요</p>
           </div>
 
@@ -221,7 +221,7 @@
             <%= f.label :preferred_date, "방문 희망 일시 (선택)", class: "block text-sm font-semibold text-gray-900 mb-2" %>
             <%= f.datetime_local_field :preferred_date,
                   min: DateTime.now.strftime("%Y-%m-%dT%H:%M"),
-                  class: "w-full px-4 py-4 text-lg border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" %>
+                  class: "w-full px-4 py-4 text-lg border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition" %>
             <p class="text-xs text-gray-500 mt-2">급하시면 빈칸으로 두셔도 돼요. 최대한 빨리 연락드릴게요</p>
           </div>
         </div>
@@ -240,35 +240,35 @@
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-2">
                 <%= f.label :videos, "영상 업로드", class: "block text-base font-bold text-gray-900" %>
-                <span class="px-3 py-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold rounded-full shadow-md animate-pulse">✨ 가장 중요!</span>
+                <span class="px-3 py-1 bg-gradient-to-r from-primary-600 to-indigo-600 text-white text-xs font-bold rounded-full shadow-md animate-pulse">✨ 가장 중요!</span>
               </div>
               <span data-file-counter-target="videoCount" class="text-sm text-gray-400">0/10</span>
             </div>
 
-            <div class="mb-4 p-5 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border-2 border-blue-300 rounded-2xl shadow-sm">
+            <div class="mb-4 p-5 bg-gradient-to-br from-primary-50 via-indigo-50 to-purple-50 border-2 border-primary-300 rounded-2xl shadow-sm">
               <div class="flex items-start gap-3">
-                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
+                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-primary-600 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
                   <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"/>
                   </svg>
                 </div>
                 <div class="flex-1">
-                  <p class="font-bold text-blue-900 text-base mb-1.5">
+                  <p class="font-bold text-primary-900 text-base mb-1.5">
                     📹 영상이 사진보다 10배 더 정확해요!
                   </p>
-                  <p class="text-blue-800 text-sm leading-relaxed mb-2">
+                  <p class="text-primary-800 text-sm leading-relaxed mb-2">
                     10초 이상의 영상으로 누수 상황을 보여주시면 전문가가 <strong>현장 방문 전에도 정확한 진단</strong>이 가능합니다.
                   </p>
                   <div class="flex flex-wrap gap-1.5">
-                    <span class="px-2 py-1 bg-white/70 text-blue-800 text-xs font-medium rounded-full">✓ 빠른 진단</span>
-                    <span class="px-2 py-1 bg-white/70 text-blue-800 text-xs font-medium rounded-full">✓ 정확한 견적</span>
-                    <span class="px-2 py-1 bg-white/70 text-blue-800 text-xs font-medium rounded-full">✓ 출장비 절약</span>
+                    <span class="px-2 py-1 bg-white/70 text-primary-800 text-xs font-medium rounded-full">✓ 빠른 진단</span>
+                    <span class="px-2 py-1 bg-white/70 text-primary-800 text-xs font-medium rounded-full">✓ 정확한 견적</span>
+                    <span class="px-2 py-1 bg-white/70 text-primary-800 text-xs font-medium rounded-full">✓ 출장비 절약</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="border-3 border-dashed border-blue-400 rounded-2xl p-10 text-center hover:border-blue-600 hover:bg-blue-50/50 bg-gradient-to-br from-blue-50/50 to-indigo-50/30 transition-all cursor-pointer shadow-sm hover:shadow-md">
+            <div class="border-3 border-dashed border-primary-400 rounded-2xl p-10 text-center hover:border-primary-600 hover:bg-primary-50/50 bg-gradient-to-br from-primary-50/50 to-indigo-50/30 transition-all cursor-pointer shadow-sm hover:shadow-md">
               <%= f.file_field :videos,
                     multiple: true,
                     accept: "video/mp4,video/quicktime,video/avi,video/webm,video/3gpp",
@@ -279,14 +279,14 @@
                       action: "change->file-counter#updateVideoCounts"
                     } %>
               <label for="video-upload" class="cursor-pointer">
-                <div class="inline-block p-5 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl mb-4 shadow-md">
+                <div class="inline-block p-5 bg-gradient-to-br from-primary-600 to-indigo-600 rounded-2xl mb-4 shadow-md">
                   <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"/>
                   </svg>
                 </div>
                 <p class="text-xl font-bold text-gray-900 mb-2">📱 스마트폰으로 촬영해서 올려주세요</p>
-                <p class="text-base text-blue-700 font-semibold mb-1">MP4, MOV, WebM 등 모든 영상 형식 지원</p>
-                <p class="text-sm text-gray-600"><strong class="text-blue-600">최대 2GB까지</strong> 업로드 가능 · 10초 이상 권장</p>
+                <p class="text-base text-primary-700 font-semibold mb-1">MP4, MOV, WebM 등 모든 영상 형식 지원</p>
+                <p class="text-sm text-gray-600"><strong class="text-primary-600">최대 2GB까지</strong> 업로드 가능 · 10초 이상 권장</p>
               </label>
             </div>
 
@@ -297,19 +297,19 @@
               </p>
               <ul class="space-y-1.5 text-sm text-gray-700">
                 <li class="flex items-start gap-2">
-                  <span class="text-blue-600 font-bold">1.</span>
+                  <span class="text-primary-600 font-bold">1.</span>
                   <span><strong>10초 이상</strong> 연속으로 촬영해주세요 (중간에 멈추지 마세요)</span>
                 </li>
                 <li class="flex items-start gap-2">
-                  <span class="text-blue-600 font-bold">2.</span>
+                  <span class="text-primary-600 font-bold">2.</span>
                   <span>누수 부위를 <strong>천천히 클로즈업</strong>하세요</span>
                 </li>
                 <li class="flex items-start gap-2">
-                  <span class="text-blue-600 font-bold">3.</span>
+                  <span class="text-primary-600 font-bold">3.</span>
                   <span>주변 환경(천장, 벽, 바닥)도 함께 보여주세요</span>
                 </li>
                 <li class="flex items-start gap-2">
-                  <span class="text-blue-600 font-bold">4.</span>
+                  <span class="text-primary-600 font-bold">4.</span>
                   <span><strong>물 떨어지는 소리</strong>도 함께 녹음되면 더욱 좋아요</span>
                 </li>
               </ul>
@@ -364,49 +364,49 @@
         </div>
 
         <div class="space-y-4">
-          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+          <div class="bg-gradient-to-br from-primary-50 to-indigo-50 rounded-2xl p-6 border border-primary-100">
             <h3 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
               <span class="text-xl">⚡</span>
               이렇게 빠르게 진행돼요
             </h3>
             <ol class="space-y-2 text-sm text-gray-700">
               <li class="flex gap-2">
-                <span class="font-bold text-blue-600">1.</span>
+                <span class="font-bold text-primary-600">1.</span>
                 <span>접수하시면 <strong>즉시 전문가 매칭</strong></span>
               </li>
               <li class="flex gap-2">
-                <span class="font-bold text-blue-600">2.</span>
+                <span class="font-bold text-primary-600">2.</span>
                 <span>평균 <strong>2시간 이내 전문가 배정</strong></span>
               </li>
               <li class="flex gap-2">
-                <span class="font-bold text-blue-600">3.</span>
+                <span class="font-bold text-primary-600">3.</span>
                 <span><strong>24시간 이내 현장 방문</strong> 가능</span>
               </li>
               <li class="flex gap-2">
-                <span class="font-bold text-blue-600">4.</span>
+                <span class="font-bold text-primary-600">4.</span>
                 <span>정밀 진단 후 <strong>투명한 견적</strong> 제공</span>
               </li>
             </ol>
           </div>
 
           <!-- 안심 보증 박스 (당근마켓 스타일) -->
-          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-200 shadow-sm">
+          <div class="bg-gradient-to-br from-primary-50 to-indigo-50 rounded-2xl p-6 border-2 border-primary-200 shadow-sm">
             <div class="flex items-center gap-3 mb-4">
-              <div class="flex-shrink-0 w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
+              <div class="flex-shrink-0 w-12 h-12 bg-primary-600 rounded-xl flex items-center justify-center">
                 <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
               </div>
               <div>
-                <h3 class="font-bold text-blue-900 text-lg">안심하고 의뢰하세요!</h3>
-                <p class="text-xs text-blue-700">3가지 보증으로 안전하게</p>
+                <h3 class="font-bold text-primary-900 text-lg">안심하고 의뢰하세요!</h3>
+                <p class="text-xs text-primary-700">3가지 보증으로 안전하게</p>
               </div>
             </div>
 
             <div class="space-y-3">
               <div class="bg-white/70 rounded-xl p-4">
                 <div class="flex items-start gap-3">
-                  <div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <div class="flex-shrink-0 w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center">
                     <span class="text-lg">💯</span>
                   </div>
                   <div class="flex-1">
@@ -465,7 +465,7 @@
         <button type="button"
                 data-insurance-step-target="nextBtn"
                 data-action="click->insurance-step#next"
-                class="ml-auto px-8 py-4 rounded-xl font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl">
+                class="ml-auto px-8 py-4 rounded-xl font-bold text-white bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl">
           다음 →
         </button>
 
@@ -473,14 +473,14 @@
                 data-insurance-step-target="submitBtn"
                 data-button-loading-target="button"
                 data-button-loading-loading-text-value="매칭하는 중..."
-                class="hidden w-full px-8 py-5 rounded-2xl font-bold text-white text-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 transition-all shadow-xl hover:shadow-2xl inline-flex items-center justify-center gap-2">
+                class="hidden w-full px-8 py-5 rounded-2xl font-bold text-white text-lg bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 transition-all shadow-xl hover:shadow-2xl inline-flex items-center justify-center gap-2">
           <span data-button-loading-target="spinner" class="btn-spinner hidden"></span>
           <span data-button-loading-target="text">주변 전문가에게 요청하기</span>
         </button>
       </div>
 
       <p class="text-sm text-center text-gray-600 mt-4 flex items-center justify-center gap-2">
-        <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+        <svg class="w-4 h-4 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
         </svg>
         평균 2시간 이내에 전문가가 배정돼요

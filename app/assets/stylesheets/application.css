@@ -442,3 +442,19 @@ turbo-frame[busy]::after {
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+/* ===== Native App 전용 스타일 ===== */
+.native-app {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.native-app main {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
+}
+
+.native-app img,
+.native-app a {
+  -webkit-touch-callout: none;
+}

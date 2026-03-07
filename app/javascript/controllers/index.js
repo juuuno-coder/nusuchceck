@@ -11,6 +11,7 @@ import ToggleController from "./toggle_controller"
 import BottomSheetController from "./bottom_sheet_controller"
 import TabController from "./tab_controller"
 import ScrollRevealController from "./scroll_reveal_controller"
+import NativeBridgeController from "./native_bridge_controller"
 
 application.register("estimate-items", EstimateItemsController)
 application.register("dismissible", DismissibleController)
@@ -24,3 +25,4 @@ application.register("toggle", ToggleController)
 application.register("bottom-sheet", BottomSheetController)
 application.register("tab", TabController)
 application.register("scroll-reveal", ScrollRevealController)
+application.register("native-bridge", NativeBridgeController)

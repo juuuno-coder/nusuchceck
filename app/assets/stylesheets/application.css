@@ -616,15 +616,17 @@ body {
   letter-spacing: -0.3px;
 }
 
-/* 진행 바 그라디언트 + 펄스 */
+/* 진행 바 그라디언트 + 펄스 (시인성 강화) */
 @keyframes progressPulse {
   0%, 100% {
-    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5),
-                0 0 30px rgba(168, 85, 247, 0.3);
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.6),
+                0 0 35px rgba(168, 85, 247, 0.4),
+                0 2px 8px rgba(59, 130, 246, 0.3);
   }
   50% {
-    box-shadow: 0 0 25px rgba(168, 85, 247, 0.7),
-                0 0 45px rgba(59, 130, 246, 0.5);
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.8),
+                0 0 50px rgba(59, 130, 246, 0.6),
+                0 4px 12px rgba(168, 85, 247, 0.4);
   }
 }
 
@@ -657,10 +659,17 @@ body {
   transform: scale(0.98);
 }
 
-/* 선택된 버튼 강조 */
-.option-btn.selected {
-  transform: scale(1.05);
-  box-shadow: 0 10px 40px -10px currentColor;
+/* 선택된 버튼 강조 (시인성 개선) */
+.option-btn.selected,
+.select-button.selected {
+  transform: scale(1.05) !important;
+  box-shadow: 0 15px 50px -10px currentColor, 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+  border-width: 3px !important;
+}
+
+.select-button {
+  cursor: pointer;
+  user-select: none;
 }
 
 /* 아이콘 서클 호버 효과 */
@@ -683,9 +692,15 @@ body {
   100% { transform: scale(1.1) rotate(0deg); }
 }
 
-/* 체크 아이콘 등장 애니메이션 */
-.check-icon {
+/* 체크 아이콘 등장 애니메이션 (select-check 클래스도 포함) */
+.check-icon,
+.select-check {
   animation: checkAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* 선택된 상태의 체크 표시 */
+.select-button.selected .select-check {
+  display: block !important;
 }
 
 @keyframes checkAppear {

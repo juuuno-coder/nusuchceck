@@ -10,9 +10,9 @@ Rails.application.routes.draw do
 
   # === 멀티 테넌시 서브도메인 라우팅 ===
 
-  # app.nusucheck.com → 고객 앱 진입점
+  # app.nusucheck.com → 고객 앱 진입점 (비로그인: 랜딩페이지, 로그인: 대시보드)
   constraints(SubdomainConstraint.new("app")) do
-    root to: "customers/requests#index", as: :app_subdomain_root
+    root to: "customers/pages#landing", as: :app_subdomain_root
   end
 
   # admin.nusucheck.com → 관리자 앱 진입점

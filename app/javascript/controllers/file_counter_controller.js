@@ -121,9 +121,15 @@ export default class extends Controller {
     videoFiles.forEach(file => dataTransfer.items.add(file))
     this.videoInputTarget.files = dataTransfer.files
 
+    // 드래그 앤 드롭 플래그 설정
+    this.uploadedViaDragDrop = true
+
     // 카운터 업데이트 및 change 이벤트 발생
     this.updateVideoCounts()
     this.videoInputTarget.dispatchEvent(new Event('change', { bubbles: true }))
+
+    // Analytics: 드래그 앤 드롭 이벤트
+    this.trackVideoUpload(videoFiles, "drag_drop")
   }
 
   updateVideoCounts() {
@@ -143,10 +149,30 @@ export default class extends Controller {
 
       // 미리보기 생성
       this.showVideoPreviews()
+
+      // Analytics: 클릭 업로드 추적 (드래그 앤 드롭이 아닌 경우)
+      if (!this.uploadedViaDragDrop) {
+        this.trackVideoUpload(Array.from(this.videoInputTarget.files), "click")
+      }
+      this.uploadedViaDragDrop = false  // 리셋
     } else {
       this.videoCountTarget.textContent = ''
       this.hideVideoPreviews()
     }
+  }
+
+  // Analytics 이벤트 발생
+  trackVideoUpload(files, method) {
+    const totalSize = files.reduce((sum, file) => sum + file.size, 0)
+
+    this.element.dispatchEvent(new CustomEvent("analytics:video-uploaded", {
+      detail: {
+        fileCount: files.length,
+        totalSize: totalSize,
+        method: method
+      },
+      bubbles: true
+    }))
   }
 
   showVideoPreviews() {

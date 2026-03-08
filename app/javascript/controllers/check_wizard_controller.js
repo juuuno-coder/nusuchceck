@@ -133,6 +133,12 @@ export default class extends Controller {
     if (!this.validateCurrentStep()) return
 
     if (this.currentStepValue < this.totalStepsValue) {
+      // Analytics: 단계 완료 이벤트
+      this.element.dispatchEvent(new CustomEvent("analytics:step-completed", {
+        detail: { step: this.currentStepValue },
+        bubbles: true
+      }))
+
       this.currentStepValue++
       this.showStep(this.currentStepValue)
       this.updateProgress()

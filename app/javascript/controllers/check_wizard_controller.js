@@ -56,26 +56,22 @@ export default class extends Controller {
     const field = group.dataset.field
     const value = button.dataset.value
 
-    // 이전 선택 해제
+    // 이전 선택 해제 (체크마크 숨기기)
     group.querySelectorAll(".select-button").forEach(btn => {
       btn.classList.remove("border-primary-500", "bg-primary-50", "ring-2", "ring-primary-200")
       btn.classList.add("border-gray-200", "bg-white")
       const check = btn.querySelector(".select-check")
       if (check) {
-        check.classList.remove("bg-primary-500", "border-primary-500")
-        check.classList.add("border-gray-300")
-        check.innerHTML = ""
+        check.classList.add("hidden")
       }
     })
 
-    // 현재 선택 활성화
+    // 현재 선택 활성화 (체크마크 표시)
     button.classList.remove("border-gray-200", "bg-white")
     button.classList.add("border-primary-500", "bg-primary-50", "ring-2", "ring-primary-200")
     const check = button.querySelector(".select-check")
     if (check) {
-      check.classList.remove("border-gray-300")
-      check.classList.add("bg-primary-500", "border-primary-500")
-      check.innerHTML = '<svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>'
+      check.classList.remove("hidden")
     }
 
     // hidden field에 값 설정

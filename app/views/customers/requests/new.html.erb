@@ -58,7 +58,11 @@
                 <p class="font-semibold text-gray-900 text-[15px]"><%= title %></p>
                 <p class="text-sm text-gray-500 mt-0.5"><%= desc %></p>
               </div>
-              <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex-shrink-0 flex items-center justify-center transition-all select-check">
+              <!-- 선택 시에만 체크마크 표시 -->
+              <div class="w-6 h-6 rounded-full bg-primary-500 flex items-center justify-center transition-all select-check hidden">
+                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
               </div>
             </button>
           <% end %>
@@ -89,9 +93,15 @@
             ["other_building", "📦", "기타"]
           ].each do |value, icon, label| %>
             <button type="button"
-                    class="flex flex-col items-center gap-2 p-5 rounded-2xl border-2 border-gray-200 bg-white hover:border-primary-300 hover:bg-primary-50/30 transition-all duration-200 select-button"
+                    class="relative flex flex-col items-center gap-2 p-5 rounded-2xl border-2 border-gray-200 bg-white hover:border-primary-300 hover:bg-primary-50/30 transition-all duration-200 select-button"
                     data-action="click->check-wizard#selectOption"
                     data-value="<%= value %>">
+              <!-- 선택 시에만 체크마크 표시 -->
+              <div class="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary-500 flex items-center justify-center transition-all select-check hidden">
+                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+              </div>
               <span class="text-3xl"><%= icon %></span>
               <span class="text-sm font-medium text-gray-700"><%= label %></span>
             </button>

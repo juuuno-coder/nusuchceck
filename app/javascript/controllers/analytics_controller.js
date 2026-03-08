@@ -20,6 +20,7 @@ export default class extends Controller {
     // 커스텀 이벤트 리스너 등록
     this.element.addEventListener("analytics:step-completed", this.trackStepCompleted.bind(this))
     this.element.addEventListener("analytics:video-uploaded", this.trackVideoUpload.bind(this))
+    this.element.addEventListener("analytics:custom", this.trackCustomEvent.bind(this))
 
     // 폼 제출 이벤트 리스너
     const form = this.element.querySelector("form")
@@ -102,6 +103,16 @@ export default class extends Controller {
       },
       bubbles: true
     }))
+  }
+
+  // 커스텀 이벤트 추적 (업로드 진행률 등)
+  trackCustomEvent(event) {
+    const eventName = event.detail?.event_name
+    const params = event.detail?.params || {}
+
+    if (eventName) {
+      this.trackEvent(eventName, params)
+    }
   }
 
   // Google Analytics 이벤트 전송 (gtag.js)

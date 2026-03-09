@@ -10,7 +10,7 @@ class Coupon < ApplicationRecord
   scope :active, -> { where(active: true) }
   scope :valid, -> { where('valid_from <= ? AND valid_until >= ?', Time.current, Time.current) }
 
-  def valid?
+  def can_use?
     active? &&
       (valid_from.nil? || valid_from <= Time.current) &&
       (valid_until.nil? || valid_until >= Time.current) &&

@@ -1,4 +1,4 @@
-class AddAccountStatusToUsers < ActiveRecord::Migration[7.2]
+class AddAccountStatusToUsers < ActiveRecord::Migration[7.1]
   def change
     add_column :users, :account_status, :integer, default: 0, null: false
     add_column :users, :guest_token, :string

@@ -1,4 +1,4 @@
-class AddMetadataToMessages < ActiveRecord::Migration[7.2]
+class AddMetadataToMessages < ActiveRecord::Migration[7.1]
   def change
     add_column :messages, :message_category, :integer, default: 0, null: false
     add_column :messages, :metadata, :jsonb, default: {}

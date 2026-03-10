@@ -1,1 +1,29 @@
 @import "tailwindcss";
+
+@theme {
+  /* Primary color (Teal - main brand color) */
+  --color-primary-50: #f0fdfa;
+  --color-primary-100: #ccfbf1;
+  --color-primary-200: #99f6e4;
+  --color-primary-300: #5eead4;
+  --color-primary-400: #2dd4bf;
+  --color-primary-500: #14b8a6;
+  --color-primary-600: #0d9488;
+  --color-primary-700: #0f766e;
+  --color-primary-800: #115e59;
+  --color-primary-900: #134e4a;
+  --color-primary-950: #042f2e;
+
+  /* Carrot Orange (secondary brand color) */
+  --color-carrot-50: #fff7ed;
+  --color-carrot-100: #ffedd5;
+  --color-carrot-200: #fed7aa;
+  --color-carrot-300: #fdba74;
+  --color-carrot-400: #fb923c;
+  --color-carrot-500: #f97316;
+  --color-carrot-600: #ea580c;
+
+  /* Border radius extensions */
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+}

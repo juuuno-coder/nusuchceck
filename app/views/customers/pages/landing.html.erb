@@ -3,7 +3,7 @@
   <!-- 히어로 섹션 -->
   <div class="max-w-6xl mx-auto px-4 pt-20 pb-16">
     <!-- 메인 캐치프레이즈 -->
-    <div class="text-center mb-16">
+    <div class="text-center mb-16 animate-fade-in">
       <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary-100 rounded-full mb-6">
         <span class="w-2 h-2 bg-primary-600 rounded-full animate-pulse"></span>
         <span class="text-sm font-bold text-primary-700">AI 기반 누수 진단 플랫폼</span>
@@ -21,14 +21,15 @@
 
       <!-- CTA 버튼 -->
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-        <%= link_to new_user_registration_path, class: "w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-5 bg-gradient-to-r from-primary-600 to-purple-600 text-white rounded-2xl hover:shadow-2xl transition-all font-bold text-lg group" do %>
+        <%= link_to new_user_registration_path, class: "w-full sm:w-auto inline-flex items-center justify-center gap-3 px-10 py-6 bg-gradient-to-r from-primary-600 to-purple-600 text-white rounded-2xl hover:shadow-2xl transition-all font-bold text-xl group hover:scale-105 shadow-lg" do %>
           <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20">
             <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"/>
           </svg>
-          <span>지금 바로 시작하기</span>
+          <span>무료로 시작하기</span>
+          <span class="px-2 py-0.5 bg-white bg-opacity-20 rounded-full text-xs">30초 완료</span>
         <% end %>
 
-        <%= link_to new_user_session_path, class: "w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-5 bg-white text-gray-700 rounded-2xl hover:bg-gray-50 transition-all font-semibold text-lg border-2 border-gray-200" do %>
+        <%= link_to new_user_session_path, class: "w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-5 bg-white text-gray-700 rounded-2xl hover:bg-gray-50 transition-all font-semibold text-lg border-2 border-gray-200 hover:border-primary-300" do %>
           <span>이미 회원이에요</span>
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -36,64 +37,87 @@
         <% end %>
       </div>
 
-      <!-- 신뢰 지표 -->
-      <div class="flex flex-wrap items-center justify-center gap-8 text-sm text-gray-600">
-        <div class="flex items-center gap-2">
-          <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-          </svg>
-          <span class="font-semibold">평균 응답시간 2시간</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-          </svg>
-          <span class="font-semibold">고객 만족도 4.8/5.0</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <svg class="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-          </svg>
-          <span class="font-semibold">검증된 전문가 500+</span>
+      <!-- 신뢰 지표 (강화된 버전) -->
+      <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 inline-block">
+        <div class="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+          <div class="text-center">
+            <div class="flex items-center justify-center gap-1 mb-1">
+              <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+              </svg>
+              <span class="text-3xl font-extrabold text-gray-900">4.8</span>
+              <span class="text-gray-400 text-sm">/5.0</span>
+            </div>
+            <p class="text-xs text-gray-500 font-medium">고객 만족도</p>
+          </div>
+
+          <div class="hidden md:block w-px h-12 bg-gray-200"></div>
+
+          <div class="text-center">
+            <div class="flex items-center justify-center gap-1 mb-1">
+              <span class="text-3xl font-extrabold text-primary-600">500</span>
+              <span class="text-primary-600 text-xl font-bold">+</span>
+            </div>
+            <p class="text-xs text-gray-500 font-medium">검증된 전문가</p>
+          </div>
+
+          <div class="hidden md:block w-px h-12 bg-gray-200"></div>
+
+          <div class="text-center">
+            <div class="flex items-center justify-center gap-1 mb-1">
+              <span class="text-3xl font-extrabold text-green-600">2</span>
+              <span class="text-gray-400 text-sm">시간</span>
+            </div>
+            <p class="text-xs text-gray-500 font-medium">평균 응답시간</p>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- 프로세스 (토스 스타일 컬러풀 카드) -->
+    <!-- 프로세스 (통일된 그라디언트) -->
     <div class="grid md:grid-cols-3 gap-6 mb-20">
       <!-- Step 1 -->
-      <div class="group bg-gradient-to-br from-blue-50 to-blue-100 rounded-3xl p-8 border-2 border-blue-200 hover:shadow-2xl transition-all hover:-translate-y-2">
-        <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform">
+      <div class="group bg-gradient-to-br from-primary-50 to-purple-100 rounded-3xl p-8 border-2 border-primary-200 hover:shadow-2xl transition-all hover:-translate-y-2 duration-300">
+        <div class="w-16 h-16 bg-gradient-to-br from-primary-600 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
           <span class="text-3xl">📹</span>
         </div>
-        <h3 class="text-2xl font-bold text-gray-900 mb-3">1. 영상 촬영</h3>
+        <div class="flex items-center gap-2 mb-3">
+          <span class="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white font-bold text-sm">1</span>
+          <h3 class="text-2xl font-bold text-gray-900">영상 촬영</h3>
+        </div>
         <p class="text-gray-700 leading-relaxed">
-          누수 부위를 10초 이상 촬영하세요.<br/>
+          누수 부위를 <strong class="text-primary-600">10초 이상</strong> 촬영하세요.<br/>
           AI가 자동으로 분석해드려요.
         </p>
       </div>
 
       <!-- Step 2 -->
-      <div class="group bg-gradient-to-br from-purple-50 to-purple-100 rounded-3xl p-8 border-2 border-purple-200 hover:shadow-2xl transition-all hover:-translate-y-2">
-        <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform">
+      <div class="group bg-gradient-to-br from-primary-50 to-purple-100 rounded-3xl p-8 border-2 border-primary-200 hover:shadow-2xl transition-all hover:-translate-y-2 duration-300 md:mt-4">
+        <div class="w-16 h-16 bg-gradient-to-br from-primary-600 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
           <span class="text-3xl">🤖</span>
         </div>
-        <h3 class="text-2xl font-bold text-gray-900 mb-3">2. AI 진단</h3>
+        <div class="flex items-center gap-2 mb-3">
+          <span class="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white font-bold text-sm">2</span>
+          <h3 class="text-2xl font-bold text-gray-900">AI 진단</h3>
+        </div>
         <p class="text-gray-700 leading-relaxed">
-          24시간 내 검증된 전문가가<br/>
+          <strong class="text-primary-600">평균 2시간 내</strong> 검증된 전문가가<br/>
           정확한 견적을 제공해드려요.
         </p>
       </div>
 
       <!-- Step 3 -->
-      <div class="group bg-gradient-to-br from-pink-50 to-pink-100 rounded-3xl p-8 border-2 border-pink-200 hover:shadow-2xl transition-all hover:-translate-y-2">
-        <div class="w-16 h-16 bg-gradient-to-br from-pink-600 to-pink-700 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform">
+      <div class="group bg-gradient-to-br from-primary-50 to-purple-100 rounded-3xl p-8 border-2 border-primary-200 hover:shadow-2xl transition-all hover:-translate-y-2 duration-300 md:mt-8">
+        <div class="w-16 h-16 bg-gradient-to-br from-primary-600 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
           <span class="text-3xl">✅</span>
         </div>
-        <h3 class="text-2xl font-bold text-gray-900 mb-3">3. 안심 수리</h3>
+        <div class="flex items-center gap-2 mb-3">
+          <span class="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white font-bold text-sm">3</span>
+          <h3 class="text-2xl font-bold text-gray-900">안심 수리</h3>
+        </div>
         <p class="text-gray-700 leading-relaxed">
           에스크로 결제로 안전하게,<br/>
-          보험청구까지 자동으로 처리해요.
+          보험청구까지 <strong class="text-primary-600">자동으로</strong> 처리해요.
         </p>
       </div>
     </div>
@@ -150,6 +174,115 @@
           <div>
             <h4 class="font-bold text-gray-900 mb-2 text-lg">투명한 가격</h4>
             <p class="text-gray-600">표준 견적으로 합리적인 가격 보장</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 고객 후기 -->
+    <div class="mb-16">
+      <h2 class="text-3xl font-bold text-gray-900 text-center mb-3">
+        <span class="text-primary-600">5,000+</span> 고객님의 선택
+      </h2>
+      <p class="text-center text-gray-600 mb-10">실제 이용하신 고객님들의 생생한 후기예요</p>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <!-- 후기 1 -->
+        <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+          <div class="flex items-center gap-1 mb-3">
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+          </div>
+          <p class="text-gray-700 mb-4 leading-relaxed">
+            "화장실 천장 누수로 걱정했는데, 영상 올리고 2시간 만에 견적 받았어요. 보험청구 서류도 자동으로 만들어줘서 정말 편했습니다!"
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gradient-to-br from-primary-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+              김
+            </div>
+            <div>
+              <p class="font-semibold text-gray-900">김**님</p>
+              <p class="text-xs text-gray-500">서울 강남구 · 아파트</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 후기 2 -->
+        <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+          <div class="flex items-center gap-1 mb-3">
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+          </div>
+          <p class="text-gray-700 mb-4 leading-relaxed">
+            "에스크로 결제라 안심하고 맡겼어요. 작업 완료 후 결제되니 사기 걱정 없이 좋았습니다. 전문가님도 친절하셨어요!"
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gradient-to-br from-primary-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+              이
+            </div>
+            <div>
+              <p class="font-semibold text-gray-900">이**님</p>
+              <p class="text-xs text-gray-500">경기 성남시 · 빌라</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 후기 3 -->
+        <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+          <div class="flex items-center gap-1 mb-3">
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+          </div>
+          <p class="text-gray-700 mb-4 leading-relaxed">
+            "AI로 먼저 간단히 체크하고, 전문가 견적까지 받았어요. 가격도 합리적이고, 2년 보증까지 있어서 믿음이 가요!"
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gradient-to-br from-primary-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+              박
+            </div>
+            <div>
+              <p class="font-semibold text-gray-900">박**님</p>
+              <p class="text-xs text-gray-500">인천 부평구 · 단독주택</p>
+            </div>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 class StandardEstimateItemsController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:index]
+  skip_before_action :authenticate_user!, only: [:index], raise: false
 
   def index
     items = StandardEstimateItem.active.sorted

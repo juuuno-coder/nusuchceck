@@ -98,7 +98,7 @@
 
               <!-- 제목 -->
               <h3 class="font-bold text-gray-900 mb-2 text-base">
-                <%= request.symptom_type_label %>
+                <%= symptom_label(request.symptom_type) %>
               </h3>
 
               <!-- 주소 -->
@@ -168,7 +168,7 @@
                 </span>
               </div>
               <h3 class="font-semibold text-gray-900 mb-1 text-sm">
-                <%= request.symptom_type_label %>
+                <%= symptom_label(request.symptom_type) %>
               </h3>
               <p class="text-xs text-gray-600 line-clamp-1"><%= request.address %></p>
             <% end %>

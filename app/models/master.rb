@@ -1,6 +1,8 @@
 class Master < User
   has_one :master_profile, foreign_key: :user_id, dependent: :destroy, inverse_of: :user
   has_one :subscription, foreign_key: :master_id, dependent: :destroy
+  has_many :master_applications, foreign_key: :master_id, dependent: :destroy
+  has_many :applied_requests, through: :master_applications, source: :request
   has_many :assigned_requests, class_name: "Request", foreign_key: :master_id, dependent: :nullify, inverse_of: :master
   has_many :estimates, foreign_key: :master_id, dependent: :destroy, inverse_of: :master
   has_many :reviews, foreign_key: :master_id, dependent: :destroy, inverse_of: :master

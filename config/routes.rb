@@ -10,28 +10,7 @@ Rails.application.routes.draw do
     # omniauth_callbacks: "users/omniauth_callbacks"
   }
 
-  # === 멀티 테넌시 서브도메인 라우팅 ===
-
-  # app.nusucheck.com → 고객 앱 진입점 (비로그인: 랜딩페이지, 로그인: 대시보드)
-  constraints(SubdomainConstraint.new("app")) do
-    root to: "customers/pages#landing", as: :app_subdomain_root
-  end
-
-  # admin.nusucheck.com → 관리자 앱 진입점
-  constraints(subdomain: "admin") do
-    root to: "admin/dashboard#index", as: :admin_subdomain_root
-  end
-
-  # expert.nusucheck.com → 전문가 앱 진입점
-  constraints(subdomain: "expert") do
-    get "/", to: "expert/pages#index"
-    devise_scope :user do
-      get  "sign_up", to: "expert/registrations#new"
-      post "sign_up", to: "expert/registrations#create"
-    end
-  end
-
-  # /expert 경로 (서브도메인 없을 때도 접근 가능)
+  # /expert 경로 (전문가 앱 - 단일 도메인)
   scope "/expert", as: "expert" do
     get "/", to: "expert/pages#index", as: :root
     devise_scope :user do
@@ -85,6 +64,7 @@ Rails.application.routes.draw do
       member do
         post :cancel
         post :accept_estimate
+        post :select_master          # 전문가 선택 (신청 목록에서)
         post :pay                    # 채팅 위젯: 결제 처리
         patch :confirm_schedule      # 채팅 위젯: 일정 확정
         post :deposit_trip_fee       # 1단계: 출장비
@@ -120,7 +100,8 @@ Rails.application.routes.draw do
         get :open_orders   # 공개 오더 목록
       end
       member do
-        post :claim        # 선착순 선택
+        post :apply        # 전문가 신청 (당근마켓 스타일)
+        post :claim        # 선착순 선택 (기존 호환성 유지)
         post :visit
         post :arrive
         post :detection_complete
@@ -230,6 +211,9 @@ Rails.application.routes.draw do
     end
   end
 
+  # 채팅 목록 (로그인 필요)
+  get "chats", to: "chats#index", as: :chats
+
   # AI 누수 빠른 점검 (비로그인 허용)
   resources :leak_inspections, only: [:new, :create, :show]
 
@@ -246,8 +230,7 @@ Rails.application.routes.draw do
   resources :surveys, only: [:new, :create]
 
   # Static pages
-  root "pages#coming_soon"
-  get "home", to: "pages#home"
+  root "pages#home"
   get "about", to: "pages#about"
   get "pricing", to: "pages#pricing"
   get "how-it-works", to: "pages#how_it_works", as: :how_it_works

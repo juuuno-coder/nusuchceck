@@ -2,8 +2,6 @@ class ApplicationController < ActionController::Base
   include Pundit::Authorization
   include HotwireNativeApp
 
-  before_action :authenticate_user!
-
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
   helper_method :current_customer, :current_master

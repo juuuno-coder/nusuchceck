@@ -1,0 +1,107 @@
+<%# 카카오톡/당근마켓 스타일 채팅 목록 %>
+<% content_for :title, "채팅" %>
+
+<div class="mb-4">
+  <h1 class="text-xl font-bold text-gray-900">채팅</h1>
+</div>
+
+<% if current_user.master? && @applied.any? %>
+  <!-- 신청 중인 체크 (전문가 전용) -->
+  <div class="mb-4">
+    <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">신청 중</h2>
+    <div class="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-100">
+      <% @applied.each do |request| %>
+        <%= link_to request_messages_path(request), class: "flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50 transition-colors" do %>
+          <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <p class="text-[15px] font-semibold text-gray-900 truncate"><%= symptom_label(request.symptom_type) %></p>
+              <span class="text-xs text-gray-400 flex-shrink-0 ml-2"><%= time_ago_in_words(request.created_at) %> 전</span>
+            </div>
+            <p class="text-sm text-gray-500 truncate mt-0.5">신청 완료 · 고객 선택 대기</p>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<% if @requests.any? %>
+  <!-- 진행 중인 채팅 -->
+  <% if current_user.master? %>
+    <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">진행 중인 오더</h2>
+  <% end %>
+  <div class="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-100">
+    <% @requests.each do |request| %>
+      <%
+        last_message = request.messages.order(created_at: :desc).first
+        unread_count = request.messages.where.not(sender_id: current_user.id).unread.count
+        other_user = current_user.customer? ? request.master : request.customer
+      %>
+      <%= link_to request_messages_path(request), class: "flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50 transition-colors" do %>
+        <!-- 아바타 -->
+        <div class="relative flex-shrink-0">
+          <% if other_user.present? %>
+            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-bold">
+              <%= other_user.name&.first %>
+            </div>
+          <% else %>
+            <div class="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center">
+              <svg class="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+          <% end %>
+          <% if unread_count > 0 %>
+            <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+              <%= unread_count > 9 ? "9+" : unread_count %>
+            </span>
+          <% end %>
+        </div>
+
+        <!-- 채팅 내용 -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between mb-0.5">
+            <p class="text-[15px] font-semibold text-gray-900 truncate">
+              <%= other_user&.name || "전문가 매칭 중" %>
+            </p>
+            <span class="text-xs text-gray-400 flex-shrink-0 ml-2">
+              <%= last_message ? time_ago_in_words(last_message.created_at) + " 전" : "" %>
+            </span>
+          </div>
+          <div class="flex items-center justify-between">
+            <p class="text-sm text-gray-500 truncate">
+              <% if last_message %>
+                <% case last_message.message_category %>
+                <% when "estimate" then %>[견적서]<%= last_message.content.presence || "" %>
+                <% when "payment_request" then %>💳 결제 요청
+                <% when "insurance_claim" then %>📋 보험서류
+                <% when "system_notice" then %>🔔 <%= truncate(last_message.content, length: 30) %>
+                <% else %><%= truncate(last_message.content, length: 30) %>
+                <% end %>
+              <% else %>
+                <%= symptom_label(request.symptom_type) %> · 새로운 체크
+              <% end %>
+            </p>
+            <% if unread_count > 0 %>
+              <span class="flex-shrink-0 ml-2 px-2 py-0.5 bg-primary-600 text-white text-xs font-bold rounded-full">
+                <%= unread_count %>
+              </span>
+            <% end %>
+          </div>
+          <!-- 상태 뱃지 -->
+          <div class="mt-1">
+            <%= render "shared/status_badge", status: request.status %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <%= render "shared/empty_state",
+        icon: "chat",
+        title: "채팅이 없어요",
+        description: current_user.customer? ? "누수 체크를 접수하면 전문가와 채팅할 수 있어요" : "공개 오더 피드에서 신청해보세요",
+        cta_text: current_user.customer? ? "체크 접수하기" : "오더 피드 보기",
+        cta_path: current_user.customer? ? new_customers_request_path : open_orders_masters_requests_path %>
+<% end %>

@@ -1,6 +1,44 @@
 <div class="space-y-6">
   <h1 class="text-2xl font-bold text-gray-900">전체 체크 관리</h1>
 
+  <!-- 빠른 승인 섹션 (reported 상태) -->
+  <% pending_requests = Request.where(status: :reported).order(created_at: :asc).limit(10) %>
+  <% if pending_requests.any? %>
+    <div class="bg-amber-50 rounded-2xl border border-amber-200 p-4">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
+        <h2 class="text-sm font-bold text-amber-800">승인 대기 중 (<%= Request.where(status: :reported).count %>건)</h2>
+      </div>
+      <div class="space-y-2">
+        <% pending_requests.each do |req| %>
+          <div class="flex items-center gap-3 bg-white rounded-xl px-4 py-3 border border-amber-100">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-mono text-gray-400">#<%= req.id %></span>
+                <span class="text-sm font-semibold text-gray-900"><%= symptom_label(req.symptom_type) %></span>
+              </div>
+              <div class="flex items-center gap-3 mt-0.5 text-xs text-gray-500">
+                <span><%= req.customer&.name %></span>
+                <span><%= truncate(req.address, length: 25) %></span>
+                <span><%= time_ago_in_words(req.created_at) %> 전</span>
+              </div>
+            </div>
+            <div class="flex gap-2 flex-shrink-0">
+              <%= link_to admin_request_path(req), class: "px-3 py-1.5 text-xs text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium" do %>
+                상세
+              <% end %>
+              <%= button_to publish_admin_request_path(req), method: :post,
+                    class: "px-3 py-1.5 text-xs text-white bg-primary-600 rounded-lg hover:bg-primary-700 font-bold",
+                    form: { class: "inline" } do %>
+                ✓ 승인
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
   <!-- 검색/필터 -->
   <div class="bg-white rounded-2xl border border-gray-100 p-4">
     <%= search_form_for @q, url: admin_requests_path, html: { method: :get, class: "flex flex-col sm:flex-row gap-3" } do |f| %>

@@ -13,7 +13,6 @@ kill_timeout = "5s"
   RAILS_LOG_TO_STDOUT = "true"
   RAILS_SERVE_STATIC_FILES = "true"
   APP_DOMAIN = "nusucheck.com"
-  EXPERT_DOMAIN = "expert.nusucheck.com"
 
 [processes]
   app = "bin/rails server -b 0.0.0.0"

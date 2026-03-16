@@ -1,5 +1,5 @@
 class Customers::MastersController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:index, :show]
+  skip_before_action :authenticate_user!, only: [:index, :show], raise: false
 
   def index
     # 검증된 전문가만 표시

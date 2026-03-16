@@ -8,8 +8,13 @@ module MasterAccessible
   private
 
   def ensure_master!
-    unless current_user&.master?
-      flash[:alert] = "마스터 전용 기능입니다."
+    unless user_signed_in?
+      flash[:alert] = "로그인이 필요합니다."
+      redirect_to new_user_session_path
+      return
+    end
+    unless current_user.master?
+      flash[:alert] = "전문가 전용 기능입니다."
       redirect_to root_path
     end
   end

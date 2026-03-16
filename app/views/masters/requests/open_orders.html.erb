@@ -1,221 +1,194 @@
-<div class="space-y-6 py-8">
-  <!-- 헤더 -->
-  <div class="text-center mb-8">
-    <div class="inline-flex items-center px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm font-medium mb-3">
-      선착순 오더
-    </div>
-    <h1 class="text-3xl font-bold text-gray-900">공개 오더 목록</h1>
-    <p class="mt-2 text-gray-600">먼저 수락하는 전문가가 배정됩니다</p>
-  </div>
+<%# 당근마켓 스타일 오더 피드 - 전문가 신청 방식 %>
+<% content_for :title, "공개 오더 피드" %>
 
-  <!-- 탭 네비게이션 -->
-  <div class="flex border-b border-gray-200 mb-6">
-    <%= link_to masters_requests_path, class: "px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300 transition-colors" do %>
-      내 진행 중 작업
+<!-- 헤더 -->
+<div class="flex items-center justify-between mb-4">
+  <div>
+    <h1 class="text-xl font-bold text-gray-900">오더 피드</h1>
+    <p class="text-sm text-gray-500 mt-0.5">관심 있는 체크에 신청해보세요</p>
+  </div>
+  <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-50 text-primary-700 rounded-full text-sm font-bold">
+    <span class="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></span>
+    <%= @requests.total_count %>건
+  </span>
+</div>
+
+<!-- 내 지역 필터 -->
+<% if @my_areas.any? %>
+  <div class="flex gap-2 mb-4 overflow-x-auto pb-1">
+    <%= link_to open_orders_masters_requests_path(params.permit(:q).to_h),
+          class: "flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-colors #{@filter_my_area ? 'bg-gray-100 text-gray-600' : 'bg-primary-600 text-white'}" do %>
+      전체
     <% end %>
-    <span class="px-4 py-2 text-sm font-medium text-primary-700 border-b-2 border-emerald-500">
-      공개 오더
-      <span class="ml-1.5 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold bg-primary-500 text-white rounded-full">
-        <%= @requests.total_count %>
+    <%= link_to open_orders_masters_requests_path(params.permit(:q).merge(my_area: "1").to_h),
+          class: "flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-colors #{@filter_my_area ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-600'}" do %>
+      📍 내 지역만
+    <% end %>
+    <% @my_areas.first(3).each do |area| %>
+      <span class="flex-shrink-0 px-3 py-2 bg-gray-50 text-gray-500 rounded-full text-xs">
+        <%= area %>
       </span>
-    </span>
-  </div>
-
-  <!-- 지역 필터 토글 -->
-  <% if @my_areas.any? %>
-    <div class="flex items-center gap-3 p-3 bg-primary-50 border border-primary-100 rounded-xl">
-      <svg class="w-5 h-5 text-primary-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
-      </svg>
-      <div class="flex-1 min-w-0">
-        <p class="text-sm text-primary-800">
-          <strong>내 서비스 지역:</strong>
-          <%= @my_areas.join(", ") %>
-        </p>
-      </div>
-      <% if @filter_my_area %>
-        <%= link_to open_orders_masters_requests_path(params.permit(:q).to_h),
-              class: "flex-shrink-0 px-3 py-1.5 bg-primary-600 text-white text-xs font-bold rounded-lg" do %>
-          내 지역만 보는 중
-        <% end %>
-        <%= link_to open_orders_masters_requests_path(params.permit(:q).merge(my_area: "0").to_h),
-              class: "flex-shrink-0 px-3 py-1.5 bg-white text-primary-700 border border-primary-300 text-xs font-medium rounded-lg" do %>
-          전체 보기
-        <% end %>
-      <% else %>
-        <%= link_to open_orders_masters_requests_path(params.permit(:q).merge(my_area: "1").to_h),
-              class: "flex-shrink-0 px-3 py-1.5 bg-primary-600 text-white text-xs font-bold rounded-lg hover:bg-primary-700 transition" do %>
-          내 지역만 보기
-        <% end %>
-      <% end %>
-    </div>
-  <% end %>
-
-  <!-- 필터 -->
-  <div class="bg-white rounded-2xl border border-gray-100 p-4">
-    <%= search_form_for @q, url: open_orders_masters_requests_path, html: { method: :get, class: "flex flex-col sm:flex-row gap-3" } do |f| %>
-      <% if @filter_my_area %>
-        <%= hidden_field_tag :my_area, "1" %>
-      <% end %>
-      <div class="flex-1">
-        <%= f.select :symptom_type_eq,
-              options_for_select([
-                ["전체 증상", ""],
-                ["벽면 누수", "wall_leak"],
-                ["천장 누수", "ceiling_leak"],
-                ["바닥 누수", "floor_leak"],
-                ["배관 누수", "pipe_leak"],
-                ["화장실 누수", "toilet_leak"],
-                ["외부 누수", "outdoor_leak"]
-              ], params.dig(:q, :symptom_type_eq)),
-              {}, class: input_classes(:select) %>
-      </div>
-      <div class="flex-1">
-        <%= f.select :building_type_eq,
-              options_for_select([
-                ["전체 건물 유형", ""],
-                ["아파트", "apartment"],
-                ["빌라/다세대", "villa"],
-                ["단독주택", "house"],
-                ["사무실", "office"],
-                ["상가", "retail_store"],
-                ["공장", "factory"],
-                ["기타", "other_building"]
-              ], params.dig(:q, :building_type_eq)),
-              {}, class: input_classes(:select) %>
-      </div>
-      <div class="flex gap-2">
-        <%= f.submit "필터 적용", class: btn_classes(:primary, :md) %>
-        <%= link_to "초기화", open_orders_masters_requests_path, class: btn_classes(:secondary, :md) %>
-      </div>
     <% end %>
   </div>
+<% end %>
 
-  <!-- 오더 목록 (당근마켓 스타일) -->
-  <% if @requests.any? %>
-    <div class="space-y-3">
-      <% @requests.each do |request| %>
-        <%
-          # 내 지역 여부 확인
-          is_my_area = @my_areas.any? { |area| request.address.include?(area) }
+<!-- 증상 유형 칩 필터 -->
+<div class="flex gap-2 mb-5 overflow-x-auto pb-1">
+  <%= search_form_for @q, url: open_orders_masters_requests_path, html: { id: "symptom_filter_form" } do |f| %>
+    <% [["전체", ""], ["벽면", "wall_leak"], ["천장", "ceiling_leak"], ["바닥", "floor_leak"], ["배관", "pipe_leak"], ["화장실", "toilet_leak"], ["외부", "outdoor_leak"]].each do |label, val| %>
+      <label class="flex-shrink-0 cursor-pointer">
+        <%= f.radio_button :symptom_type_eq, val, class: "hidden", onchange: "document.getElementById('symptom_filter_form').submit()", checked: (params.dig(:q, :symptom_type_eq) == val || (val == "" && params.dig(:q, :symptom_type_eq).blank?)) %>
+        <span class="inline-block px-4 py-2 rounded-full text-sm font-semibold border-2 transition-all
+          <%= (params.dig(:q, :symptom_type_eq) == val || (val == "" && params.dig(:q, :symptom_type_eq).blank?)) ? 'border-primary-600 bg-primary-600 text-white' : 'border-gray-200 text-gray-600 hover:border-primary-300' %>">
+          <%= label %>
+        </span>
+      </label>
+    <% end %>
+    <% if @filter_my_area %>
+      <%= hidden_field_tag :my_area, "1" %>
+    <% end %>
+  <% end %>
+</div>
 
-          # AI 추천 예상가 계산 (간단한 로직 - 나중에 실제 AI로 대체)
-          base_price = case request.symptom_type
-            when "wall_leak" then 350000
-            when "ceiling_leak" then 450000
-            when "floor_leak" then 400000
-            when "pipe_leak" then 300000
-            when "toilet_leak" then 250000
-            when "outdoor_leak" then 500000
-            else 350000
-          end
+<!-- 오더 카드 목록 -->
+<% if @requests.any? %>
+  <div class="space-y-3">
+    <% @requests.each do |request| %>
+      <%
+        already_applied = request.master_applications.exists?(master_id: current_user.id)
+        is_my_area = @my_areas.any? { |area| request.address.to_s.include?(area) }
+        applicant_count = request.master_applications.count
+      %>
 
-          building_multiplier = case request.building_type
-            when "apartment" then 1.0
-            when "villa" then 0.9
-            when "house" then 1.1
-            when "office", "retail_store" then 1.3
-            when "factory" then 1.5
-            else 1.0
-          end
-
-          estimated_price = (base_price * building_multiplier).to_i
-          price_range_min = (estimated_price * 0.8).to_i
-          price_range_max = (estimated_price * 1.2).to_i
-        %>
-
-        <%= link_to masters_request_path(request), class: "block bg-white rounded-2xl border-2 border-gray-100 hover:border-primary-200 hover:shadow-lg transition-all p-5" do %>
-          <!-- 헤더: 시간 + 지역 뱃지 -->
-          <div class="flex items-center justify-between mb-3">
+      <!-- 오더 카드 -->
+      <div class="bg-white rounded-2xl border-2 <%= already_applied ? 'border-primary-200 bg-primary-50/30' : 'border-gray-100' %> overflow-hidden">
+        <!-- 카드 상단: 클릭 → 상세 -->
+        <%= link_to masters_request_path(request), class: "block p-4" do %>
+          <!-- 메타 정보 행 -->
+          <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
-              <span class="text-xs font-medium text-gray-500">
-                <%= time_ago_in_words(request.created_at) %> 전
-              </span>
               <% if is_my_area %>
-                <span class="px-2 py-0.5 bg-primary-100 text-primary-700 text-xs font-bold rounded-full">
-                  내 지역
+                <span class="px-2 py-0.5 bg-primary-100 text-primary-700 text-xs font-bold rounded-full">내 지역</span>
+              <% end %>
+              <span class="text-xs text-gray-400"><%= time_ago_in_words(request.created_at) %> 전</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <% if applicant_count > 0 %>
+                <span class="flex items-center gap-1 text-xs text-gray-500">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  신청 <%= applicant_count %>명
                 </span>
               <% end %>
-            </div>
-            <span class="text-xs font-mono text-gray-400">#<%= request.id %></span>
-          </div>
-
-          <!-- 제목 (증상 유형) -->
-          <h3 class="text-lg font-bold text-gray-900 mb-2">
-            <%= symptom_label(request.symptom_type) %>
-          </h3>
-
-          <!-- 거리 + 주소 (강조) -->
-          <div class="flex items-start gap-2 mb-3">
-            <svg class="w-5 h-5 text-primary-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
-            </svg>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-semibold text-gray-900"><%= truncate(request.address, length: 40) %></p>
-              <% if is_my_area %>
-                <p class="text-xs text-primary-600 font-medium mt-0.5">🎯 가까운 지역이에요</p>
+              <% if already_applied %>
+                <span class="px-2 py-0.5 bg-primary-100 text-primary-600 text-xs font-bold rounded-full">✓ 신청완료</span>
               <% end %>
             </div>
           </div>
 
-          <!-- 건물 유형 + AI 추천가 -->
-          <div class="flex items-center justify-between mb-3 pb-3 border-b border-gray-100">
+          <!-- 제목 -->
+          <h3 class="text-[16px] font-bold text-gray-900 mb-1">
+            <%= symptom_label(request.symptom_type) %>
             <% if request.building_type.present? %>
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg">
-                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-                </svg>
-                <%= t("activerecord.enums.request.building_type.#{request.building_type}", default: request.building_type) %>
-              </span>
-            <% else %>
-              <div></div>
+              <span class="text-sm font-normal text-gray-500">· <%= t("activerecord.enums.request.building_type.#{request.building_type}", default: request.building_type) rescue request.building_type %></span>
             <% end %>
+          </h3>
 
-            <div class="text-right">
-              <p class="text-xs text-gray-500 mb-0.5">AI 예상 견적</p>
-              <p class="text-sm font-bold text-purple-600">
-                <%= number_to_currency(price_range_min, unit: "", precision: 0) %>~<%= number_to_currency(price_range_max, unit: "", precision: 0) %>원
-              </p>
-            </div>
+          <!-- 주소 -->
+          <div class="flex items-center gap-1.5 text-sm text-gray-600 mb-2">
+            <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <%= truncate(request.address, length: 35) %>
           </div>
 
           <!-- 설명 -->
           <% if request.description.present? %>
-            <p class="text-sm text-gray-600 line-clamp-2 mb-3">
-              <%= truncate(request.description, length: 80) %>
-            </p>
+            <p class="text-sm text-gray-500 line-clamp-2"><%= truncate(request.description, length: 70) %></p>
           <% end %>
 
-          <!-- 액션 버튼 영역 -->
-          <div class="flex gap-2 mt-4">
-            <span class="flex-1 text-center px-4 py-2.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-xl hover:bg-gray-200 transition-colors">
-              상세보기
-            </span>
-            <%= button_to "수락하기",
-                  claim_masters_request_path(request),
-                  method: :post,
-                  class: "flex-1 text-center px-4 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-sm font-bold rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all shadow-md",
-                  data: { confirm: "이 오더를 수락하시겠습니까? 선착순이므로 이미 다른 전문가가 수락했을 수 있습니다." },
-                  form: { class: "flex-1" } %>
-          </div>
+          <!-- 사진 미리보기 -->
+          <% if request.photos.attached? %>
+            <div class="flex gap-2 mt-3">
+              <% request.photos.first(3).each do |photo| %>
+                <%= image_tag rails_blob_url(photo), class: "w-16 h-16 rounded-xl object-cover border border-gray-100" rescue nil %>
+              <% end %>
+              <% if request.photos.count > 3 %>
+                <div class="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center text-xs text-gray-500 font-bold">
+                  +<%= request.photos.count - 3 %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
         <% end %>
+
+        <!-- 신청 버튼 영역 (당근마켓 스타일 하단 바) -->
+        <div class="px-4 pb-4">
+          <% if already_applied %>
+            <div id="apply_btn_<%= request.id %>">
+              <div class="flex items-center justify-center gap-2 py-3 bg-gray-100 text-gray-500 rounded-xl text-sm font-semibold">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                신청 완료 · 고객 선택 대기 중
+              </div>
+            </div>
+          <% else %>
+            <div id="apply_btn_<%= request.id %>">
+              <!-- 신청 트리거 버튼 -->
+              <button
+                type="button"
+                onclick="document.getElementById('apply_modal_<%= request.id %>').classList.remove('hidden')"
+                class="w-full py-3 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 active:scale-[0.98] transition-all">
+                신청하기
+              </button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- 신청 모달 (바텀시트 스타일) -->
+      <% unless already_applied %>
+        <div id="apply_modal_<%= request.id %>" class="hidden fixed inset-0 z-50 flex items-end" onclick="if(event.target===this)this.classList.add('hidden')">
+          <div class="absolute inset-0 bg-black/40"></div>
+          <div class="relative w-full bg-white rounded-t-3xl p-6 animate-slide-up max-w-lg mx-auto">
+            <div class="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-5"></div>
+
+            <h3 class="text-lg font-bold text-gray-900 mb-1">신청 메시지</h3>
+            <p class="text-sm text-gray-500 mb-4">고객에게 짧은 인사말을 보내보세요 (선택)</p>
+
+            <%= form_with url: apply_masters_request_path(request), method: :post, data: { turbo: true } do |f| %>
+              <%= f.text_area :intro_message,
+                    placeholder: "예: 안녕하세요! 해당 지역 방문 가능합니다. 빠른 처리 자신 있어요.",
+                    class: "w-full px-4 py-3 border-2 border-gray-200 rounded-2xl text-sm focus:border-primary-500 focus:outline-none resize-none",
+                    rows: 3,
+                    maxlength: 300 %>
+              <p class="text-xs text-gray-400 text-right mt-1">최대 300자</p>
+
+              <div class="flex gap-3 mt-4">
+                <button type="button"
+                  onclick="document.getElementById('apply_modal_<%= request.id %>').classList.add('hidden')"
+                  class="flex-1 py-3.5 bg-gray-100 text-gray-700 rounded-xl font-semibold text-sm">
+                  취소
+                </button>
+                <%= f.submit "신청하기",
+                      class: "flex-1 py-3.5 bg-primary-600 text-white rounded-xl font-bold text-sm hover:bg-primary-700 cursor-pointer" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
       <% end %>
-    </div>
+    <% end %>
+  </div>
 
-    <div class="mt-6">
-      <%= paginate @requests %>
-    </div>
-  <% else %>
-    <%= render "shared/empty_state",
-          icon: "document",
-          title: "현재 공개된 오더가 없어요",
-          description: "새로운 오더가 등록되면 바로 알려드릴게요" %>
+  <div class="mt-6">
+    <%= paginate @requests %>
+  </div>
+<% else %>
+  <%= render "shared/empty_state",
+        icon: "document",
+        title: "현재 공개된 오더가 없어요",
+        description: "고객이 체크를 접수하면 관리자 승인 후 여기에 표시됩니다" %>
 
-    <div class="mt-6 bg-primary-50 rounded-xl p-6 border border-emerald-100 text-center">
-      <p class="text-primary-700 text-sm font-medium">
-        고객이 누수 체크를 신청하면 관리자가 검토 후 공개 등록합니다.
-        <br>등록 즉시 알림을 받으실 수 있도록 알림을 켜두세요.
-      </p>
-    </div>
-  <% end %>
-</div>
+  <div class="mt-4 bg-primary-50 rounded-2xl p-5 text-center border border-primary-100">
+    <p class="text-sm text-primary-700">
+      새 오더 등록 시 알림을 받으려면<br>
+      <strong>알림 설정</strong>을 켜두세요
+    </p>
+  </div>
+<% end %>

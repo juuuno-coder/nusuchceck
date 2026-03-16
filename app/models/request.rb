@@ -3,6 +3,8 @@ class Request < ApplicationRecord
 
   belongs_to :customer, class_name: "Customer", inverse_of: :requests
   belongs_to :master, class_name: "Master", optional: true, inverse_of: :assigned_requests
+  has_many :master_applications, dependent: :destroy
+  has_many :applicant_masters, through: :master_applications, source: :master
   has_many :estimates, dependent: :destroy
   has_many :escrow_transactions, dependent: :destroy
   has_one :review, dependent: :destroy

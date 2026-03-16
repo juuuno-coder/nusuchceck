@@ -1,63 +1,83 @@
 <%= turbo_frame_tag dom_id(message) do %>
   <% if message.estimate? %>
-    <!-- 견적서 위젯 -->
     <%= render "messages/widgets/estimate", message: message, request: message.request %>
 
   <% elsif message.payment_request? %>
-    <!-- 결제 요청 위젯 -->
     <%= render "messages/widgets/payment_request", message: message, request: message.request %>
 
   <% elsif message.payment_complete? %>
-    <!-- 결제 완료 위젯 -->
     <%= render "messages/widgets/payment_complete", message: message %>
 
   <% elsif message.schedule? %>
-    <!-- 일정 제안 위젯 -->
     <%= render "messages/widgets/schedule", message: message, request: message.request %>
 
   <% elsif message.insurance_claim? %>
-    <!-- 보험청구서 위젯 -->
     <%= render "messages/widgets/insurance_claim", message: message %>
 
   <% elsif message.system_message? %>
-    <!-- 시스템 메시지 (AI 안내) -->
-    <div class="flex justify-center mb-4">
-      <div class="max-w-md w-full">
-        <div class="bg-gray-100 rounded-xl px-4 py-3 border border-gray-200">
-          <div class="text-center text-xs text-gray-500 mb-1.5">
-            <%= message.sender_name %>
+    <!-- 시스템 메시지 (AI 안내, 상태 변경) - 가운데 정렬 -->
+    <div class="flex justify-center my-3">
+      <div class="max-w-[85%]">
+        <div class="bg-gray-100 rounded-2xl px-4 py-3 border border-gray-200/50">
+          <div class="text-xs text-gray-500 text-center mb-1.5 font-medium">
+            🔔 <%= message.sender_name %>
           </div>
-          <div class="text-sm text-gray-700 text-center break-words whitespace-pre-wrap">
+          <div class="text-sm text-gray-700 text-center break-words whitespace-pre-wrap leading-relaxed">
             <%= message.content %>
           </div>
-          <div class="text-center text-xs text-gray-400 mt-1.5">
+          <div class="text-center text-[10px] text-gray-400 mt-1.5">
             <%= message.created_at.strftime("%H:%M") %>
           </div>
         </div>
       </div>
     </div>
+
   <% else %>
-    <!-- 일반 메시지 (고객/전문가) -->
+    <!-- 일반 텍스트 메시지 - 카카오톡 스타일 버블 -->
     <% is_my_message = message.sender_id == current_user&.id %>
-    <div class="flex <%= is_my_message ? 'justify-end' : 'justify-start' %> mb-2">
+    <div class="flex <%= is_my_message ? 'justify-end' : 'justify-start' %> mb-1.5 items-end gap-2">
+
+      <% unless is_my_message %>
+        <!-- 상대방 아바타 -->
+        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mb-0.5">
+          <%= message.sender&.name&.first %>
+        </div>
+      <% end %>
+
       <div class="max-w-[70%]">
         <% unless is_my_message %>
-          <div class="text-xs text-gray-500 mb-1 ml-1"><%= message.sender_name %></div>
+          <div class="text-xs text-gray-500 mb-1 ml-1 font-medium"><%= message.sender_name %></div>
         <% end %>
 
-        <div class="<%= is_my_message ? 'bg-primary-500 text-white' : 'bg-white border border-gray-100 text-gray-900' %> rounded-2xl px-4 py-2.5">
-          <div class="break-words whitespace-pre-wrap"><%= message.content %></div>
-        </div>
+        <!-- 메시지 버블 -->
+        <div class="<%= is_my_message ? 'bg-primary-500 text-white rounded-2xl rounded-br-md' : 'bg-white text-gray-900 rounded-2xl rounded-bl-md border border-gray-200/80' %> px-4 py-2.5 shadow-sm">
+          <div class="text-sm break-words whitespace-pre-wrap leading-relaxed"><%= message.content %></div>
 
-        <div class="flex items-center gap-1 mt-1 <%= is_my_message ? 'justify-end' : 'justify-start' %>">
-          <div class="text-xs text-gray-400">
-            <%= message.created_at.strftime("%H:%M") %>
-          </div>
-          <% if is_my_message && message.read? %>
-            <div class="text-xs text-gray-400">읽음</div>
+          <!-- 첨부 이미지 -->
+          <% if message.images.attached? %>
+            <div class="mt-2 grid <%= message.images.count == 1 ? 'grid-cols-1' : 'grid-cols-2' %> gap-1.5">
+              <% message.images.each do |img| %>
+                <div class="rounded-xl overflow-hidden">
+                  <%= image_tag rails_blob_url(img), class: "w-full h-32 object-cover" rescue nil %>
+                </div>
+              <% end %>
+            </div>
           <% end %>
         </div>
+
+        <!-- 시간 + 읽음 표시 -->
+        <div class="flex items-center gap-1 mt-0.5 <%= is_my_message ? 'justify-end' : 'justify-start' %>">
+          <% if is_my_message && message.read? %>
+            <span class="text-[10px] text-gray-400">읽음</span>
+          <% end %>
+          <span class="text-[10px] text-gray-400"><%= message.created_at.strftime("%H:%M") %></span>
+        </div>
       </div>
+
+      <% if is_my_message %>
+        <!-- 내 아바타 공간 (우측 정렬 균형) -->
+        <div class="w-8 flex-shrink-0"></div>
+      <% end %>
     </div>
   <% end %>
 <% end %>

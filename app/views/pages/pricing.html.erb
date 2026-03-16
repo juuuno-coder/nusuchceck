@@ -52,7 +52,7 @@
                 <span class="text-gray-700">추천 조치 사항 제공</span>
               </li>
             </ul>
-            <%= link_to "지금 시작하기 →", ai_quick_inspection_new_path, class: "block w-full text-center bg-purple-600 text-white font-semibold py-3 rounded-lg hover:bg-purple-700 transition" %>
+            <%= link_to "지금 시작하기 →", new_leak_inspection_path, class: "block w-full text-center bg-purple-600 text-white font-semibold py-3 rounded-lg hover:bg-purple-700 transition" %>
           </div>
         </div>
 
@@ -255,7 +255,7 @@
               </div>
             </div>
 
-            <%= link_to "전문가로 등록하기 →", new_expert_registration_path, class: "block w-full text-center bg-green-600 text-white font-semibold py-4 rounded-lg hover:bg-green-700 transition text-lg" %>
+            <%= link_to "전문가로 등록하기 →", expert_sign_up_path, class: "block w-full text-center bg-green-600 text-white font-semibold py-4 rounded-lg hover:bg-green-700 transition text-lg" %>
           </div>
         </div>
       </div>
@@ -298,7 +298,7 @@
       <p class="text-xl text-primary-100 mb-8">투명하고 안전한 누수 해결 플랫폼, 누수체크</p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <%= link_to "고객으로 시작하기", new_user_registration_path, class: "px-8 py-4 bg-white text-primary-600 font-semibold rounded-lg hover:bg-primary-50 transition transform hover:scale-105" %>
-        <%= link_to "전문가로 시작하기", new_expert_registration_path, class: "px-8 py-4 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-400 transition transform hover:scale-105" %>
+        <%= link_to "전문가로 시작하기", expert_sign_up_path, class: "px-8 py-4 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-400 transition transform hover:scale-105" %>
       </div>
     </div>
   </div>

@@ -17,6 +17,17 @@ class NotificationService
     notification
   end
 
+  # 전문가 신청 알림 (고객에게)
+  def self.notify_master_applied(request, master)
+    notify(
+      recipient: request.customer,
+      action: "master_applied",
+      message: "#{master.name} 전문가가 체크 신청을 보냈어요",
+      actor: master,
+      notifiable: request
+    )
+  end
+
   # 신고 배정 알림 (+ 이메일)
   def self.notify_request_assigned(request)
     return unless request.master

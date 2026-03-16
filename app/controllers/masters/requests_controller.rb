@@ -2,7 +2,7 @@ class Masters::RequestsController < ApplicationController
   include MasterAccessible
 
   before_action :set_request, only: [
-    :show, :claim, :visit, :arrive, :detection_complete, :detection_fail,
+    :show, :apply, :claim, :visit, :arrive, :detection_complete, :detection_fail,
     :submit_estimate, :start_construction, :complete_construction
   ]
 
@@ -35,6 +35,50 @@ class Masters::RequestsController < ApplicationController
 
     @q = base_scope.ransack(params[:q])
     @requests = @q.result.includes(:customer).recent.page(params[:page])
+  end
+
+  # 당근마켓 스타일: 전문가가 신청 (고객이 나중에 선택)
+  def apply
+    unless current_user.master_profile&.verified?
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("flash_messages", partial: "shared/flash_messages", locals: { alert: "승인된 전문가만 신청할 수 있습니다." }) }
+        format.html { redirect_to open_orders_masters_requests_path, alert: "승인된 전문가만 신청할 수 있습니다." }
+      end
+      return
+    end
+
+    unless @request.open?
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("flash_messages", partial: "shared/flash_messages", locals: { alert: "신청 가능한 상태가 아닙니다." }) }
+        format.html { redirect_to open_orders_masters_requests_path, alert: "신청 가능한 상태가 아닙니다." }
+      end
+      return
+    end
+
+    @application = @request.master_applications.build(
+      master: current_user,
+      intro_message: params[:intro_message].to_s.strip.presence || "안녕하세요! 빠르게 방문 가능합니다."
+    )
+
+    if @application.save
+      # 고객에게 알림
+      NotificationService.notify_master_applied(@request, current_user) rescue nil
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.replace("apply_btn_#{@request.id}", partial: "masters/requests/applied_badge"),
+            turbo_stream.replace("flash_messages", partial: "shared/flash_messages", locals: { notice: "신청이 완료되었습니다! 고객이 선택하면 알림을 드릴게요." })
+          ]
+        end
+        format.html { redirect_to open_orders_masters_requests_path, notice: "신청이 완료되었습니다!" }
+      end
+    else
+      error_msg = @application.errors.full_messages.first || "신청 중 오류가 발생했습니다."
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("flash_messages", partial: "shared/flash_messages", locals: { alert: error_msg }) }
+        format.html { redirect_to open_orders_masters_requests_path, alert: error_msg }
+      end
+    end
   end
 
   def claim
@@ -123,8 +167,8 @@ class Masters::RequestsController < ApplicationController
   private
 
   def set_request
-    # claim 액션은 아직 배정 전이므로 전체 오더에서 찾음
-    if action_name == "claim"
+    # apply, claim 액션은 아직 배정 전이므로 전체 오더에서 찾음
+    if action_name.in?(["apply", "claim"])
       @request = Request.find(params[:id])
     else
       @request = current_user.assigned_requests.find(params[:id])

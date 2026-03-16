@@ -1,5 +1,5 @@
 class EmailSubscriptionsController < ApplicationController
-  skip_before_action :authenticate_user!
+  skip_before_action :authenticate_user!, raise: false
 
   def create
     @subscription = EmailSubscription.new(email: params[:email])

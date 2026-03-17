@@ -20,10 +20,10 @@ class User < ApplicationRecord
   # 조건부 검증
   validates :email, presence: true, uniqueness: true, if: :registered_or_verified?
   validates :password, presence: true, if: :password_required?
-  validates :name, presence: true, if: :registered_or_verified?
   validates :phone, format: { with: /\A01[016789]-?\d{3,4}-?\d{4}\z/, allow_blank: true }, if: :phone_present?
 
   before_create :set_guest_token, if: :guest?
+  before_create :set_default_nickname
 
   geocoded_by :address
   after_validation :geocode, if: ->(obj) { obj.address.present? && obj.address_changed? }
@@ -97,6 +97,10 @@ class User < ApplicationRecord
 
   def set_guest_token
     self.guest_token = SecureRandom.urlsafe_base64(32)
+  end
+
+  def set_default_nickname
+    self.name = "물방울#{rand(1000..9999)}" if name.blank?
   end
 
   def registered_or_verified?

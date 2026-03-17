@@ -2,7 +2,8 @@
   <div class="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm">
     <div class="text-center mb-8">
       <h1 class="text-3xl font-bold text-gray-900">회원가입</h1>
-      <p class="mt-2 text-gray-500">이메일과 비밀번호만 입력하세요</p>
+      <p class="mt-2 text-gray-500">이메일과 비밀번호만 입력하면 가입 완료!</p>
+      <p class="mt-1 text-xs text-primary-500">닉네임은 자동으로 생성되며 나중에 변경할 수 있어요</p>
     </div>
 
     <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-5" }) do |f| %>
@@ -23,13 +24,6 @@
       <% end %>
 
       <%= f.hidden_field :type, value: "Customer" %>
-
-      <!-- 이름 -->
-      <div>
-        <label for="user_name" class="block text-sm font-semibold text-gray-700 mb-1.5">이름 <span class="text-red-500">*</span></label>
-        <%= f.text_field :name, autocomplete: "name", placeholder: "홍길동",
-            class: "w-full h-12 px-4 rounded-2xl border border-gray-200 text-base focus:border-primary-500 focus:ring-primary-500 transition-colors" %>
-      </div>
 
       <!-- 이메일 -->
       <div>
@@ -91,8 +85,8 @@
   <!-- 전문가 가입 안내 -->
   <div class="mt-6 p-4 bg-gray-50 rounded-2xl text-center border border-gray-200">
     <p class="text-sm text-gray-600">누수 탐지/시공 전문가이신가요?</p>
-    <a href="/expert/sign_up" class="inline-flex items-center mt-1.5 text-sm font-semibold text-primary-700 hover:text-primary-800">
-      전문가 가입 페이지로 이동
+    <a href="/expert/inquiry" class="inline-flex items-center mt-1.5 text-sm font-semibold text-primary-700 hover:text-primary-800">
+      전문가 등록 문의하기
       <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
       </svg>

@@ -25,6 +25,7 @@ import UploadProgressController from "./upload_progress_controller"
 import VideoCompressorController from "./video_compressor_controller"
 import OnboardingController from "./onboarding_controller"
 import ButtonSelectController from "./button_select_controller"
+import UserMenuController from "./user_menu_controller"
 
 application.register("estimate-items", EstimateItemsController)
 application.register("dismissible", DismissibleController)
@@ -52,3 +53,4 @@ application.register("upload-progress", UploadProgressController)
 application.register("video-compressor", VideoCompressorController)
 application.register("onboarding", OnboardingController)
 application.register("button-select", ButtonSelectController)
+application.register("user-menu", UserMenuController)

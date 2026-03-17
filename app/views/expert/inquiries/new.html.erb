@@ -1,0 +1,88 @@
+<div class="max-w-lg mx-auto py-4">
+
+  <% if flash[:notice] %>
+    <!-- 접수 완료 -->
+    <div class="bg-primary-50 border border-primary-100 rounded-2xl p-8 text-center">
+      <div class="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-7 h-7 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+      <h2 class="text-xl font-bold text-gray-900 mb-2">문의가 접수되었습니다</h2>
+      <p class="text-sm text-gray-500 leading-relaxed">검토 후 입력하신 연락처로 개별 연락드리겠습니다.<br>보통 1~3 영업일 내에 연락드립니다.</p>
+      <%= link_to "홈으로", root_path, class: "inline-flex mt-6 px-6 py-2.5 bg-primary-500 text-white text-sm font-semibold rounded-xl hover:bg-primary-600 transition-colors" %>
+    </div>
+
+  <% else %>
+    <!-- 문의 폼 -->
+    <div class="mb-6">
+      <p class="text-xs font-semibold text-primary-600 uppercase tracking-wider mb-1">전문가 등록</p>
+      <h1 class="text-2xl font-bold text-gray-900 mb-2">파트너 전문가 문의</h1>
+      <p class="text-sm text-gray-500 leading-relaxed">
+        누수체크 파트너 전문가는 <strong>검수 후 개별 등록</strong>으로 진행됩니다.<br>
+        아래 양식을 작성해주시면 담당자가 확인 후 연락드립니다.
+      </p>
+    </div>
+
+    <!-- 프로세스 안내 -->
+    <div class="flex items-center gap-2 mb-6 text-xs text-gray-400">
+      <div class="flex items-center gap-1.5">
+        <span class="w-5 h-5 bg-primary-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0">1</span>
+        <span>문의 접수</span>
+      </div>
+      <div class="flex-1 border-t border-dashed border-gray-200"></div>
+      <div class="flex items-center gap-1.5">
+        <span class="w-5 h-5 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0">2</span>
+        <span>서류 검토</span>
+      </div>
+      <div class="flex-1 border-t border-dashed border-gray-200"></div>
+      <div class="flex items-center gap-1.5">
+        <span class="w-5 h-5 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0">3</span>
+        <span>개별 연락 & 등록</span>
+      </div>
+    </div>
+
+    <%= form_with url: expert_inquiry_submit_path, method: :post, class: "space-y-4" do |f| %>
+
+      <div class="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-50">
+
+        <div class="px-4 py-3.5">
+          <label class="block text-xs font-semibold text-gray-500 mb-1.5">이름 <span class="text-red-400">*</span></label>
+          <input type="text" name="name" required placeholder="홍길동"
+            class="w-full text-sm text-gray-900 border-0 p-0 focus:ring-0 placeholder-gray-300 bg-transparent">
+        </div>
+
+        <div class="px-4 py-3.5">
+          <label class="block text-xs font-semibold text-gray-500 mb-1.5">연락처 <span class="text-red-400">*</span></label>
+          <input type="tel" name="phone" required placeholder="010-0000-0000"
+            class="w-full text-sm text-gray-900 border-0 p-0 focus:ring-0 placeholder-gray-300 bg-transparent">
+        </div>
+
+        <div class="px-4 py-3.5">
+          <label class="block text-xs font-semibold text-gray-500 mb-1.5">이메일</label>
+          <input type="email" name="email" placeholder="expert@email.com"
+            class="w-full text-sm text-gray-900 border-0 p-0 focus:ring-0 placeholder-gray-300 bg-transparent">
+        </div>
+
+        <div class="px-4 py-3.5">
+          <label class="block text-xs font-semibold text-gray-500 mb-1.5">간단 소개 <span class="text-gray-300 font-normal">(경력·전문분야 등)</span></label>
+          <textarea name="message" rows="4" placeholder="예) 15년 경력 누수 탐지 전문가입니다. 서울/경기 지역 아파트 욕실·옥상 방수 공사를 주로 합니다."
+            class="w-full text-sm text-gray-900 border-0 p-0 focus:ring-0 placeholder-gray-300 bg-transparent resize-none"></textarea>
+        </div>
+
+      </div>
+
+      <button type="submit"
+        class="w-full py-3.5 bg-primary-500 text-white text-sm font-bold rounded-xl hover:bg-primary-600 transition-colors shadow-sm">
+        문의 접수하기
+      </button>
+
+    <% end %>
+
+    <p class="mt-4 text-center text-xs text-gray-400">
+      이미 계정이 있으신가요?
+      <%= link_to "로그인", new_user_session_path, class: "text-primary-600 font-medium" %>
+    </p>
+  <% end %>
+
+</div>

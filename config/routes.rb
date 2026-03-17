@@ -17,6 +17,8 @@ Rails.application.routes.draw do
       get  "sign_up", to: "expert/registrations#new",    as: :sign_up
       post "sign_up", to: "expert/registrations#create",  as: :registration
     end
+    get  "inquiry",  to: "expert/inquiries#new",    as: :inquiry
+    post "inquiry",  to: "expert/inquiries#create",  as: :inquiry_submit
 
     # 전문가 대시보드 (로그인 후)
     get "dashboard", to: "expert/dashboard#index", as: :dashboard

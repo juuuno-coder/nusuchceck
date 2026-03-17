@@ -1,6 +1,13 @@
 class Expert::RegistrationsController < Devise::RegistrationsController
   layout "expert"
+  before_action :redirect_to_inquiry, only: [:new, :create]
   before_action :configure_sign_up_params, only: [:create]
+
+  private
+
+  def redirect_to_inquiry
+    redirect_to expert_inquiry_path
+  end
 
   protected
 

@@ -11,7 +11,7 @@
     <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">신청 중</h2>
     <div class="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-100">
       <% @applied.each do |request| %>
-        <%= link_to request_messages_path(request), class: "flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50 transition-colors" do %>
+        <%= link_to masters_request_path(request), class: "flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50 transition-colors" do %>
           <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
             <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
@@ -72,11 +72,11 @@
           <div class="flex items-center justify-between">
             <p class="text-sm text-gray-500 truncate">
               <% if last_message %>
-                <% case last_message.message_category %>
-                <% when "estimate" then %>[견적서]<%= last_message.content.presence || "" %>
-                <% when "payment_request" then %>💳 결제 요청
-                <% when "insurance_claim" then %>📋 보험서류
-                <% when "system_notice" then %>🔔 <%= truncate(last_message.content, length: 30) %>
+                <% cat = last_message.message_category %>
+                <% if cat == "estimate" %>[견적서] <%= last_message.content.presence || "" %>
+                <% elsif cat == "payment_request" %>💳 결제 요청
+                <% elsif cat == "insurance_claim" %>📋 보험서류
+                <% elsif cat == "system_notice" %>🔔 <%= truncate(last_message.content, length: 30) %>
                 <% else %><%= truncate(last_message.content, length: 30) %>
                 <% end %>
               <% else %>

@@ -46,9 +46,16 @@ class MessagesController < ApplicationController
   end
 
   def check_chat_permission
-    # 고객이거나 배정된 전문가만 접근 가능
-    unless current_user.id == @request.customer_id || current_user.id == @request.master_id
-      redirect_to root_path, alert: "채팅 권한이 없습니다."
+    # 고객, 배정된 전문가, 어드민만 접근 가능
+    return if current_user.admin?
+    return if current_user.id == @request.customer_id
+    return if current_user.id == @request.master_id
+
+    # 아직 배정 안 된 전문가는 요청 상세 페이지로 안내
+    if current_user.master?
+      redirect_to masters_request_path(@request), alert: "배정 완료 후 채팅이 시작돼요."
+    else
+      redirect_to root_path, alert: "채팅 권한이 없어요."
     end
   end
 

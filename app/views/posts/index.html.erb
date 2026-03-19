@@ -37,7 +37,11 @@
           <!-- 이미지 썸네일 (있는 경우) -->
           <% if post.image.attached? %>
             <div class="flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-gray-100">
-              <%= image_tag post.image.variant(resize_to_fill: [160, 160]), class: "w-full h-full object-cover", alt: post.title %>
+              <% begin %>
+                <%= image_tag post.image.variant(resize_to_fill: [160, 160]), class: "w-full h-full object-cover", alt: post.title %>
+              <% rescue %>
+                <%= image_tag post.image, class: "w-full h-full object-cover", alt: post.title rescue nil %>
+              <% end %>
             </div>
           <% else %>
             <!-- 기본 이미지 플레이스홀더 -->

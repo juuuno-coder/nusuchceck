@@ -1,0 +1,98 @@
+<%# 검색 페이지 %>
+<% content_for :title, @query.present? ? "\"#{@query}\" 검색 결과" : "검색" %>
+
+<div class="max-w-2xl mx-auto px-4 py-6">
+
+  <!-- 검색 폼 -->
+  <div class="mb-6">
+    <%= form_with url: search_path, method: :get, local: true do |f| %>
+      <div class="relative">
+        <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <%= f.text_field :q, value: @query, placeholder: "전문가, 커뮤니티, 가이드 검색...",
+            class: "w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-2xl text-[15px] focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition",
+            autofocus: true, autocomplete: "off" %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @query.length < 2 && @query.present? %>
+    <p class="text-sm text-gray-400 text-center py-8">두 글자 이상 입력해주세요</p>
+
+  <% elsif @query.present? %>
+    <% total = @posts.size + @masters.size %>
+    <% if total == 0 %>
+      <div class="text-center py-16">
+        <div class="w-16 h-16 mx-auto bg-gray-100 rounded-2xl flex items-center justify-center mb-4">
+          <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </div>
+        <p class="font-semibold text-gray-700 mb-1">"<%= @query %>" 검색 결과가 없어요</p>
+        <p class="text-sm text-gray-400">전문가 이름, 커뮤니티 글 제목으로 검색해보세요</p>
+      </div>
+
+    <% else %>
+      <p class="text-xs text-gray-400 mb-4">"<%= @query %>" 검색 결과 <%= total %>건</p>
+
+      <!-- 전문가 결과 -->
+      <% if @masters.any? %>
+        <section class="mb-6">
+          <h2 class="text-sm font-bold text-gray-500 mb-2 px-1">전문가</h2>
+          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm divide-y divide-gray-50 overflow-hidden">
+            <% @masters.each do |master| %>
+              <%= link_to master_path(master), class: "flex items-center gap-3 p-4 hover:bg-gray-50 transition-colors" do %>
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-bold flex-shrink-0">
+                  <%= master.name&.first %>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold text-gray-900 text-sm"><%= master.name %></p>
+                  <p class="text-xs text-gray-400 truncate"><%= master.master_profile&.introduction&.truncate(50) || "누수 전문가" %></p>
+                </div>
+                <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              <% end %>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
+
+      <!-- 커뮤니티 결과 -->
+      <% if @posts.any? %>
+        <section class="mb-6">
+          <h2 class="text-sm font-bold text-gray-500 mb-2 px-1">커뮤니티</h2>
+          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm divide-y divide-gray-50 overflow-hidden">
+            <% @posts.each do |post| %>
+              <%= link_to post_path(post), class: "flex items-start gap-3 p-4 hover:bg-gray-50 transition-colors" do %>
+                <div class="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <% icons = {"tip" => "💧", "review" => "⭐", "question" => "❓", "general" => "💬"} %>
+                  <span class="text-sm"><%= icons[post.category] || "📝" %></span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold text-gray-900 text-sm truncate"><%= post.title %></p>
+                  <p class="text-xs text-gray-400 mt-0.5 line-clamp-1"><%= post.content.truncate(60) %></p>
+                </div>
+                <svg class="w-4 h-4 text-gray-300 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              <% end %>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
+    <% end %>
+
+  <% else %>
+    <!-- 검색 전 빈 상태 -->
+    <div class="text-center py-12 text-gray-400">
+      <svg class="w-12 h-12 mx-auto mb-3 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+      <p class="text-sm font-medium">전문가 이름, 커뮤니티 글을 검색해보세요</p>
+      <p class="text-xs mt-1">향후 가이드, FAQ도 검색할 수 있어요</p>
+    </div>
+  <% end %>
+
+</div>

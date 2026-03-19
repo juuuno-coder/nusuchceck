@@ -254,4 +254,5 @@ Rails.application.routes.draw do
   # 커뮤니티 (하단 탭 링크 유지 + CRUD)
   get "community", to: "posts#index", as: :community
   resources :posts, except: [:index]
+  get "search", to: "search#index", as: :search
 end

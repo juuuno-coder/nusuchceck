@@ -176,7 +176,7 @@ turbo-frame[busy]::after {
   left: 0;
   width: 0%;
   height: 3px;
-  background: linear-gradient(90deg, #0d9488, #2dd4bf);
+  background: linear-gradient(90deg, #2563eb, #60a5fa);
   transition: width 0.3s ease-out;
   z-index: 9999;
   box-shadow: 0 0 10px rgba(13, 148, 136, 0.5);
@@ -518,13 +518,13 @@ turbo-frame[busy]::after {
 /* Pulse 애니메이션 (알림) */
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.7);
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
   }
   70% {
-    box-shadow: 0 0 0 8px rgba(13, 148, 136, 0);
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(13, 148, 136, 0);
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
   }
 }
 
@@ -836,7 +836,7 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid #0d9488;
+  outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
 

@@ -125,7 +125,7 @@ export default class extends Controller {
 
     // 프로그레스 텍스트 업데이트
     if (this.hasProgressTarget) {
-      this.progressTarget.textContent = `${this.currentStepValue}/${this.totalStepsValue}`
+      this.progressTarget.textContent = `${this.currentStepValue}`
     }
 
     // 단계별 인디케이터 업데이트
@@ -160,14 +160,16 @@ export default class extends Controller {
   }
 
   validateCurrentStep() {
-    // 단계 1: 증상 타입과 건물 타입 검증 (hidden input)
+    // 단계 1: 증상 타입과 건물 타입 검증 (requests/new 폼 전용, 요소가 있을 때만)
     if (this.currentStepValue === 1) {
-      const symptom = document.getElementById('symptom-type-input')?.value
-      const building = document.getElementById('building-type-input')?.value
+      const symptomEl = document.getElementById('symptom-type-input')
+      const buildingEl = document.getElementById('building-type-input')
 
-      if (!symptom || !building) {
-        this.showError('증상과 건물 종류를 선택해주세요')
-        return false
+      if (symptomEl && buildingEl) {
+        if (!symptomEl.value || !buildingEl.value) {
+          this.showError('증상과 건물 종류를 선택해주세요')
+          return false
+        }
       }
     }
 

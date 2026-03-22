@@ -276,58 +276,71 @@ export default class extends Controller {
     const stepType = this.stepTypes[this.currentStepValue - 1]
     const isLast = this.currentStepValue === this.totalStepsValue
 
-    // 모든 버튼 그룹 숨기기
-    if (this.hasNextBtnTarget) this.nextBtnTarget.classList.add("hidden")
-    if (this.hasSkipNextGroupTarget) this.skipNextGroupTarget.classList.add("hidden")
-    if (this.hasSubmitBtnTarget) this.submitBtnTarget.classList.add("hidden")
+    // 모든 버튼 그룹 숨기기 (Stimulus target + document fallback)
+    const nextBtn = this._findNextBtn()
+    const skipGroup = this.hasSkipNextGroupTarget
+      ? this.skipNextGroupTarget
+      : this.element.querySelector('[data-check-wizard-target="skipNextGroup"]')
+    const submitBtn = this.hasSubmitBtnTarget
+      ? this.submitBtnTarget
+      : this.element.querySelector('[data-check-wizard-target="submitBtn"]')
+
+    if (nextBtn) nextBtn.classList.add("hidden")
+    if (skipGroup) skipGroup.classList.add("hidden")
+    if (submitBtn) submitBtn.classList.add("hidden")
 
     if (isLast) {
       // 제출 버튼
-      if (this.hasSubmitBtnTarget) this.submitBtnTarget.classList.remove("hidden")
+      if (submitBtn) submitBtn.classList.remove("hidden")
     } else if (stepType === "optional") {
       // 건너뛰기 + 다음
-      if (this.hasSkipNextGroupTarget) this.skipNextGroupTarget.classList.remove("hidden")
+      if (skipGroup) skipGroup.classList.remove("hidden")
     } else if (stepType === "button") {
       // 버튼 선택 스텝: 카드 선택 전에는 비활성화, 선택 후 enableNextButton()으로 활성화
-      if (this.hasNextBtnTarget) {
-        this.nextBtnTarget.classList.remove("hidden")
+      if (nextBtn) {
+        nextBtn.classList.remove("hidden")
         this.disableNextButton()
       }
     } else {
       // 일반 폼 스텝
-      if (this.hasNextBtnTarget) {
-        this.nextBtnTarget.classList.remove("hidden")
+      if (nextBtn) {
+        nextBtn.classList.remove("hidden")
         // 주소 필드가 있으면 채워져 있는지 확인
         this.checkFormValidity()
       }
     }
   }
 
+  _findNextBtn() {
+    if (this.hasNextBtnTarget) return this.nextBtnTarget
+    // Fallback 1: scoped querySelector
+    const scoped = this.element.querySelector('[data-check-wizard-target="nextBtn"]')
+    if (scoped) return scoped
+    // Fallback 2: document-level (catches cases where Stimulus target scanning is blocked)
+    return document.querySelector('[data-check-wizard-target="nextBtn"]')
+  }
+
   enableNextButton() {
-    const btn = this.hasNextBtnTarget
-      ? this.nextBtnTarget
-      : this.element.querySelector('[data-check-wizard-target="nextBtn"]')
+    const btn = this._findNextBtn()
     if (btn) {
       btn.disabled = false
       btn.classList.remove("hidden", "bg-gray-100", "bg-gray-200", "text-gray-300", "text-gray-400", "cursor-not-allowed")
-      btn.style.backgroundColor = "#3b82f6"
-      btn.style.color = "#ffffff"
-      btn.style.boxShadow = "0 20px 25px -5px rgba(0,0,0,0.1),0 8px 10px -6px rgba(0,0,0,0.1)"
-      btn.style.cursor = "pointer"
+      btn.style.setProperty('background-color', '#3b82f6', 'important')
+      btn.style.setProperty('color', '#ffffff', 'important')
+      btn.style.setProperty('box-shadow', '0 20px 25px -5px rgba(0,0,0,0.1),0 8px 10px -6px rgba(0,0,0,0.1)', 'important')
+      btn.style.setProperty('cursor', 'pointer', 'important')
     }
   }
 
   disableNextButton() {
-    const btn = this.hasNextBtnTarget
-      ? this.nextBtnTarget
-      : this.element.querySelector('[data-check-wizard-target="nextBtn"]')
+    const btn = this._findNextBtn()
     if (btn) {
       btn.disabled = true
       btn.classList.remove("hidden", "bg-primary-500", "text-white", "hover:bg-primary-600", "shadow-xl")
-      btn.style.backgroundColor = "#f3f4f6"
-      btn.style.color = "#d1d5db"
-      btn.style.boxShadow = "none"
-      btn.style.cursor = "not-allowed"
+      btn.style.setProperty('background-color', '#f3f4f6', 'important')
+      btn.style.setProperty('color', '#d1d5db', 'important')
+      btn.style.setProperty('box-shadow', 'none', 'important')
+      btn.style.setProperty('cursor', 'not-allowed', 'important')
     }
   }
 

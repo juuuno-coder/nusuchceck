@@ -56,7 +56,8 @@ export default class extends Controller {
   selectOption(event) {
     event.preventDefault()
     const button = event.currentTarget
-    const group = button.closest("[data-check-wizard-target='buttonGroup']")
+    const group = button.closest("[data-field]")
+    if (!group) return
     const field = group.dataset.field
     const value = button.dataset.value
     const gradient = button.dataset.gradient  // 토스 스타일 그라디언트 색상
@@ -351,7 +352,7 @@ export default class extends Controller {
     const stepType = this.stepTypes[this.currentStepValue - 1]
 
     if (stepType === "button") {
-      const group = this.stepTargets[this.currentStepValue - 1].querySelector("[data-check-wizard-target='buttonGroup']")
+      const group = this.stepTargets[this.currentStepValue - 1].querySelector("[data-field]")
       if (group) {
         const field = group.dataset.field
         if (!this.selections[field]) {

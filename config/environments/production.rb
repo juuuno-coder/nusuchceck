@@ -30,6 +30,7 @@ Rails.application.configure do
     ENV["APP_DOMAIN"],          # .env로 동적 설정
     /.*\.nusucheck\.com/,
     /.*\.vibers\.co\.kr/,
+    "localhost",                # Docker 내부 헬스체크
     /\A[\d.]+\z/,              # IP 헬스체크 허용
     /\A[\d.]+:\d+\z/,          # IP:port 허용
     /\A[0-9a-f:]+\z/           # IPv6 허용

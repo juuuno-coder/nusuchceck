@@ -1,95 +1,77 @@
+version: '3.8'
+
 services:
+  app:
+    container_name: nusucheck-app
+    build: .
+    ports:
+      - "4080:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file: .env
+    networks:
+      - npm_default
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/up"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  sidekiq:
+    container_name: nusucheck-sidekiq
+    build: .
+    command: bundle exec sidekiq
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file: .env
+    networks:
+      - npm_default
+    restart: unless-stopped
+
   db:
+    container_name: nusucheck-db
     image: postgres:16-alpine
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
     environment:
+      POSTGRES_DB: nusucheck_production
       POSTGRES_USER: nusucheck
-      POSTGRES_PASSWORD: nusucheck
-      POSTGRES_DB: nusucheck_development
-    ports:
-      - "5432:5432"
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - npm_default
+    restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U nusucheck"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
       retries: 5
 
   redis:
+    container_name: nusucheck-redis
     image: redis:7-alpine
-    ports:
-      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - npm_default
+    restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
-      retries: 5
-
-  web:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    command: >
-      bash -c "
-        bundle install &&
-        bin/rails db:prepare &&
-        rm -f tmp/pids/server.pid &&
-        bin/rails server -b 0.0.0.0
-      "
-    volumes:
-      - .:/app
-      - bundle_cache:/usr/local/bundle
-      - rails_storage:/app/storage
-    ports:
-      - "3000:3000"
-    environment:
-      DATABASE_HOST: db
-      DATABASE_USERNAME: nusucheck
-      DATABASE_PASSWORD: nusucheck
-      REDIS_URL: redis://redis:6379/0
-      RAILS_ENV: development
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    stdin_open: true
-    tty: true
-
-  sidekiq:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    command: bash -c "bundle install && bundle exec sidekiq"
-    volumes:
-      - .:/app
-      - bundle_cache:/usr/local/bundle
-      - rails_storage:/app/storage
-    environment:
-      DATABASE_HOST: db
-      DATABASE_USERNAME: nusucheck
-      DATABASE_PASSWORD: nusucheck
-      REDIS_URL: redis://redis:6379/0
-      RAILS_ENV: development
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-
-  tailwind:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    command: bin/rails tailwindcss:watch
-    volumes:
-      - .:/app
-      - bundle_cache:/usr/local/bundle
-    environment:
-      RAILS_ENV: development
-    tty: true
+      retries: 3
 
 volumes:
-  postgres_data:
-  bundle_cache:
-  rails_storage:
+  db_data:
+  redis_data:
+
+networks:
+  npm_default:
+    external: true

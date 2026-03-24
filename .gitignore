@@ -35,3 +35,6 @@
 .DS_Store
 Thumbs.db
 nul
+
+# 환경변수 (절대 커밋 금지)
+.env

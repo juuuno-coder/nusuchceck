@@ -1,5 +1,6 @@
 # Ignore bundler config.
 /.bundle
+/vendor/bundle
 
 # Ignore all environment files.
 /.env*
@@ -35,6 +36,9 @@
 .DS_Store
 Thumbs.db
 nul
+
+# macOS AppleDouble (resource fork) files
+._*
 
 # 환경변수 (절대 커밋 금지)
 .env

@@ -5,11 +5,11 @@ module OmniAuth
   module Strategies
     class Kakao < OmniAuth::Strategies::OAuth2
       option :name, "kakao"
-
       option :client_options, {
         site: "https://kauth.kakao.com",
         authorize_url: "/oauth/authorize",
-        token_url: "/oauth/token"
+        token_url: "/oauth/token",
+        auth_scheme: :request_body
       }
 
       uid { raw_info["id"].to_s }
@@ -25,6 +25,15 @@ module OmniAuth
 
       extra do
         { raw_info: raw_info }
+      end
+
+      # OAuth2 클라이언트를 ENV에서 직접 생성 (devise 인자 전달 문제 해결)
+      def client
+        ::OAuth2::Client.new(
+          ENV['KAKAO_CLIENT_ID'],
+          ENV.fetch('KAKAO_CLIENT_SECRET', ''),
+          deep_symbolize(options.client_options)
+        )
       end
 
       def raw_info

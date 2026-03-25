@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rsync -av --progress --exclude='node_modules' --exclude='.next' --exclude='.turbo' \"/Users/admin/Desktop/nusucheck/\" \"/Volumes/새 볼륨/projects/nusucheck/\")"
+    ]
+  }
+}

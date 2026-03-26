@@ -13,7 +13,7 @@ class User < ApplicationRecord
   # Devise 모듈 (게스트 지원을 위해 :validatable 제거)
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable,
-         :omniauthable, omniauth_providers: [:kakao, :naver]
+         :omniauthable, omniauth_providers: [:kakao, :naver, :google_oauth2]
 
   # Associations
   has_many :posts, dependent: :destroy
@@ -86,9 +86,9 @@ class User < ApplicationRecord
     create!(
       provider: auth.provider,
       uid: auth.uid,
-      email: email || "kakao_#{auth.uid}@nusucheck.com",
+      email: email || "#{auth.provider}_#{auth.uid}@nusucheck.com",
       password: Devise.friendly_token[0, 20],
-      name: auth.info.nickname || "카카오유저#{SecureRandom.hex(4)}",
+      name: auth.info.nickname || auth.info.name || "유저#{SecureRandom.hex(4)}",
       type: "Customer",
       account_status: :registered
     )

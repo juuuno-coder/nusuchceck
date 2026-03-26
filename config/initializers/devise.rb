@@ -54,6 +54,46 @@ module OmniAuth
       end
     end
 
+    class Google < OmniAuth::Strategies::OAuth2
+      option :name, "google_oauth2"
+      option :client_options, {
+        site: "https://accounts.google.com",
+        authorize_url: "https://accounts.google.com/o/oauth2/auth",
+        token_url: "https://oauth2.googleapis.com/token"
+      }
+      option :authorize_params, { scope: "email profile" }
+
+      uid { raw_info["sub"] }
+
+      info do
+        {
+          name: raw_info["name"],
+          email: raw_info["email"],
+          image: raw_info["picture"]
+        }
+      end
+
+      extra do
+        { raw_info: raw_info }
+      end
+
+      def client
+        ::OAuth2::Client.new(
+          ENV['GOOGLE_CLIENT_ID'],
+          ENV['GOOGLE_CLIENT_SECRET'],
+          deep_symbolize(options.client_options)
+        )
+      end
+
+      def raw_info
+        @raw_info ||= access_token.get("https://www.googleapis.com/oauth2/v3/userinfo").parsed
+      end
+
+      def callback_url
+        full_host + callback_path
+      end
+    end
+
     class Naver < OmniAuth::Strategies::OAuth2
       option :name, "naver"
       option :client_options, {
@@ -139,5 +179,15 @@ Devise.setup do |config|
       ENV['NAVER_CLIENT_ID'],
       ENV['NAVER_CLIENT_SECRET'],
       strategy_class: OmniAuth::Strategies::Naver
+  end
+
+  # OmniAuth 설정 (구글 로그인)
+  if ENV['GOOGLE_CLIENT_ID'].present?
+    config.omniauth :google_oauth2,
+      ENV['GOOGLE_CLIENT_ID'],
+      ENV['GOOGLE_CLIENT_SECRET'],
+      strategy_class: OmniAuth::Strategies::Google,
+      scope: "email,profile",
+      provider_ignores_state: true
   end
 end

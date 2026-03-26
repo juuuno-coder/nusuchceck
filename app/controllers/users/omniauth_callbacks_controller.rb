@@ -1,5 +1,5 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
-  skip_before_action :verify_authenticity_token, only: [:kakao, :naver]
+  skip_before_action :verify_authenticity_token, only: [:kakao, :naver, :google_oauth2]
 
   def kakao
     handle_oauth("카카오")
@@ -7,6 +7,10 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   def naver
     handle_oauth("네이버")
+  end
+
+  def google_oauth2
+    handle_oauth("Google")
   end
 
   def failure

@@ -121,7 +121,7 @@
   <div class="max-w-lg mx-auto md:max-w-4xl px-4 md:px-6">
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-base font-bold text-gray-900">활동 중인 전문가</h2>
-      <%= link_to masters_path, class: "text-sm text-primary-600 font-semibold" do %>전체보기 →<% end %>
+      <%= link_to customers_masters_path, class: "text-sm text-primary-600 font-semibold" do %>전체보기 →<% end %>
     </div>
     <div class="space-y-2.5">
       <% masters_preview.each do |master| %>
@@ -130,7 +130,7 @@
           m_tc = [m_completed * 3, 100].min
           m_tt = (36.5 + m_tc * 0.6).round(1)
         %>
-        <%= link_to master_path(master), class: "flex items-center gap-3 p-3.5 bg-white rounded-2xl border border-gray-100 hover:border-primary-200 hover:shadow-sm transition-all block" do %>
+        <%= link_to customers_master_path(master), class: "flex items-center gap-3 p-3.5 bg-white rounded-2xl border border-gray-100 hover:border-primary-200 hover:shadow-sm transition-all block" do %>
           <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
             <%= master.name&.first %>
           </div>

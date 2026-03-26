@@ -112,7 +112,11 @@ export default class extends Controller {
   submitForm() {
     const content = this.inputTarget.value.trim()
     if (content.length === 0) return
+    if (this._submitting) return
+    this._submitting = true
     this.formTarget.requestSubmit()
+    // 0.5초 후 다시 전송 가능
+    setTimeout(() => { this._submitting = false }, 500)
   }
 
   resetForm(event) {

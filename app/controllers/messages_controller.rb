@@ -12,18 +12,18 @@ class MessagesController < ApplicationController
   end
 
   def create
-    # 중복 전송 방지 (2초 이내 같은 내용)
-    recent_dup = @request.messages.where(sender: current_user, content: params.dig(:message, :content))
-                                  .where("created_at > ?", 2.seconds.ago).exists?
-    if recent_dup
-      head :ok
-      return
-    end
-
     @message = @request.messages.build(message_params)
     @message.sender = current_user
     @message.message_type ||= :user
     @message.message_category ||= :text
+
+    # Redis 기반 중복 전송 방지 (같은 유저가 같은 request에 0.5초 이내 재전송 차단)
+    lock_key = "msg_lock:#{current_user.id}:#{@request.id}"
+    if Rails.cache.read(lock_key)
+      head :ok
+      return
+    end
+    Rails.cache.write(lock_key, true, expires_in: 0.5.seconds)
 
     if @message.save
       # ActionCable을 통해 실시간 전송 (Message 모델의 after_create_commit에서 처리)

@@ -12,6 +12,14 @@ class MessagesController < ApplicationController
   end
 
   def create
+    # 중복 전송 방지 (2초 이내 같은 내용)
+    recent_dup = @request.messages.where(sender: current_user, content: params.dig(:message, :content))
+                                  .where("created_at > ?", 2.seconds.ago).exists?
+    if recent_dup
+      head :ok
+      return
+    end
+
     @message = @request.messages.build(message_params)
     @message.sender = current_user
     @message.message_type ||= :user

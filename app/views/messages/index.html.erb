@@ -81,6 +81,32 @@
     </div>
   </div>
 
+  <!-- 의뢰 첨부 미디어 (사진/영상) -->
+  <% if @request.photos.attached? || @request.videos.attached? %>
+    <div class="bg-white border-b border-gray-100 px-4 py-2.5 flex-shrink-0">
+      <div class="flex items-center gap-2 overflow-x-auto scrollbar-none">
+        <span class="text-xs text-gray-400 font-medium flex-shrink-0">첨부</span>
+        <% @request.videos.each do |video| %>
+          <div class="flex-shrink-0 w-20 h-14 rounded-lg overflow-hidden bg-gray-900 relative">
+            <video src="<%= rails_blob_url(video) %>" class="w-full h-full object-cover" preload="metadata"></video>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="w-7 h-7 bg-white/80 rounded-full flex items-center justify-center">
+                <svg class="w-3.5 h-3.5 text-gray-800 ml-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        <% end %>
+        <% @request.photos.each do |photo| %>
+          <div class="flex-shrink-0 w-20 h-14 rounded-lg overflow-hidden">
+            <%= image_tag rails_blob_url(photo), class: "w-full h-full object-cover" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
   <!-- 메시지 영역 -->
   <div class="flex-1 overflow-y-auto px-4 py-4 space-y-1 bg-gray-50"
        data-chat-target="messagesContainer"

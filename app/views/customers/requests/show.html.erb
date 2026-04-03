@@ -393,9 +393,16 @@
               class: "flex-1 #{btn_classes(:outline, :md)} text-center", target: "_blank" %>
       </div>
 
-    <%# 대기 상태 %>
-    <% elsif @request.reported? %>
-      <p class="text-sm text-gray-500 text-center py-1">마스터 배정을 기다리고 있어요</p>
+    <%# 대기 상태 (취소 버튼 포함) %>
+    <% elsif @request.reported? || @request.open? %>
+      <div class="space-y-2">
+        <p class="text-sm text-gray-500 text-center py-1">마스터 배정을 기다리고 있어요</p>
+        <%= button_to "체크 취소",
+              cancel_customers_request_path(@request),
+              method: :post,
+              class: "w-full #{btn_classes(:outline, :lg)} !text-red-600 !border-red-200",
+              data: { turbo_confirm: "정말 이 체크를 취소하시겠습니까?" } %>
+      </div>
 
     <%# 취소 가능 상태 %>
     <% else %>

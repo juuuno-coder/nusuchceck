@@ -1,7 +1,7 @@
 <% content_for :title, "#{@order_name} 결제" %>
 
-<!-- 토스페이먼츠 JS SDK v2 -->
-<script src="https://js.tosspayments.com/v2/standard"></script>
+<!-- 토스페이먼츠 JS SDK v1 (기존 결제창) -->
+<script src="https://js.tosspayments.com/v1/payment"></script>
 
 <div class="max-w-xl mx-auto py-8 px-4">
   <!-- 헤더 -->
@@ -43,19 +43,12 @@
     </p>
   </div>
 
-  <!-- 토스페이먼츠 위젯 영역 -->
-  <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-4">
-    <div id="payment-method" class="mb-4"></div>
-    <div id="agreement" class="mb-4"></div>
-  </div>
-
   <!-- 결제 버튼 -->
   <button
     id="payment-button"
-    class="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white font-bold text-lg rounded-xl transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-    disabled
+    class="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white font-bold text-lg rounded-xl transition shadow-lg"
   >
-    <span id="payment-button-text">결제 수단 로딩 중...</span>
+    <%= number_to_currency(@amount, unit: "", precision: 0) %>원 결제하기
   </button>
 
   <p class="text-center text-xs text-gray-400 mt-3">
@@ -64,64 +57,28 @@
 </div>
 
 <script>
-  (async function() {
-    const clientKey  = "<%= @toss_client_key %>";
-    const customerKey = "user-<%= current_user.id %>";
-    const amount     = <%= @amount.to_i %>;
-    const orderId    = "<%= @order_id %>";
-    const orderName  = "<%= @order_name %>";
-    const successUrl = "<%= @success_url %>";
-    const failUrl    = "<%= @fail_url %>";
+  document.getElementById("payment-button").addEventListener("click", async function() {
+    this.disabled = true;
+    this.textContent = "결제 처리 중...";
 
-    const button       = document.getElementById("payment-button");
-    const buttonText   = document.getElementById("payment-button-text");
+    const tossPayments = TossPayments("<%= @toss_client_key %>");
 
     try {
-      const tossPayments = TossPayments(clientKey);
-      const widgets = tossPayments.widgets({ customerKey });
-
-      await widgets.setAmount({ currency: "KRW", value: amount });
-
-      await Promise.all([
-        widgets.renderPaymentMethods({
-          selector: "#payment-method",
-          variantKey: "DEFAULT"
-        }),
-        widgets.renderAgreement({
-          selector: "#agreement",
-          variantKey: "AGREEMENT"
-        })
-      ]);
-
-      button.disabled = false;
-      buttonText.textContent = `${amount.toLocaleString()}원 결제하기`;
-
-      button.addEventListener("click", async () => {
-        button.disabled = true;
-        buttonText.textContent = "결제 처리 중...";
-
-        try {
-          await widgets.requestPayment({
-            orderId,
-            orderName,
-            successUrl,
-            failUrl,
-            customerEmail: "<%= current_user.email %>",
-            customerName:  "<%= current_user.name %>",
-          });
-        } catch (error) {
-          // 사용자가 결제창을 닫거나 취소한 경우
-          button.disabled = false;
-          buttonText.textContent = `${amount.toLocaleString()}원 결제하기`;
-          if (error.code !== "USER_CANCEL") {
-            console.error("결제 오류:", error);
-          }
-        }
+      await tossPayments.requestPayment("카드", {
+        amount: <%= @amount.to_i %>,
+        orderId: "<%= @order_id %>",
+        orderName: "<%= @order_name %>",
+        successUrl: "<%= @success_url %>",
+        failUrl: "<%= @fail_url %>",
+        customerEmail: "<%= current_user.email %>",
+        customerName: "<%= current_user.name %>",
       });
-
     } catch (error) {
-      console.error("토스 위젯 초기화 오류:", error);
-      buttonText.textContent = "결제 위젯 로드 실패 - 새로고침 해주세요";
+      this.disabled = false;
+      this.textContent = "<%= number_to_currency(@amount, unit: '', precision: 0) %>원 결제하기";
+      if (error.code !== "USER_CANCEL") {
+        console.error("결제 오류:", error);
+      }
     }
-  })();
+  });
 </script>

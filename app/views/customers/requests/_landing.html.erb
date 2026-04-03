@@ -34,8 +34,8 @@
     <!-- 선택 카드 -->
     <div class="space-y-3">
 
-      <!-- YES: 지금 누수 중 -->
-      <%= link_to new_customers_request_path(mode: 'expert'),
+      <!-- YES: 지금 누수 중 → 바로 접수 폼 -->
+      <%= link_to new_customers_request_path(mode: 'urgent'),
             class: "block group",
             data: { turbo: false } do %>
         <div class="flex items-center gap-4 p-5 rounded-3xl border-2 border-gray-100 bg-white
@@ -47,7 +47,7 @@
           </div>
           <div class="flex-1">
             <p class="font-bold text-gray-900 text-[16px] mb-0.5">네, 지금 새고 있어요</p>
-            <p class="text-sm text-gray-400">영상·사진으로 전문가에게 바로 연결</p>
+            <p class="text-sm text-gray-400">바로 접수하고 전문가와 채팅 연결</p>
           </div>
           <svg class="w-5 h-5 text-gray-300 group-hover:text-red-400 group-hover:translate-x-0.5 transition-all flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
@@ -55,7 +55,7 @@
         </div>
       <% end %>
 
-      <!-- NO: 점검/사전진단 필요 -->
+      <!-- NO: AI 사전진단 → 진단서 → 의뢰 -->
       <%= link_to new_customers_request_path(mode: 'diagnosis'),
             class: "block group",
             data: { turbo: false } do %>
@@ -68,7 +68,7 @@
           </div>
           <div class="flex-1">
             <p class="font-bold text-gray-900 text-[16px] mb-0.5">아니요, 점검이 필요해요</p>
-            <p class="text-sm text-gray-400">증상을 파악하고 전문가 예약</p>
+            <p class="text-sm text-gray-400">AI가 증상을 분석하고 진단서를 드려요</p>
           </div>
           <svg class="w-5 h-5 text-gray-300 group-hover:text-primary-400 group-hover:translate-x-0.5 transition-all flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>

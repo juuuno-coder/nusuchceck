@@ -61,7 +61,7 @@
     <% @requests.each do |request| %>
       <% thumb_photo = request.photos.first %>
       <% thumb_video = request.videos.first %>
-      <%= link_to customers_request_path(request), class: "block bg-white rounded-2xl p-4 hover:shadow-lg transition-all border-2 border-gray-100 hover:border-primary-200" do %>
+      <%= link_to request_messages_path(request), class: "block bg-white rounded-2xl p-4 hover:shadow-lg transition-all border-2 border-gray-100 hover:border-primary-200" do %>
         <div class="flex items-start gap-4">
           <%# 썸네일 %>
           <div class="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">

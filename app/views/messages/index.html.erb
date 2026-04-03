@@ -137,6 +137,54 @@
   <div class="flex-1 overflow-y-auto px-4 py-4 space-y-2 bg-gray-50"
        data-chat-target="messagesContainer"
        id="messages">
+
+    <!-- 접수 정보 카드 (시스템 메시지) -->
+    <div class="flex justify-center mb-3">
+      <div class="bg-white rounded-2xl border border-gray-200 shadow-sm w-full max-w-sm overflow-hidden">
+        <div class="bg-primary-50 border-b border-primary-100 px-4 py-2.5 flex items-center gap-2">
+          <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <span class="text-xs font-bold text-primary-700">접수된 체크 정보</span>
+          <span class="ml-auto text-[10px] text-primary-500">#<%= @request.id %></span>
+        </div>
+        <div class="px-4 py-3 space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-gray-400 w-16 flex-shrink-0">증상</span>
+            <span class="text-xs font-semibold text-gray-800"><%= symptom_label(@request.symptom_type) %></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-gray-400 w-16 flex-shrink-0">건물 유형</span>
+            <span class="text-xs font-semibold text-gray-800"><%= @request.building_type_label rescue @request.building_type %></span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="text-xs text-gray-400 w-16 flex-shrink-0 mt-0.5">주소</span>
+            <span class="text-xs font-semibold text-gray-800 leading-relaxed"><%= @request.address %></span>
+          </div>
+          <% if @request.description.present? %>
+            <div class="flex items-start gap-2">
+              <span class="text-xs text-gray-400 w-16 flex-shrink-0 mt-0.5">상세 설명</span>
+              <span class="text-xs text-gray-700 leading-relaxed line-clamp-3"><%= @request.description %></span>
+            </div>
+          <% end %>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-gray-400 w-16 flex-shrink-0">접수일</span>
+            <span class="text-xs text-gray-600"><%= @request.created_at.strftime("%Y.%m.%d %H:%M") %></span>
+          </div>
+          <% media_count = (@request.photos.attached? ? @request.photos.count : 0) + (@request.videos.attached? ? @request.videos.count : 0) %>
+          <% if media_count > 0 %>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-gray-400 w-16 flex-shrink-0">첨부</span>
+              <span class="text-xs text-gray-600">사진/영상 <%= media_count %>개 · 위 미디어 섹션에서 확인</span>
+            </div>
+          <% end %>
+        </div>
+        <div class="border-t border-gray-100 px-4 py-2 bg-gray-50">
+          <p class="text-[10px] text-gray-400 text-center">추가 자료가 있으면 아래 채팅으로 올려주세요</p>
+        </div>
+      </div>
+    </div>
+
     <%= render @messages %>
     <div class="hidden justify-start mb-1.5" data-chat-target="typingIndicator">
       <div class="flex items-end gap-2">

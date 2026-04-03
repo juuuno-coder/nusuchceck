@@ -8,8 +8,10 @@ Rails.application.configure do
   config.cache_store = :memory_store
   config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
   config.assets.compile = false
-  # 스토리지 우선순위: OCI > R2 > 로컬 디스크
-  config.active_storage.service = if ENV["OCI_ENDPOINT"].present?
+  # 스토리지 우선순위: NCP > OCI > R2 > 로컬 디스크
+  config.active_storage.service = if ENV["NCP_ACCESS_KEY"].present?
+    :ncp
+  elsif ENV["OCI_ENDPOINT"].present?
     :oracle_cloud
   elsif ENV["R2_ENDPOINT"].present?
     :cloudflare_r2

@@ -7,6 +7,8 @@ class Customers::DashboardController < ApplicationController
     @active_requests = current_user.requests
                                    .where.not(status: %w[closed cancelled])
                                    .order(created_at: :desc)
+                                   .with_attached_photos
+                                   .with_attached_videos
                                    .limit(5)
 
     # 견적 대기 중

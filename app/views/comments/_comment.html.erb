@@ -1,0 +1,84 @@
+<%# 댓글 (대댓글 포함) %>
+<div id="comment-<%= comment.id %>" class="<%= comment.parent_id.present? ? 'ml-10 border-l-2 border-gray-100 pl-4' : '' %>">
+  <div class="bg-white rounded-2xl border border-gray-100 p-4 mb-2">
+    <div class="flex items-start gap-3">
+      <!-- 아바타 -->
+      <div class="w-7 h-7 bg-gradient-to-br from-primary-400 to-teal-500 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+        <%= comment.user.name&.first || "?" %>
+      </div>
+
+      <div class="flex-1 min-w-0">
+        <!-- 작성자 + 시간 -->
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-sm font-semibold text-gray-800">
+            <%= comment.user.name&.first&.then { |c| "#{c}*" } || "익명" %>
+          </span>
+          <span class="text-xs text-gray-400"><%= time_ago_in_words(comment.created_at) %> 전</span>
+        </div>
+
+        <!-- 내용 -->
+        <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap"><%= comment.content %></p>
+
+        <!-- 액션 버튼 -->
+        <div class="flex items-center gap-3 mt-2">
+          <% if user_signed_in? && comment.parent_id.nil? %>
+            <button type="button"
+                    class="text-xs text-gray-400 hover:text-primary-600 transition font-medium"
+                    onclick="toggleReplyForm(<%= comment.id %>)">
+              답글
+            </button>
+          <% end %>
+          <% if user_signed_in? && (comment.user == current_user || current_user.admin?) %>
+            <%= button_to post_comment_path(post, comment), method: :delete,
+                  form: { data: { turbo_confirm: "삭제할까요?" } },
+                  class: "text-xs text-gray-300 hover:text-red-400 transition font-medium bg-transparent border-0 p-0 cursor-pointer" do %>
+              삭제
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 대댓글 목록 -->
+  <% if comment.replies.any? %>
+    <div class="space-y-1 mb-2">
+      <% comment.replies.each do |reply| %>
+        <%= render "comments/comment", comment: reply, post: post %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- 답글 작성 폼 (기본 숨김) -->
+  <% if user_signed_in? && comment.parent_id.nil? %>
+    <div id="reply-form-<%= comment.id %>" class="hidden ml-10 mb-3">
+      <div class="bg-gray-50 rounded-2xl p-3">
+        <%= form_with url: post_comments_path(post), local: true do |f| %>
+          <%= f.hidden_field :parent_id, value: comment.id %>
+          <div class="flex gap-2">
+            <div class="w-6 h-6 bg-gradient-to-br from-primary-400 to-teal-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0 mt-0.5">
+              <%= current_user.name&.first || "?" %>
+            </div>
+            <div class="flex-1">
+              <%= f.text_area :content, rows: 2,
+                    placeholder: "답글을 남겨보세요",
+                    class: "w-full text-sm text-gray-800 placeholder-gray-400 border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300 resize-none bg-white" %>
+              <div class="flex justify-end gap-2 mt-1.5">
+                <button type="button" onclick="toggleReplyForm(<%= comment.id %>)"
+                        class="px-3 py-1 text-xs text-gray-500 hover:text-gray-700 transition">취소</button>
+                <%= f.submit "등록", class: "px-3 py-1 bg-primary-600 text-white text-xs font-semibold rounded-lg hover:bg-primary-700 transition cursor-pointer" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  function toggleReplyForm(id) {
+    const form = document.getElementById('reply-form-' + id);
+    if (form) form.classList.toggle('hidden');
+  }
+</script>

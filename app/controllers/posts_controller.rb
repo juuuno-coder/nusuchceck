@@ -13,7 +13,8 @@ class PostsController < ApplicationController
 
   def show
     @post.increment_views!
-    @comments = []  # 향후 댓글 기능 추가용
+    @comments = @post.comments.roots.includes(:user, replies: :user).recent
+    @comment = Comment.new
   end
 
   def new

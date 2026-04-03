@@ -239,7 +239,9 @@ Rails.application.routes.draw do
   get "events", to: "pages#events", as: :events
   # 커뮤니티 (하단 탭 링크 유지 + CRUD)
   get "community", to: "posts#index", as: :community
-  resources :posts, except: [:index]
+  resources :posts, except: [:index] do
+    resources :comments, only: [:create, :destroy]
+  end
   get "search", to: "search#index", as: :search
   get "terms", to: "pages#terms", as: :terms
   get "privacy", to: "pages#privacy", as: :privacy

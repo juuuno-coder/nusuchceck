@@ -34,6 +34,9 @@ jobs:
             sleep 5
             curl -sf http://localhost:4080/up || (echo "❌ 헬스체크 실패!" && docker compose logs --tail=30 && exit 1)
 
+            echo "▶ NPM nginx reload (502 방지)..."
+            docker exec npm-app-1 nginx -s reload || true
+
             echo "▶ 컨테이너 상태 확인..."
             docker compose ps
 

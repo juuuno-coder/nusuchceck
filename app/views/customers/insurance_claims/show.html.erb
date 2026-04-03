@@ -37,6 +37,32 @@
     </div>
   <% end %>
 
+  <!-- 진행 상태 스텝퍼 -->
+  <% steps = [
+    { key: %w[draft pending_customer_review], label: "작성중", icon: "✏️" },
+    { key: %w[submitted], label: "작성완료", icon: "📄" },
+    { key: %w[under_review], label: "제출완료", icon: "📬" },
+    { key: %w[approved rejected completed], label: "심사완료", icon: "✅" }
+  ]
+  current_step = steps.index { |s| s[:key].include?(@insurance_claim.status) } || 0
+  %>
+  <div class="mb-6 bg-white rounded-2xl border border-gray-100 p-4">
+    <div class="flex items-center justify-between relative">
+      <div class="absolute top-5 left-0 right-0 h-0.5 bg-gray-100 mx-8"></div>
+      <% steps.each_with_index do |step, i| %>
+        <% done = i < current_step %>
+        <% active = i == current_step %>
+        <div class="flex flex-col items-center gap-1.5 relative z-10">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center text-base font-bold
+            <%= done ? 'bg-primary-600 text-white' : active ? 'bg-primary-100 text-primary-700 ring-2 ring-primary-400' : 'bg-gray-100 text-gray-400' %>">
+            <%= done ? "✓" : step[:icon] %>
+          </div>
+          <span class="text-[11px] font-medium <%= active ? 'text-primary-700' : done ? 'text-gray-600' : 'text-gray-400' %>"><%= step[:label] %></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
   <!-- 상태별 안내 메시지 -->
   <% case @insurance_claim.status %>
   <% when 'pending_customer_review' %>
@@ -91,21 +117,11 @@
               🏢 보험사 바로가기
             </button>
 
-            <%= button_to auto_submit_customers_insurance_claim_path(@insurance_claim),
-                          method: :patch,
-                          data: { confirm: "보험사에 신청서를 자동으로 이메일 발송합니다. 계속하시겠습니까?" },
-                          class: "inline-flex items-center justify-center px-5 py-3 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition-colors" do %>
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-              </svg>
-              ⚡ 자동 제출 (이메일)
-            <% end %>
           </div>
 
           <div class="text-xs text-gray-600 space-y-1">
-            <p>📱 <strong>수동 제출:</strong> 보험사 앱/웹에서 1분 안에 완료!</p>
-            <p>⚡ <strong>자동 제출:</strong> 보험사에 즉시 이메일로 발송됩니다</p>
-            <p>💡 제출 후 "심사 시작" 버튼을 눌러주시면 진행 상황을 추적해드려요</p>
+            <p>📱 보험사 앱/웹에서 1분 안에 제출 완료!</p>
+            <p>💡 제출 후 "보험사 제출 완료" 버튼을 눌러주시면 진행 상황을 추적해드려요</p>
           </div>
         </div>
       </div>

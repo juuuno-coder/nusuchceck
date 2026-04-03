@@ -15,9 +15,9 @@ INSURANCE_COMPANIES = {
     name: "현대해상",
     email: "claim@hi.co.kr", # 실제 이메일로 교체 필요
     phone: "1588-5656",
-    app_name: "굿앤굿",
+    app_name: "Hi카",
     website: "https://www.hi.co.kr",
-    claim_menu: "간편청구",
+    claim_menu: "보험금 청구",
     logo_emoji: "🟢"
   },
   "DB손해보험" => {

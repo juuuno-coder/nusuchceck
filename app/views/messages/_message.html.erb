@@ -104,6 +104,35 @@
               <% end %>
             </div>
           <% end %>
+
+          <!-- 첨부 문서 -->
+          <% if message.respond_to?(:documents) && message.documents.attached? %>
+            <div class="mt-2 space-y-1.5">
+              <% message.documents.each do |doc| %>
+                <%= link_to rails_blob_url(doc, disposition: "attachment"), target: "_blank",
+                      class: "flex items-center gap-2 bg-white/10 hover:bg-white/20 rounded-xl px-3 py-2.5 transition-colors group" do %>
+                  <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+                    <% ext = File.extname(doc.filename.to_s).downcase %>
+                    <% icon = case ext
+                               when '.pdf' then '📄'
+                               when '.doc', '.docx' then '📝'
+                               when '.xls', '.xlsx' then '📊'
+                               when '.hwp' then '📋'
+                               else '📎'
+                               end %>
+                    <span class="text-base"><%= icon %></span>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <p class="text-xs font-medium truncate"><%= doc.filename %></p>
+                    <p class="text-[10px] opacity-70"><%= number_to_human_size(doc.byte_size) %></p>
+                  </div>
+                  <svg class="w-4 h-4 opacity-60 group-hover:opacity-100 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                  </svg>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
         </div>
 
         <!-- 시간 + 읽음 표시 -->

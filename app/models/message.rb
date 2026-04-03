@@ -5,6 +5,7 @@ class Message < ApplicationRecord
   # 이미지/영상 첨부
   has_many_attached :images
   has_many_attached :videos
+  has_many_attached :documents
 
   # 메시지 타입: user(고객/전문가), system(AI 자동), admin(관리자 수동)
   enum message_type: {

@@ -33,6 +33,7 @@ class MessagesController < ApplicationController
     Rails.cache.write(lock_key, true, expires_in: 0.5.seconds)
 
     if @message.save
+      attach_files_by_type(@message)
       # ActionCable을 통해 실시간 전송 (Message 모델의 after_create_commit에서 처리)
 
       # Turbo Stream 응답으로 메시지 추가
@@ -75,7 +76,22 @@ class MessagesController < ApplicationController
   end
 
   def message_params
-    params.require(:message).permit(:content, images: [], videos: [])
+    params.require(:message).permit(:content, images: [], videos: [], documents: [])
+  end
+
+  def attach_files_by_type(message)
+    return unless params[:message][:attachments].present?
+
+    params[:message][:attachments].each do |file|
+      next unless file.respond_to?(:content_type)
+      if file.content_type.start_with?("image/")
+        message.images.attach(file)
+      elsif file.content_type.start_with?("video/")
+        message.videos.attach(file)
+      else
+        message.documents.attach(file)
+      end
+    end
   end
 
   def mark_unread_messages_as_read

@@ -446,15 +446,19 @@
         </svg>
       </button>
 
-      <!-- 첨부 버튼 (클립) -->
-      <label class="flex-shrink-0 w-9 h-9 flex items-center justify-center text-gray-400 hover:text-primary-500 cursor-pointer transition-colors rounded-lg hover:bg-gray-100">
+      <!-- 첨부 버튼 (클립) — 사진/영상/문서 -->
+      <label for="file-attach-input" class="flex-shrink-0 w-9 h-9 flex items-center justify-center text-gray-400 hover:text-primary-500 cursor-pointer transition-colors rounded-lg hover:bg-gray-100">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
         </svg>
-        <%= f.file_field :images, multiple: true, accept: "image/*,video/*", class: "hidden" %>
       </label>
 
+      <%= f.file_field :attachments, multiple: true, accept: "image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.hwp",
+            class: "hidden", id: "file-attach-input", onchange: "handleFileAttach(this)" %>
+
       <div class="flex-1">
+        <!-- 첨부 미리보기 -->
+        <div id="file-preview" class="hidden mb-1.5 flex flex-wrap gap-1.5 max-h-20 overflow-y-auto"></div>
         <%= f.text_area :content,
               rows: 1,
               placeholder: "메시지를 입력하세요",
@@ -476,3 +480,77 @@
     <% end %>
   </div>
 </div>
+
+<!-- 라이트박스 -->
+<div id="lightbox" class="hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain rounded-lg">
+</div>
+
+<script>
+  // 라이트박스
+  function openLightbox(url) {
+    document.getElementById('lightbox-img').src = url;
+    document.getElementById('lightbox').classList.remove('hidden');
+    document.getElementById('lightbox').classList.add('flex');
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.add('hidden');
+    document.getElementById('lightbox').classList.remove('flex');
+  }
+
+  // 표현 패널 (이모지/스티커)
+  function toggleExpressionPanel() {
+    const panel = document.getElementById('expression-panel');
+    panel.classList.toggle('hidden');
+  }
+  function switchTab(tab) {
+    document.getElementById('panel-emoji').classList.toggle('hidden', tab !== 'emoji');
+    document.getElementById('panel-sticker').classList.toggle('hidden', tab !== 'sticker');
+    document.getElementById('tab-emoji').className = `flex-1 py-2 text-xs font-semibold border-b-2 transition-colors ${tab === 'emoji' ? 'text-yellow-500 border-yellow-400' : 'text-gray-400 border-transparent'}`;
+    document.getElementById('tab-sticker').className = `flex-1 py-2 text-xs font-semibold border-b-2 transition-colors ${tab === 'sticker' ? 'text-purple-500 border-purple-400' : 'text-gray-400 border-transparent'}`;
+  }
+
+  // 스티커 전송
+  function sendSticker(filename) {
+    const form = document.getElementById('message_form');
+    const fd = new FormData(form);
+    fd.set('sticker_name', filename);
+    fd.delete('message[content]');
+    fd.delete('message[attachments][]');
+    fetch(form.action, {
+      method: 'POST',
+      headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'text/vnd.turbo-stream.html' },
+      body: fd
+    }).then(r => r.text()).then(html => Turbo.renderStreamMessage(html));
+  }
+
+  // 파일 첨부 미리보기
+  function handleFileAttach(input) {
+    const preview = document.getElementById('file-preview');
+    preview.innerHTML = '';
+    if (!input.files || input.files.length === 0) {
+      preview.classList.add('hidden');
+      return;
+    }
+    preview.classList.remove('hidden');
+    Array.from(input.files).forEach(file => {
+      const item = document.createElement('div');
+      item.className = 'flex items-center gap-1 bg-gray-100 rounded-lg px-2 py-1 text-xs text-gray-700 max-w-[120px]';
+      if (file.type.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.className = 'w-6 h-6 object-cover rounded';
+        img.src = URL.createObjectURL(file);
+        item.prepend(img);
+      } else {
+        const icon = document.createElement('span');
+        icon.textContent = file.type.startsWith('video/') ? '🎬' : '📄';
+        item.prepend(icon);
+      }
+      const name = document.createElement('span');
+      name.className = 'truncate';
+      name.textContent = file.name;
+      item.appendChild(name);
+      preview.appendChild(item);
+    });
+  }
+</script>

@@ -90,9 +90,19 @@ class InsuranceClaimPdfService
   private
 
   def setup_fonts
-    # 기본적으로 Prawn은 한글을 지원하지 않으므로,
-    # 실제 운영 환경에서는 한글 폰트를 추가해야 합니다.
-    # 여기서는 기본 설정만 제공합니다.
+    nanum_paths = [
+      "/usr/share/fonts/truetype/nanum/NanumGothic.ttf",
+      "/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf"
+    ]
+    if nanum_paths.all? { |p| File.exist?(p) }
+      @pdf.font_families.update(
+        "NanumGothic" => {
+          normal: nanum_paths[0],
+          bold:   nanum_paths[1]
+        }
+      )
+      @pdf.font "NanumGothic"
+    end
   end
 
   def render_header

@@ -53,7 +53,12 @@ class EscrowService
   def refund_all!
     request.escrow_transactions.where(status: [:pending, :deposited, :held]).each do |escrow|
       simulate_pg_refund(escrow)
-      escrow.refund! rescue nil
+      escrow.refund!
+    rescue AASM::InvalidTransition => e
+      Rails.logger.error("[EscrowService] 에스크로 환불 상태 전이 실패 (id=#{escrow.id}): #{e.message}")
+    rescue => e
+      Rails.logger.error("[EscrowService] 에스크로 환불 실패 (id=#{escrow.id}): #{e.message}")
+      raise EscrowError, "에스크로 환불 실패: #{e.message}"
     end
   end
 

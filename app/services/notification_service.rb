@@ -41,7 +41,9 @@ class NotificationService
     )
 
     # 고객에게 이메일 알림
-    RequestMailer.master_assigned(request).deliver_later rescue nil
+    RequestMailer.master_assigned(request).deliver_later
+  rescue => e
+    Rails.logger.error("[NotificationService] 이메일 발송 실패 (master_assigned): #{e.message}")
   end
 
   # 견적 제출 알림 (+ 이메일)
@@ -55,7 +57,9 @@ class NotificationService
     )
 
     # 고객에게 이메일 알림
-    RequestMailer.estimate_submitted(estimate.request).deliver_later rescue nil
+    RequestMailer.estimate_submitted(estimate.request).deliver_later
+  rescue => e
+    Rails.logger.error("[NotificationService] 이메일 발송 실패 (estimate_submitted): #{e.message}")
   end
 
   # 견적 수락 알림
@@ -80,7 +84,9 @@ class NotificationService
     )
 
     # 고객에게 이메일 알림
-    RequestMailer.construction_completed(request).deliver_later rescue nil
+    RequestMailer.construction_completed(request).deliver_later
+  rescue => e
+    Rails.logger.error("[NotificationService] 이메일 발송 실패 (construction_completed): #{e.message}")
   end
 
   # 보험청구 검토 요청 알림

@@ -15,6 +15,7 @@ jobs:
           host: ${{ secrets.NCP_HOST }}
           username: ${{ secrets.NCP_USER }}
           key: ${{ secrets.NCP_SSH_KEY }}
+          command_timeout: 20m
           script: |
             set -e
             cd /root/projects/nusucheck

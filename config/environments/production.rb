@@ -5,7 +5,11 @@ Rails.application.configure do
   config.eager_load = true
   config.consider_all_requests_local = false
   config.action_controller.perform_caching = true
-  config.cache_store = :redis_cache_store, { url: ENV.fetch("REDIS_URL", "redis://localhost:6379/0") }
+  if ENV["REDIS_URL"].present?
+    config.cache_store = :redis_cache_store, { url: ENV["REDIS_URL"] }
+  else
+    config.cache_store = :memory_store
+  end
   config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
   config.assets.compile = false
   # 스토리지 우선순위: NCP > OCI > R2 > 로컬 디스크
@@ -33,9 +37,8 @@ Rails.application.configure do
     ENV["APP_DOMAIN"],
     /.*\.nusucheck\.com/,
     /.*\.vibers\.co\.kr/,
+    "localhost",
   ].compact
-  # Docker 내부 헬스체크(/up)는 Host 검증 제외
-  config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
   # Action Mailer
   config.action_mailer.perform_caching = false

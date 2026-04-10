@@ -14,7 +14,7 @@ ENV RAILS_ENV="production" \
 
 FROM base AS build
 
-# BUNDLE_DEPLOYMENT는 bundle lock 명령에서만 해제 (아래 RUN에서 인라인 설정)
+ENV BUNDLE_DEPLOYMENT=""
 
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libpq-dev pkg-config curl libyaml-dev && \
@@ -26,7 +26,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 COPY Gemfile Gemfile.lock ./
-RUN BUNDLE_DEPLOYMENT="" bundle lock --add-platform x86_64-linux && \
+RUN bundle lock --add-platform x86_64-linux && \
     bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
 

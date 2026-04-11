@@ -1,6 +1,5 @@
 class Admin::ServiceZonesController < ApplicationController
-  before_action :authenticate_user!
-  before_action :require_admin
+  include AdminAccessible
   before_action :set_zone, only: [:edit, :update, :destroy]
 
   def index
@@ -55,7 +54,4 @@ class Admin::ServiceZonesController < ApplicationController
     params.require(:service_zone).permit(:name, :region, :population, :max_slots, :monthly_fee, :active, :sort_order, districts: [])
   end
 
-  def require_admin
-    redirect_to root_path, alert: "권한이 없어요." unless current_user.admin?
-  end
 end

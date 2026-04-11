@@ -1,6 +1,5 @@
 class Admin::DisputesController < ApplicationController
-  before_action :authenticate_user!
-  before_action :require_admin
+  include AdminAccessible
   before_action :set_dispute, except: [:index]
 
   def index
@@ -58,7 +57,4 @@ class Admin::DisputesController < ApplicationController
     @dispute = Dispute.find(params[:id])
   end
 
-  def require_admin
-    redirect_to root_path, alert: "권한이 없어요." unless current_user.admin?
-  end
 end

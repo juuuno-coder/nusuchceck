@@ -13,7 +13,7 @@
               <p class="text-sm font-semibold text-gray-900"><%= claim.service_zone.display_name %></p>
               <p class="text-xs text-gray-400"><%= claim.service_zone.districts_text %></p>
             </div>
-            <%= link_to masters_zone_claim_path(claim), method: :delete, data: { confirm: "정말 해제할까요?" }, class: "text-xs text-red-400 hover:text-red-600" do %>
+            <%= link_to masters_zone_claim_path(claim), method: :delete, data: { turbo_confirm: "정말 해제할까요?" }, class: "text-xs text-red-400 hover:text-red-600" do %>
               해제
             <% end %>
           </div>

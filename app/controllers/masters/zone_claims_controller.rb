@@ -11,27 +11,30 @@ class Masters::ZoneClaimsController < ApplicationController
   def create
     zone = ServiceZone.find(params[:service_zone_id])
 
-    if zone.full?
-      redirect_to masters_zone_claims_path(region: zone.region), alert: "이 구역은 모든 슬롯이 선점됐어요."
-      return
-    end
+    ActiveRecord::Base.transaction do
+      zone.lock!
 
-    if current_user.zone_claims.active.count >= 3
-      redirect_to masters_zone_claims_path(region: zone.region), alert: "최대 3개 구역까지 선점할 수 있어요."
-      return
-    end
+      if zone.full?
+        redirect_to masters_zone_claims_path(region: zone.region), alert: "이 구역은 모든 슬롯이 선점됐어요."
+        return
+      end
 
-    claim = current_user.zone_claims.build(
-      service_zone: zone,
-      status: "active"
-    )
+      if current_user.zone_claims.active.count >= 3
+        redirect_to masters_zone_claims_path(region: zone.region), alert: "최대 3개 구역까지 선점할 수 있어요."
+        return
+      end
 
-    if claim.save
-      # master_profile의 service_areas도 동기화
-      sync_service_areas!
-      redirect_to masters_zone_claims_path(region: zone.region), notice: "#{zone.display_name} 구역을 선점했어요!"
-    else
-      redirect_to masters_zone_claims_path(region: zone.region), alert: claim.errors.full_messages.first
+      claim = current_user.zone_claims.build(
+        service_zone: zone,
+        status: "active"
+      )
+
+      if claim.save
+        sync_service_areas!
+        redirect_to masters_zone_claims_path(region: zone.region), notice: "#{zone.display_name} 구역을 선점했어요!"
+      else
+        redirect_to masters_zone_claims_path(region: zone.region), alert: claim.errors.full_messages.first
+      end
     end
   end
 

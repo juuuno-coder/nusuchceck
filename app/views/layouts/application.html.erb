@@ -302,6 +302,15 @@
               <span class="font-medium">설문</span>
             <% end %>
             <div class="border-t border-gray-100 my-2"></div>
+            <%= link_to admin_disputes_path, class: "flex items-center gap-3 px-3 py-3.5 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors" do %>
+              <i class="fa-solid fa-gavel w-5 text-center"></i>
+              <span class="font-medium">분쟁 관리</span>
+            <% end %>
+            <%= link_to admin_service_zones_path, class: "flex items-center gap-3 px-3 py-3.5 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors" do %>
+              <i class="fa-solid fa-map-location-dot w-5 text-center"></i>
+              <span class="font-medium">구역 관리</span>
+            <% end %>
+            <div class="border-t border-gray-100 my-2"></div>
             <%= link_to admin_insurance_claims_path, class: "flex items-center gap-3 px-3 py-3.5 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors" do %>
               <i class="fa-solid fa-file-shield w-5 text-center"></i>
               <span class="font-medium">보험청구</span>

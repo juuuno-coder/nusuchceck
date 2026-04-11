@@ -56,6 +56,30 @@
     </div>
   <% end %>
 
+  <!-- 증거 자료 -->
+  <% if @evidences.any? %>
+    <div class="bg-white border border-gray-200 rounded-2xl p-4 mb-4">
+      <h2 class="text-sm font-bold text-gray-900 mb-3">증거 자료</h2>
+      <div class="space-y-2">
+        <% @evidences.each do |evidence| %>
+          <div class="flex items-center gap-3 bg-gray-50 rounded-xl p-3">
+            <span class="text-lg"><%= { "photo" => "📷", "video" => "🎥", "document" => "📄", "receipt" => "🧾" }[evidence.evidence_type] || "📎" %></span>
+            <div class="flex-1">
+              <p class="text-xs font-medium text-gray-700"><%= evidence.type_label %></p>
+              <p class="text-xs text-gray-400"><%= evidence.submitted_by&.name %> · <%= evidence.created_at.strftime("%m/%d %H:%M") %></p>
+              <% if evidence.description.present? %>
+                <p class="text-xs text-gray-500 mt-1"><%= evidence.description %></p>
+              <% end %>
+            </div>
+            <% if evidence.files.attached? %>
+              <span class="text-xs text-primary-500"><%= evidence.files.count %>개 파일</span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
   <!-- 대화 내역 -->
   <div class="bg-white border border-gray-200 rounded-2xl p-4 mb-4">
     <h2 class="text-sm font-bold text-gray-900 mb-3">대화 내역</h2>

@@ -1,6 +1,6 @@
 class ZoneClaim < ApplicationRecord
   belongs_to :master, class_name: "User"
-  belongs_to :service_zone, counter_cache: :claimed_slots_count
+  belongs_to :service_zone
 
   validates :master_id, uniqueness: { scope: :service_zone_id, message: "이미 선점한 구역이에요" }
   validate :zone_not_full, on: :create
@@ -9,6 +9,8 @@ class ZoneClaim < ApplicationRecord
   scope :expired, -> { where(status: "expired") }
 
   before_create :set_claimed_at
+  after_save :update_slot_count
+  after_destroy :update_slot_count
 
   def active?
     status == "active"
@@ -34,5 +36,9 @@ class ZoneClaim < ApplicationRecord
   def set_claimed_at
     self.claimed_at ||= Time.current
     self.expires_at ||= 1.year.from_now
+  end
+
+  def update_slot_count
+    service_zone.update_column(:claimed_slots_count, service_zone.zone_claims.active.count)
   end
 end

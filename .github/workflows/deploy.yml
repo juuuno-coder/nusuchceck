@@ -25,11 +25,14 @@ jobs:
             git pull origin main
             git stash pop || true
 
+            echo "▶ 이미지 빌드..."
+            docker compose build app sidekiq
+
             echo "▶ 기존 컨테이너 정리 (충돌 방지)..."
             docker rm -f nusucheck-app nusucheck-sidekiq 2>/dev/null || true
 
-            echo "▶ docker compose rebuild & restart (app/sidekiq only)..."
-            docker compose up -d --build --no-deps app sidekiq
+            echo "▶ 컨테이너 재시작 (app/sidekiq only)..."
+            docker compose up -d --no-deps app sidekiq
 
             echo "▶ DB 마이그레이션..."
             sleep 20

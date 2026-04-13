@@ -589,7 +589,16 @@
           <%= link_to "의견 보내기", new_feedback_path, class: "hover:text-white transition" %>
           <a href="mailto:contact@nusucheck.com" class="hover:text-white transition">contact@nusucheck.com</a>
         </div>
-        <p class="text-gray-600">&copy; <%= Date.current.year %> 누수체크. All rights reserved.</p>
+        <div class="text-gray-500 space-y-1">
+          <p>상호명: 위로 | 사업자번호: 545-16-01046 | 대표자: 김성원</p>
+          <p>주소: 경남 양산시 고향의봄12길 10, 뉴그린빌 301호</p>
+          <div class="flex gap-3">
+            <%= link_to "이용약관", terms_path, class: "hover:text-white transition" %>
+            <%= link_to "개인정보방침", privacy_path, class: "hover:text-white transition" %>
+            <%= link_to "환불정책", refund_path, class: "hover:text-white transition" %>
+          </div>
+        </div>
+        <p class="text-gray-600">&copy; <%= Date.current.year %> 누수체크 (위로). All rights reserved.</p>
       </div>
     </div>
 
@@ -618,8 +627,14 @@
             </ul>
           </div>
         </div>
-        <div class="border-t border-gray-700 pt-6 text-center">
-          <p class="text-sm text-gray-500">&copy; <%= Date.current.year %> 누수체크. All rights reserved.</p>
+        <div class="border-t border-gray-700 pt-6 space-y-2 text-center">
+          <p class="text-xs text-gray-500">상호명: 위로 &nbsp;|&nbsp; 사업자등록번호: 545-16-01046 &nbsp;|&nbsp; 대표자: 김성원 &nbsp;|&nbsp; 주소: 경남 양산시 고향의봄12길 10, 뉴그린빌 301호</p>
+          <div class="flex items-center justify-center gap-4 text-xs text-gray-500">
+            <%= link_to "이용약관", terms_path, class: "hover:text-white transition" %>
+            <%= link_to "개인정보처리방침", privacy_path, class: "hover:text-white transition" %>
+            <%= link_to "취소·환불정책", refund_path, class: "hover:text-white transition" %>
+          </div>
+          <p class="text-xs text-gray-600">&copy; <%= Date.current.year %> 누수체크 (위로). All rights reserved.</p>
         </div>
       </div>
     </div>

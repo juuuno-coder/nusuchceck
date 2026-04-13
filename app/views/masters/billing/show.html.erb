@@ -1,0 +1,84 @@
+<% content_for :title, "결제 관리" %>
+
+<div class="min-h-screen bg-gray-50 py-10">
+  <div class="max-w-lg mx-auto px-4">
+
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">결제 관리</h1>
+
+    <% if @subscription.zone? && @subscription.active? %>
+      <!-- 활성 구역 선점 플랜 -->
+      <div class="bg-white rounded-2xl shadow-sm border border-blue-100 p-6 mb-4">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="font-bold text-gray-900">구역 선점 플랜</p>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">이용 중</span>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-xl font-bold text-gray-900">99,000원</p>
+            <p class="text-xs text-gray-400">/ 월</p>
+          </div>
+        </div>
+
+        <div class="border-t border-gray-100 pt-4 space-y-2 text-sm">
+          <div class="flex justify-between">
+            <span class="text-gray-500">시작일</span>
+            <span class="font-medium"><%= @subscription.starts_on&.strftime("%Y년 %m월 %d일") %></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-500">다음 결제일</span>
+            <span class="font-medium"><%= @subscription.expires_on&.strftime("%Y년 %m월 %d일") %></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-500">자동결제</span>
+            <span class="font-medium text-green-600"><%= @subscription.has_billing_key? ? "등록됨" : "미등록" %></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 선점 구역 -->
+      <% if current_user.zone_claims.active.any? %>
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-4">
+          <h2 class="font-bold text-gray-900 mb-3">선점 구역</h2>
+          <% current_user.zone_claims.active.includes(:service_zone).each do |claim| %>
+            <div class="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+              <span class="text-sm font-medium text-gray-900"><%= claim.service_zone.name %></span>
+              <span class="text-xs text-gray-500"><%= claim.claimed_at&.strftime("%Y.%m.%d") %> 선점</span>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <!-- 해지 -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h2 class="font-bold text-gray-900 mb-2">자동결제 해지</h2>
+        <p class="text-sm text-gray-500 mb-4">해지하면 다음 결제일(<%= @subscription.expires_on&.strftime("%Y년 %m월 %d일") %>)까지 구독이 유지돼요.</p>
+        <%= button_to "자동결제 해지하기", masters_billing_path,
+              method: :delete,
+              data: { confirm: "정말 해지하시겠어요? 다음 결제일까지는 구독이 유지됩니다." },
+              class: "text-sm text-red-500 hover:text-red-700 underline" %>
+      </div>
+
+    <% else %>
+      <!-- 미가입 -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+        <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+          </svg>
+        </div>
+        <h2 class="text-lg font-bold text-gray-900 mb-2">구역 선점을 시작해보세요</h2>
+        <p class="text-sm text-gray-500 mb-6">월 99,000원으로 내 구역 고객에게 가장 먼저 노출돼요</p>
+        <%= link_to "구역 선점 플랜 시작하기", new_masters_billing_path,
+              class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-colors" %>
+      </div>
+    <% end %>
+
+  </div>
+</div>

@@ -4,7 +4,8 @@ class Subscription < ApplicationRecord
   enum tier: {
     free: 0,       # 무료: 월 5건 제한, 일반 매칭
     basic: 1,      # 베이직: 월 20,000원, 월 무제한, 일반 매칭
-    premium: 2     # 프리미엄: 월 50,000원, 월 무제한, 우선 매칭, 프로필 상단 노출
+    premium: 2,    # 프리미엄: 월 50,000원, 월 무제한, 우선 매칭, 프로필 상단 노출
+    zone: 3        # 구역 선점: 월 99,000원, 1구역 우선 노출, 자동결제(빌링키)
   }
 
   validates :tier, presence: true
@@ -13,6 +14,8 @@ class Subscription < ApplicationRecord
   scope :active, -> { where(active: true).where("expires_on > ?", Date.current) }
   scope :premium, -> { where(tier: :premium) }
   scope :basic_or_premium, -> { where(tier: [:basic, :premium]) }
+  scope :paid, -> { where(tier: [:basic, :premium, :zone]) }
+  scope :with_billing, -> { where.not(billing_key: nil) }
 
   # 티어별 특징 반환
   def features_for_tier
@@ -37,12 +40,24 @@ class Subscription < ApplicationRecord
       }
     when "premium"
       {
-        monthly_limit: nil,  # 무제한
-        priority_matching: true,   # 신규 체크 우선 알림 (5분 선행)
-        profile_boost: true,        # 프로필 상단 노출
+        monthly_limit: nil,
+        priority_matching: true,
+        profile_boost: true,
         ad_free: true,
+        zone_claim: false,
         display_name: "프리미엄 플랜",
         description: "우선 매칭으로 더 많은 기회를"
+      }
+    when "zone"
+      {
+        monthly_limit: nil,
+        priority_matching: true,
+        profile_boost: true,
+        ad_free: true,
+        zone_claim: true,           # 구역 우선 노출 슬롯 1개
+        auto_billing: true,          # 자동결제 (빌링키)
+        display_name: "구역 선점 플랜",
+        description: "내 구역 1위 전문가로 우선 노출"
       }
     end
   end
@@ -62,7 +77,7 @@ class Subscription < ApplicationRecord
 
   # 이번 달 클레임 가능 건수 확인
   def can_claim_request?
-    return true if basic? || premium?
+    return true if basic? || premium? || zone?
     return true if free? && monthly_claimed_count < 5
     false
   end
@@ -75,7 +90,7 @@ class Subscription < ApplicationRecord
 
   # 남은 클레임 가능 건수
   def remaining_claims
-    return Float::INFINITY if basic? || premium?
+    return Float::INFINITY if basic? || premium? || zone?
     [5 - monthly_claimed_count, 0].max
   end
 
@@ -85,7 +100,33 @@ class Subscription < ApplicationRecord
     when "free" then 0
     when "basic" then 20_000
     when "premium" then 50_000
+    when "zone" then 99_000
     else 0
     end
+  end
+
+  # 빌링키로 자동결제 가능 여부
+  def has_billing_key?
+    billing_key.present?
+  end
+
+  # 구독 만료 임박 (7일 이내)
+  def expiring_soon?
+    expires_on.present? && expires_on <= 7.days.from_now.to_date
+  end
+
+  # 자동결제로 구독 갱신
+  def activate_with_billing!(billing_key:, customer_key:)
+    update!(
+      billing_key: billing_key,
+      customer_key: customer_key,
+      billing_status: "active",
+      tier: :zone,
+      monthly_fee: 99_000,
+      starts_on: Date.current,
+      expires_on: Date.current + 1.month,
+      active: true,
+      next_billing_at: Date.current + 1.month
+    )
   end
 end

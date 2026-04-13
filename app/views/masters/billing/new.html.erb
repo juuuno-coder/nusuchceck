@@ -1,0 +1,107 @@
+<% content_for :title, "구역 선점 플랜 시작" %>
+
+<div class="min-h-screen bg-gray-50 py-10">
+  <div class="max-w-lg mx-auto px-4">
+
+    <!-- 헤더 -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-2xl mb-4">
+        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </div>
+      <h1 class="text-2xl font-bold text-gray-900">구역 선점 플랜</h1>
+      <p class="text-gray-500 mt-2">내 구역 고객에게 가장 먼저 노출돼요</p>
+    </div>
+
+    <!-- 플랜 혜택 카드 -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-lg font-bold text-gray-900">구역 선점 플랜</span>
+        <div class="text-right">
+          <span class="text-2xl font-bold text-blue-600">99,000원</span>
+          <span class="text-sm text-gray-400">/월</span>
+        </div>
+      </div>
+
+      <ul class="space-y-3">
+        <% [
+          ["구역 우선 노출", "선택 구역 고객에게 1순위로 노출", true],
+          ["우선 매칭 알림", "신규 체크 접수 시 가장 먼저 알림", true],
+          ["무제한 견적 제출", "월 건수 제한 없이 모든 요청에 견적", true],
+          ["자동 갱신", "매월 자동결제로 구독 유지", true],
+          ["언제든 해지", "위약금 없이 즉시 해지 가능", true],
+        ].each do |title, desc, included| %>
+          <li class="flex items-start gap-3">
+            <div class="flex-shrink-0 w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center mt-0.5">
+              <svg class="w-3 h-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-900"><%= title %></p>
+              <p class="text-xs text-gray-500"><%= desc %></p>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <!-- 결제 버튼 -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-4">
+      <p class="text-sm text-gray-600 mb-4">카드를 등록하면 즉시 결제 후 구독이 시작돼요.<br>매월 같은 날 자동으로 갱신됩니다.</p>
+
+      <button id="toss-payment-btn"
+              data-customer-key="<%= @customer_key %>"
+              data-success-url="<%= @success_url %>"
+              data-fail-url="<%= @fail_url %>"
+              data-client-key="<%= @toss_client_key %>"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl transition-colors text-lg">
+        카드 등록하고 시작하기
+      </button>
+    </div>
+
+    <!-- 안내 -->
+    <div class="text-center space-y-1">
+      <p class="text-xs text-gray-400">토스페이먼츠 · 안전한 결제</p>
+      <p class="text-xs text-gray-400">
+        결제 전 <a href="/terms" class="underline" target="_blank">이용약관</a>과
+        <a href="/refund" class="underline" target="_blank">환불정책</a>을 확인해주세요
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+  const btn = document.getElementById('toss-payment-btn');
+  if (!btn) return;
+
+  btn.addEventListener('click', async function() {
+    btn.disabled = true;
+    btn.textContent = '결제창 열기...';
+
+    try {
+      const { loadTossPayments } = await import('https://js.tosspayments.com/v2/standard');
+      const tossPayments = await loadTossPayments(btn.dataset.clientKey);
+      const payment = tossPayments.payment({
+        customerKey: btn.dataset.customerKey,
+      });
+
+      await payment.requestBillingAuth({
+        method: 'CARD',
+        successUrl: btn.dataset.successUrl,
+        failUrl: btn.dataset.failUrl,
+        customerEmail: '<%= current_user.email %>',
+        customerName: '<%= current_user.name %>',
+      });
+    } catch(e) {
+      console.error(e);
+      btn.disabled = false;
+      btn.textContent = '카드 등록하고 시작하기';
+    }
+  });
+});
+</script>

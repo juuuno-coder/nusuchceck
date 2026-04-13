@@ -50,6 +50,42 @@ class TossPaymentsService
     get("/payments/orders/#{order_id}")
   end
 
+  # ── 자동결제(빌링키) ──────────────────────────────────
+
+  # 빌링키 발급 (카드 등록 후 authKey로 빌링키 발급)
+  def issue_billing_key(auth_key:, customer_key:)
+    response = post("/billing/authorizations/issue", {
+      authKey: auth_key,
+      customerKey: customer_key
+    })
+
+    unless response["billingKey"].present?
+      raise PaymentError, "빌링키 발급 실패: #{response.dig('failure', 'message') || response['message']}"
+    end
+
+    response
+  end
+
+  # 빌링키로 자동결제 실행
+  def charge_billing_key(billing_key:, customer_key:, amount:, order_id:, order_name:, customer_email: nil, customer_name: nil)
+    body = {
+      customerKey: customer_key,
+      amount: amount.to_i,
+      orderId: order_id,
+      orderName: order_name
+    }
+    body[:customerEmail] = customer_email if customer_email.present?
+    body[:customerName] = customer_name if customer_name.present?
+
+    response = post("/billing/#{billing_key}", body)
+
+    unless response["status"] == "DONE"
+      raise PaymentError, "자동결제 실패: #{response.dig('failure', 'message') || response['message']}"
+    end
+
+    response
+  end
+
   private
 
   def auth_header

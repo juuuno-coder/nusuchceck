@@ -151,6 +151,12 @@ Rails.application.routes.draw do
         patch :downgrade    # 플랜 다운그레이드 (Free로)
       end
     end
+
+    # 자동결제(빌링키) 관리
+    resource :billing, only: [:show, :new, :destroy] do
+      get :success, on: :collection
+      get :fail, on: :collection
+    end
   end
 
   # Admin namespace
@@ -322,6 +328,7 @@ Rails.application.routes.draw do
   get "search", to: "search#index", as: :search
   get "terms", to: "pages#terms", as: :terms
   get "privacy", to: "pages#privacy", as: :privacy
+  get "refund", to: "pages#refund", as: :refund
 
   # Vibers 통합 어드민
   scope "/api" do

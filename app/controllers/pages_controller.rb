@@ -54,4 +54,7 @@ class PagesController < ApplicationController
 
   def privacy
   end
+
+  def refund
+  end
 end

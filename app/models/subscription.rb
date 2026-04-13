@@ -5,7 +5,7 @@ class Subscription < ApplicationRecord
     free: 0,       # 무료: 월 5건 제한, 일반 매칭
     basic: 1,      # 베이직: 월 20,000원, 월 무제한, 일반 매칭
     premium: 2,    # 프리미엄: 월 50,000원, 월 무제한, 우선 매칭, 프로필 상단 노출
-    zone: 3        # 구역 선점: 월 99,000원, 1구역 우선 노출, 자동결제(빌링키)
+    zone: 3        # 마스터 플랜: 월 99,000원, 1구역 우선 노출, 자동결제(빌링키)
   }
 
   validates :tier, presence: true
@@ -56,7 +56,7 @@ class Subscription < ApplicationRecord
         ad_free: true,
         zone_claim: true,           # 구역 우선 노출 슬롯 1개
         auto_billing: true,          # 자동결제 (빌링키)
-        display_name: "구역 선점 플랜",
+        display_name: "전문가 등록 마스터 플랜",
         description: "내 구역 1위 전문가로 우선 노출"
       }
     end

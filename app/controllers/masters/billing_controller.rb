@@ -4,13 +4,13 @@ class Masters::BillingController < ApplicationController
   before_action :set_subscription
 
   ZONE_PLAN_AMOUNT = 99_000
-  ZONE_PLAN_NAME   = "누수체크 구역 선점 플랜 (월 99,000원)"
+  ZONE_PLAN_NAME   = "누수체크 전문가 등록 마스터 플랜 (월 99,000원)"
 
   # GET /masters/billing/new
   # 카드 등록 + 첫 결제 페이지 (토스 결제창)
   def new
     if @subscription.zone? && @subscription.active?
-      redirect_to masters_billing_path, notice: "이미 구역 선점 플랜을 이용 중이에요."
+      redirect_to masters_billing_path, notice: "이미 전문가 등록 마스터 플랜을 이용 중이에요."
       return
     end
 
@@ -79,7 +79,7 @@ class Masters::BillingController < ApplicationController
       ip_address: request.remote_ip
     )
 
-    redirect_to masters_billing_path, notice: "🎉 구역 선점 플랜이 시작되었어요! 내 구역에서 우선 노출됩니다."
+    redirect_to masters_billing_path, notice: "🎉 전문가 등록 마스터 플랜이 시작되었어요! 내 구역에서 우선 노출됩니다."
 
   rescue TossPaymentsService::PaymentError => e
     Rails.logger.error "[Billing] 빌링키/결제 실패: #{e.message}"

@@ -6,7 +6,7 @@
     <h1 class="text-2xl font-bold text-gray-900 mb-6">결제 관리</h1>
 
     <% if @subscription.zone? && @subscription.active? %>
-      <!-- 활성 구역 선점 플랜 -->
+      <!-- 활성 전문가 등록 마스터 플랜 -->
       <div class="bg-white rounded-2xl shadow-sm border border-blue-100 p-6 mb-4">
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-3">
@@ -16,7 +16,7 @@
               </svg>
             </div>
             <div>
-              <p class="font-bold text-gray-900">구역 선점 플랜</p>
+              <p class="font-bold text-gray-900">전문가 등록 마스터 플랜</p>
               <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">이용 중</span>
             </div>
           </div>
@@ -73,9 +73,9 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
           </svg>
         </div>
-        <h2 class="text-lg font-bold text-gray-900 mb-2">구역 선점을 시작해보세요</h2>
+        <h2 class="text-lg font-bold text-gray-900 mb-2">전문가 등록 마스터 플랜을 시작해보세요</h2>
         <p class="text-sm text-gray-500 mb-6">월 99,000원으로 내 구역 고객에게 가장 먼저 노출돼요</p>
-        <%= link_to "구역 선점 플랜 시작하기", new_masters_billing_path,
+        <%= link_to "전문가 등록 마스터 플랜 시작하기", new_masters_billing_path,
               class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-colors" %>
       </div>
     <% end %>

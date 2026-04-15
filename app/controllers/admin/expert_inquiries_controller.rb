@@ -1,4 +1,5 @@
-class Admin::ExpertInquiriesController < Admin::BaseController
+class Admin::ExpertInquiriesController < ApplicationController
+  include AdminAccessible
   before_action :set_inquiry, only: [:show, :approve, :reject]
 
   def index

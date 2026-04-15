@@ -26,4 +26,13 @@ class ServiceZone < ApplicationRecord
   def display_name
     "#{region} #{name}"
   end
+
+  def population_range_text
+    return "미정" if population.to_i.zero?
+    man = population / 10000
+    lower = (man * 0.8 / 5).round * 5   # 5만 단위 반올림
+    upper = (man * 1.2 / 5).round * 5
+    lower = [lower, 5].max
+    "약 #{lower}만~#{upper}만명"
+  end
 end

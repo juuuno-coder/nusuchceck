@@ -180,6 +180,8 @@ Rails.application.routes.draw do
         post :reject
         post :approve_insurance
         post :reject_insurance
+        post :approve_profile
+        post :flag_profile
       end
     end
     resources :escrow_transactions, only: [:index, :show] do

@@ -22,8 +22,14 @@
 
     <!-- 아바타 + 이름 -->
     <div class="flex items-start gap-4 mb-4">
-      <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center flex-shrink-0 shadow-md">
-        <span class="text-white font-bold text-3xl"><%= @master.name&.first %></span>
+      <div class="w-20 h-20 rounded-2xl flex-shrink-0 shadow-md overflow-hidden">
+        <% if @profile&.profile_photo&.attached? %>
+          <%= image_tag @profile.profile_photo.variant(resize_to_fill: [80, 80]), class: "w-full h-full object-cover" %>
+        <% else %>
+          <div class="w-full h-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center">
+            <span class="text-white font-bold text-3xl"><%= @master.name&.first %></span>
+          </div>
+        <% end %>
       </div>
 
       <div class="flex-1 min-w-0 pt-1">
@@ -74,6 +80,11 @@
         </div>
       </div>
     </div>
+
+    <!-- 한 줄 소개 -->
+    <% if @profile&.tagline.present? %>
+      <p class="text-sm font-semibold text-primary-700 mb-2"><%= @profile.tagline %></p>
+    <% end %>
 
     <!-- 소개글 -->
     <% if @profile&.bio.present? %>
@@ -153,6 +164,52 @@
         </div>
       <% end %>
     </div>
+  <% end %>
+
+  <!-- 자격증 -->
+  <% if @profile&.certifications_list.any? %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-5 mb-4">
+      <h2 class="text-sm font-bold text-gray-700 mb-3">자격증 / 수료증</h2>
+      <div class="flex flex-wrap gap-2">
+        <% @profile.certifications_list.each do |cert| %>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-800 text-xs font-semibold rounded-full border border-amber-100">
+            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+            </svg>
+            <%= cert %>
+          </span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- 시공 사례 사진 -->
+  <% if @profile&.work_photos&.attached? %>
+    <div class="bg-white rounded-2xl border border-gray-100 p-5 mb-4">
+      <h2 class="text-sm font-bold text-gray-700 mb-3">시공 사례</h2>
+      <div class="grid grid-cols-2 gap-2">
+        <% @profile.work_photos.each do |photo| %>
+          <%= image_tag photo.variant(resize_to_fill: [300, 200]), class: "w-full h-32 object-cover rounded-xl" %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- 소개 영상 -->
+  <% if @profile&.intro_video_url.present? %>
+    <%
+      video_id = @profile.intro_video_url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/i)&.[](1)
+    %>
+    <% if video_id %>
+      <div class="bg-white rounded-2xl border border-gray-100 p-5 mb-4">
+        <h2 class="text-sm font-bold text-gray-700 mb-3">소개 영상</h2>
+        <div class="aspect-video rounded-xl overflow-hidden">
+          <iframe src="https://www.youtube.com/embed/<%= video_id %>"
+                  class="w-full h-full" frameborder="0" allowfullscreen
+                  title="<%= @master.name %> 소개 영상"></iframe>
+        </div>
+      </div>
+    <% end %>
   <% end %>
 
   <!-- 고객 리뷰 -->

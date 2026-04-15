@@ -69,10 +69,24 @@ class Masters::ProfilesController < ApplicationController
   end
 
   def profile_params
-    params.require(:master_profile).permit(
+    raw = params.require(:master_profile).permit(
       :license_number, :license_type, :experience_years,
       :bank_name, :account_number, :account_holder, :bio,
-      equipment: [], service_areas: []
+      :tagline, :intro_video_url, :profile_photo,
+      work_photos: [],
+      equipment: [], service_areas: [], certifications: []
     )
+
+    # 콤마 구분 텍스트를 배열로 변환
+    if raw[:equipment].is_a?(String)
+      raw[:equipment] = raw[:equipment].split(",").map(&:strip).reject(&:blank?)
+    end
+    if raw[:service_areas].is_a?(String)
+      raw[:service_areas] = raw[:service_areas].split(",").map(&:strip).reject(&:blank?)
+    end
+    if raw[:certifications].is_a?(String)
+      raw[:certifications] = raw[:certifications].split(",").map(&:strip).reject(&:blank?)
+    end
+    raw
   end
 end

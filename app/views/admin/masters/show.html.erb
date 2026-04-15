@@ -280,6 +280,92 @@
           </div>
         </dl>
       </div>
+
+      <!-- 프로필 콘텐츠 점검 -->
+      <% profile = @master.master_profile %>
+      <% if profile.present? %>
+        <div class="bg-white rounded-2xl border border-gray-100 p-6">
+          <div class="flex items-center justify-between mb-5">
+            <h3 class="text-base font-bold text-gray-900">프로필 콘텐츠 점검</h3>
+            <% case profile.profile_review_status
+               when "approved" %>
+              <span class="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">점검 완료</span>
+            <% when "flagged" %>
+              <span class="px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">수정 요청</span>
+            <% else %>
+              <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">미점검</span>
+            <% end %>
+          </div>
+
+          <!-- 프로필 미리보기 -->
+          <div class="space-y-4 mb-6">
+            <div class="flex items-start gap-4 p-4 bg-gray-50 rounded-xl">
+              <% if profile.profile_photo.attached? %>
+                <%= image_tag profile.profile_photo.variant(resize_to_fill: [64, 64]), class: "w-16 h-16 rounded-xl object-cover flex-shrink-0" %>
+              <% else %>
+                <div class="w-16 h-16 rounded-xl bg-gray-200 flex items-center justify-center flex-shrink-0">
+                  <span class="text-gray-400 text-xs">사진없음</span>
+                </div>
+              <% end %>
+              <div>
+                <p class="text-sm font-bold text-gray-900"><%= @master.name %></p>
+                <p class="text-xs text-primary-600 mt-0.5"><%= profile.tagline.presence || "(한 줄 소개 없음)" %></p>
+                <p class="text-xs text-gray-500 mt-1 line-clamp-2"><%= profile.bio.presence || "(자기소개 없음)" %></p>
+              </div>
+            </div>
+
+            <% if profile.certifications_list.any? %>
+              <div>
+                <p class="text-xs font-semibold text-gray-500 mb-1.5">자격증</p>
+                <div class="flex flex-wrap gap-1.5">
+                  <% profile.certifications_list.each do |cert| %>
+                    <span class="px-2 py-0.5 bg-amber-50 text-amber-700 text-xs rounded-full border border-amber-100"><%= cert %></span>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+
+            <% if profile.work_photos.attached? %>
+              <div>
+                <p class="text-xs font-semibold text-gray-500 mb-1.5">시공 사례 사진 (<%= profile.work_photos.count %>장)</p>
+                <div class="grid grid-cols-4 gap-1.5">
+                  <% profile.work_photos.each do |photo| %>
+                    <%= image_tag photo.variant(resize_to_fill: [120, 90]), class: "w-full h-20 object-cover rounded-lg" %>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+
+            <% if profile.intro_video_url.present? %>
+              <div>
+                <p class="text-xs font-semibold text-gray-500 mb-1">소개 영상</p>
+                <a href="<%= profile.intro_video_url %>" target="_blank" class="text-xs text-primary-600 hover:underline truncate block"><%= profile.intro_video_url %></a>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- 점검 액션 -->
+          <%= form_with url: "#", method: :post, class: "space-y-3", id: "profile_review_form" do |f| %>
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 mb-1">점검 메모 (선택)</label>
+              <textarea name="review_notes" rows="2" placeholder="수정 요청 사유 또는 메모"
+                class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-300 focus:outline-none resize-none"></textarea>
+            </div>
+            <div class="flex gap-2">
+              <%= link_to approve_profile_admin_master_path(@master), method: :post,
+                    data: { turbo_confirm: "프로필을 승인할까요?" },
+                    class: "flex-1 py-2.5 text-center text-sm font-bold rounded-xl bg-green-600 text-white hover:bg-green-700 transition" do %>
+                ✅ 승인
+              <% end %>
+              <%= link_to flag_profile_admin_master_path(@master), method: :post,
+                    data: { turbo_confirm: "수정 요청을 보낼까요?" },
+                    class: "flex-1 py-2.5 text-center text-sm font-semibold rounded-xl bg-white border border-red-300 text-red-600 hover:bg-red-50 transition" do %>
+                ⚠️ 수정 요청
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

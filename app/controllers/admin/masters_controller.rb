@@ -1,7 +1,7 @@
 class Admin::MastersController < ApplicationController
   include AdminAccessible
 
-  before_action :set_master, only: [:show, :verify, :reject, :approve_insurance, :reject_insurance]
+  before_action :set_master, only: [:show, :verify, :reject, :approve_insurance, :reject_insurance, :approve_profile, :flag_profile]
 
   def index
     @q = Master.ransack(params[:q])
@@ -51,6 +51,38 @@ class Admin::MastersController < ApplicationController
     ) rescue nil
 
     redirect_to admin_master_path(@master), alert: "#{@master.name} 마스터 보험 인증이 거절됐어요."
+  end
+
+  def approve_profile
+    notes = params[:review_notes].to_s.strip.presence
+    @master.master_profile.update!(
+      profile_review_status: "approved",
+      profile_reviewed_at: Time.current,
+      profile_review_notes: notes
+    )
+    NotificationService.notify(
+      recipient: @master,
+      action: "profile_approved",
+      message: "프로필 점검이 완료됐어요! 고객에게 프로필이 공개돼요.",
+      notifiable: @master.master_profile
+    ) rescue nil
+    redirect_to admin_master_path(@master), notice: "#{@master.name} 프로필이 승인됐어요."
+  end
+
+  def flag_profile
+    notes = params[:review_notes].to_s.strip.presence
+    @master.master_profile.update!(
+      profile_review_status: "flagged",
+      profile_reviewed_at: Time.current,
+      profile_review_notes: notes
+    )
+    NotificationService.notify(
+      recipient: @master,
+      action: "profile_flagged",
+      message: "프로필 수정이 필요해요. #{notes.present? ? "사유: #{notes}" : "관리자에게 문의해주세요."}",
+      notifiable: @master.master_profile
+    ) rescue nil
+    redirect_to admin_master_path(@master), notice: "#{@master.name} 프로필 수정 요청을 보냈어요."
   end
 
   private

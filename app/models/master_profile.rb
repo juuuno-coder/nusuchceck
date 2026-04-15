@@ -14,6 +14,10 @@ class MasterProfile < ApplicationRecord
   scope :insurance_pending, -> { where(insurance_pending_review: true) }
 
   has_one_attached :insurance_certificate
+  has_one_attached :profile_photo
+  has_many_attached :work_photos
+
+  PROFILE_REVIEW_STATUSES = %w[pending approved flagged].freeze
 
   def insurance_active?
     insurance_verified? && (insurance_valid_until.nil? || insurance_valid_until >= Date.current)
@@ -59,5 +63,17 @@ class MasterProfile < ApplicationRecord
 
   def specialty_types_list
     specialty_types.is_a?(Array) ? specialty_types : []
+  end
+
+  def certifications_list
+    certifications.is_a?(Array) ? certifications : []
+  end
+
+  def profile_approved?
+    profile_review_status == "approved"
+  end
+
+  def profile_flagged?
+    profile_review_status == "flagged"
   end
 end

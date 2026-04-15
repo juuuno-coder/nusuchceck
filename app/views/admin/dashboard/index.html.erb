@@ -181,9 +181,13 @@
     </div>
   </div>
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Chart.js — data-turbo-track으로 Turbo가 CDN을 중복 로드하지 않도록 -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" data-turbo-track="reload"></script>
   <script>
+    // 드릴다운 전역 상태 — 맨 위에 선언해야 TDZ 에러 없음
+    var activeMetric = null;
+    var drillCharts  = {};  // Chart 인스턴스 보관
+
     <%
       trend_labels = (29.downto(0)).map { |i| (Date.current - i.days).strftime("%m/%d") }
       trend_data   = (29.downto(0)).map { |i| @monthly_requests[(Date.current - i.days).to_s] || 0 }
@@ -193,6 +197,17 @@
       rev_labels   = @monthly_revenue.keys
       rev_data     = @monthly_revenue.values.map(&:to_f)
     %>
+
+    // Chart.js가 로드된 후 실행 (Turbo Drive 재진입 대응)
+    function initCharts() {
+      if (typeof Chart === 'undefined') return;
+
+      // 기존 인스턴스 파괴 (Turbo 캐시 재진입 시 canvas 재사용 오류 방지)
+      ['requestTrendChart','symptomChart','revenueChart'].forEach(id => {
+        const existing = Chart.getChart(id);
+        if (existing) existing.destroy();
+      });
+
     new Chart(document.getElementById('requestTrendChart'), {
       type: 'bar',
       data: {
@@ -232,61 +247,61 @@
                     callback: (v) => '₩' + v.toLocaleString() } } } }
     });
 
-    // ── 드릴다운 데이터 (Rails → JS) ──────────────────────────────────────
-    const ROWS = <%= @daily_rows.to_json.html_safe %>;
+    } // end initCharts
 
-    const METRICS = {
+    // ── 드릴다운 데이터 (Rails → JS) ──────────────────────────────────────
+    var ROWS = <%= @daily_rows.to_json.html_safe %>;
+
+    var METRICS = {
       requests: {
         title: "전체 체크 — 일자별",
         cols: ["일자", "요일", "신규 접수", "완료", "누적"],
-        row:  r => [r.date, r.weekday, r.new_req, r.done_req, r.req_cum],
-        highlights: [2]  // 강조할 컬럼 인덱스
+        row:  function(r) { return [r.date, r.weekday, r.new_req, r.done_req, r.req_cum]; },
+        highlights: [2]
       },
       active_requests: {
         title: "진행중 체크 — 일자별",
         cols: ["일자", "요일", "신규 접수", "당일 완료"],
-        row:  r => [r.date, r.weekday, r.new_req, r.done_req],
+        row:  function(r) { return [r.date, r.weekday, r.new_req, r.done_req]; },
         highlights: [2]
       },
       masters: {
         title: "전체 마스터 — 일자별",
         cols: ["일자", "요일", "신규 가입", "누적"],
-        row:  r => [r.date, r.weekday, r.new_master, r.master_cum],
+        row:  function(r) { return [r.date, r.weekday, r.new_master, r.master_cum]; },
         highlights: [2]
       },
       verified: {
         title: "인증 마스터 — 일자별",
         cols: ["일자", "요일", "신규 인증"],
-        row:  r => [r.date, r.weekday, r.new_verified],
+        row:  function(r) { return [r.date, r.weekday, r.new_verified]; },
         highlights: [2]
       },
       escrow: {
         title: "에스크로 입금 — 일자별",
         cols: ["일자", "요일", "신규 입금 건"],
-        row:  r => [r.date, r.weekday, r.escrow_dep],
+        row:  function(r) { return [r.date, r.weekday, r.escrow_dep]; },
         highlights: [2]
       },
       revenue: {
         title: "수수료 매출 — 일자별",
         cols: ["일자", "요일", "수수료 수입"],
-        row:  r => [r.date, r.weekday, '₩' + r.revenue.toLocaleString()],
+        row:  function(r) { return [r.date, r.weekday, '₩' + r.revenue.toLocaleString()]; },
         highlights: [2]
       },
       insurance: {
         title: "보험청구 — 일자별",
         cols: ["일자", "요일", "신규 청구", "누적"],
-        row:  r => [r.date, r.weekday, r.new_ins, r.ins_cum],
+        row:  function(r) { return [r.date, r.weekday, r.new_ins, r.ins_cum]; },
         highlights: [2]
       },
       ins_pending: {
         title: "보험청구 신규 접수 — 일자별",
         cols: ["일자", "요일", "신규 청구"],
-        row:  r => [r.date, r.weekday, r.new_ins],
+        row:  function(r) { return [r.date, r.weekday, r.new_ins]; },
         highlights: [2]
       },
     };
-
-    let activeMetric = null;
 
     function toggleMetric(metric) {
       const panel = document.getElementById('drill-panel');
@@ -337,9 +352,18 @@
     function closeDrill() {
       activeMetric = null;
       document.getElementById('drill-panel').classList.add('hidden');
-      document.querySelectorAll('[id^="card-"]').forEach(c => {
+      document.querySelectorAll('[id^="card-"]').forEach(function(c) {
         c.classList.remove('border-primary-400', 'ring-2', 'ring-primary-200', 'bg-primary-50');
       });
+    }
+
+    // Turbo Drive: 페이지 로드 & 캐시 복원 시 차트 초기화
+    document.addEventListener('turbo:load', function() { initCharts(); });
+    // Turbo 미사용 또는 첫 로드 대응
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() { initCharts(); });
+    } else {
+      initCharts();
     }
   </script>
 

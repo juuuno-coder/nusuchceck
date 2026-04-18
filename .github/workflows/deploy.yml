@@ -17,7 +17,7 @@ jobs:
         run: gem install brakeman bundler-audit --no-document
       - name: Brakeman (static security analysis)
         # -w 2: High 이상 경고 시 실패, EOL 경고는 제외 (Ruby/Rails 버전 업그레이드는 별도 관리)
-        run: brakeman --no-pager -q -w 2 --skip-checks EOLRuby,EOLRails
+        run: brakeman --no-pager -q -w 2 --except EOLRuby,EOLRails
       - name: bundler-audit (gem CVE check)
         run: bundle-audit check --update
 

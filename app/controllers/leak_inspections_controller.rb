@@ -17,12 +17,8 @@ class LeakInspectionsController < ApplicationController
         VideoOptimizationJob.perform_later(@inspection.id)
       end
 
-      # AI 분석 시작 (백그라운드)
-      begin
-        LeakInspectionService.new(@inspection).analyze!
-      rescue LeakInspectionService::AnalysisError
-        # 분석 실패는 무시하고 계속 진행
-      end
+      # AI 분석 시작 (비동기 Sidekiq)
+      LeakInspectionAnalysisJob.perform_later(@inspection.id)
 
       # Request 생성 (채팅방 연결)
       @request = create_request_from_inspection(@inspection)

@@ -13,6 +13,7 @@ class Request < ApplicationRecord
   has_many :disputes, dependent: :destroy
   has_many_attached :photos
   has_many_attached :videos
+  has_many_attached :construction_photos  # 전문가 작업 완료 사진
 
   validates :symptom_type, presence: true
   validates :address, presence: true

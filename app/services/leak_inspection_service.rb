@@ -34,7 +34,13 @@ class LeakInspectionService
 
       inspection
     rescue => e
-      inspection.update!(status: :failed, analysis_detail: { error: e.message })
+      Rails.logger.error("[LeakInspection##{inspection.id}] 분석 실패: #{e.class} - #{e.message}")
+      Sentry.capture_exception(e, extra: { inspection_id: inspection.id }) if defined?(Sentry)
+      inspection.update!(status: :failed, analysis_detail: {
+        error: e.message,
+        error_class: e.class.name,
+        backtrace: e.backtrace&.first(5)
+      })
       raise AnalysisError, "AI 분석 실패: #{e.message}"
     end
   end
@@ -133,8 +139,10 @@ class LeakInspectionService
   end
 
   def parse_json_response(text)
-    json_str = text.match(/\{[\s\S]*\}/)&.to_s
-    parsed = JSON.parse(json_str)
+    # Markdown 코드블록 또는 순수 JSON 모두 처리
+    json_str = text.match(/```(?:json)?\s*([\s\S]*?)```/)&.[](1) ||
+               text.match(/\{[\s\S]*\}/)&.to_s
+    parsed = JSON.parse(json_str.to_s)
 
     {
       leak_detected: parsed["leak_detected"] == true,

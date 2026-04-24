@@ -57,4 +57,14 @@ class PagesController < ApplicationController
 
   def refund
   end
+
+  def sitemap
+    @static_pages = %w[/ /about /pricing /how-it-works /reviews /faq /community /terms /privacy /refund /expert /leak_inspections/new]
+    @masters = Master.joins(:master_profile).where(master_profiles: { verified_at: ..Time.current }).limit(500)
+    @posts = Post.where(published: true).order(created_at: :desc).limit(500) rescue []
+
+    respond_to do |format|
+      format.xml { render layout: false, content_type: "application/xml" }
+    end
+  end
 end

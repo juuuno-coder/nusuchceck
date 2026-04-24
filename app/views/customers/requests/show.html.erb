@@ -415,6 +415,21 @@
 
     <%# 공사 완료 확인 %>
     <% elsif @request.construction_completed? %>
+      <% if @request.construction_notes.present? || @request.construction_photos.attached? %>
+        <div class="bg-green-50 rounded-2xl p-4 mb-4 border border-green-100">
+          <h4 class="text-sm font-bold text-gray-900 mb-2">📋 전문가 작업 보고서</h4>
+          <% if @request.construction_notes.present? %>
+            <p class="text-sm text-gray-700 whitespace-pre-line mb-3"><%= @request.construction_notes %></p>
+          <% end %>
+          <% if @request.construction_photos.attached? %>
+            <div class="grid grid-cols-3 gap-2">
+              <% @request.construction_photos.each do |photo| %>
+                <%= image_tag photo, class: "rounded-lg w-full h-24 object-cover" %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
       <%= button_to "공사 완료 확인",
             confirm_completion_customers_request_path(@request),
             method: :post,

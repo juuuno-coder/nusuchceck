@@ -339,6 +339,7 @@ Rails.application.routes.draw do
   get "terms", to: "pages#terms", as: :terms
   get "privacy", to: "pages#privacy", as: :privacy
   get "refund", to: "pages#refund", as: :refund
+  get "sitemap.xml", to: "pages#sitemap", as: :sitemap, defaults: { format: :xml }
 
   # Vibers 통합 어드민
   scope "/api" do

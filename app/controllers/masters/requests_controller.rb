@@ -172,6 +172,8 @@ class Masters::RequestsController < ApplicationController
 
   def complete_construction
     authorize @request
+    @request.construction_notes = params[:construction_notes] if params[:construction_notes].present?
+    @request.construction_photos.attach(params[:construction_photos]) if params[:construction_photos].present?
     @request.complete_construction!
     redirect_to masters_request_path(@request), notice: "공사가 완료되었습니다. 고객 확인을 기다립니다."
   rescue AASM::InvalidTransition => e

@@ -70,8 +70,7 @@ gem "rack-attack"
 # Cloud Storage (Cloudflare R2 / Amazon S3 compatible)
 gem "aws-sdk-s3", require: false
 
-# AI (Claude Vision API)
-gem "anthropic"
+# AI (Gemini Vision API — HTTP 직접 호출, gem 불필요)
 
 # CODEF API (금융 데이터 연동 - 보험 조회 등)
 gem "easycodefrb"

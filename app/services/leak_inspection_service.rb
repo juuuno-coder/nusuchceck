@@ -1,7 +1,14 @@
+# frozen_string_literal: true
+
+require "net/http"
+require "json"
+require "base64"
+
 class LeakInspectionService
   class AnalysisError < StandardError; end
 
-  CLAUDE_MODEL = ENV.fetch("CLAUDE_MODEL", "claude-sonnet-4-20250514")
+  GEMINI_MODEL = ENV.fetch("GEMINI_MODEL", "gemini-2.0-flash")
+  GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/%{model}:generateContent?key=%{key}"
 
   attr_reader :inspection
 
@@ -15,7 +22,7 @@ class LeakInspectionService
 
     begin
       result = if api_key_available?
-                 analyze_with_claude
+                 analyze_with_gemini
                else
                  mock_analysis
                end
@@ -27,7 +34,7 @@ class LeakInspectionService
         analysis_summary: result[:summary],
         analysis_detail: result[:detail],
         recommended_action: result[:recommended_action],
-        ai_model_used: api_key_available? ? CLAUDE_MODEL : "mock",
+        ai_model_used: api_key_available? ? GEMINI_MODEL : "mock",
         ai_tokens_used: result[:tokens_used] || 0,
         analysis_duration_seconds: (Time.current - start_time).round(2)
       )
@@ -52,42 +59,60 @@ class LeakInspectionService
   end
 
   def api_key
-    @api_key ||= Rails.application.credentials.dig(:anthropic, :api_key) ||
-                 ENV["ANTHROPIC_API_KEY"]
+    @api_key ||= ENV["GEMINI_API_KEY"]
   end
 
-  def analyze_with_claude
+  def analyze_with_gemini
     image_bytes = inspection.photo.blob.download
     image_base64 = Base64.strict_encode64(image_bytes)
     media_type = inspection.photo.content_type
 
-    client = Anthropic::Client.new(api_key: api_key)
+    url = URI(format(GEMINI_ENDPOINT, model: GEMINI_MODEL, key: api_key))
 
-    response = client.messages.create(
-      model: CLAUDE_MODEL,
-      max_tokens: 1024,
-      messages: [{
-        role: "user",
-        content: [
+    body = {
+      contents: [{
+        parts: [
           {
-            type: "image",
-            source: { type: "base64", media_type: media_type, data: image_base64 }
+            inline_data: {
+              mime_type: media_type,
+              data: image_base64
+            }
           },
-          { type: "text", text: analysis_prompt }
+          { text: analysis_prompt }
         ]
-      }]
-    )
+      }],
+      generationConfig: {
+        temperature: 0.2,
+        maxOutputTokens: 1024,
+        responseMimeType: "application/json"
+      }
+    }
 
-    text_content = response.dig("content", 0, "text")
-    tokens_used = response.dig("usage", "input_tokens").to_i +
-                  response.dig("usage", "output_tokens").to_i
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = true
+    http.read_timeout = 30
+
+    request = Net::HTTP::Post.new(url)
+    request["Content-Type"] = "application/json"
+    request.body = body.to_json
+
+    response = http.request(request)
+
+    unless response.is_a?(Net::HTTPSuccess)
+      error_body = JSON.parse(response.body) rescue { "error" => response.body }
+      raise AnalysisError, "Gemini API 오류 (#{response.code}): #{error_body.dig("error", "message") || response.body.truncate(200)}"
+    end
+
+    data = JSON.parse(response.body)
+    text_content = data.dig("candidates", 0, "content", "parts", 0, "text")
+    tokens_used = data.dig("usageMetadata", "totalTokenCount").to_i
 
     parsed = parse_json_response(text_content)
     parsed.merge(tokens_used: tokens_used)
   end
 
   def mock_analysis
-    sleep(1.5) # 분석 시뮬레이션
+    sleep(1.5)
 
     {
       leak_detected: true,
@@ -139,7 +164,6 @@ class LeakInspectionService
   end
 
   def parse_json_response(text)
-    # Markdown 코드블록 또는 순수 JSON 모두 처리
     json_str = text.match(/```(?:json)?\s*([\s\S]*?)```/)&.[](1) ||
                text.match(/\{[\s\S]*\}/)&.to_s
     parsed = JSON.parse(json_str.to_s)

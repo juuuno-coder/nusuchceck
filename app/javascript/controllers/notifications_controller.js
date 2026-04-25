@@ -139,14 +139,14 @@ export default class extends Controller {
 
   showToast(data) {
     const toast = document.createElement('div')
-    toast.className = 'fixed top-20 right-4 bg-white shadow-lg rounded-lg p-4 max-w-sm animate-slideIn z-50'
+    toast.className = 'fixed top-20 right-4 bg-white shadow-lg rounded-2xl p-4 max-w-sm z-50 border border-gray-100'
+    toast.style.animation = 'slideIn 0.3s ease-out'
 
     const wrapper = document.createElement('div')
     wrapper.className = 'flex items-start gap-3'
 
-    const iconEl = document.createElement('div')
-    iconEl.className = 'text-2xl'
-    iconEl.textContent = data.icon || '🔔'
+    const dot = document.createElement('div')
+    dot.className = 'flex-shrink-0 w-2 h-2 mt-1.5 bg-primary-500 rounded-full'
 
     const body = document.createElement('div')
     body.className = 'flex-1'
@@ -167,7 +167,7 @@ export default class extends Controller {
     closeBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>'
     closeBtn.addEventListener('click', () => toast.remove())
 
-    wrapper.appendChild(iconEl)
+    wrapper.appendChild(dot)
     wrapper.appendChild(body)
     wrapper.appendChild(closeBtn)
     toast.appendChild(wrapper)

@@ -26,27 +26,18 @@ class Notification < ApplicationRecord
     update(read_at: nil) if read?
   end
 
-  # 알림 타입별 아이콘
+  # 알림 타입별 아이콘 (SVG class용)
   def icon
     case action
-    when "request_assigned"
-      "🔧"
-    when "estimate_submitted"
-      "💰"
-    when "estimate_accepted"
-      "✅"
-    when "construction_completed"
-      "🎉"
-    when "insurance_review_requested"
-      "📋"
-    when "insurance_approved"
-      "✅"
-    when "insurance_change_requested"
-      "📝"
-    when "payment_released"
-      "💸"
-    else
-      "🔔"
+    when "request_assigned"      then "wrench"
+    when "estimate_submitted"    then "currency"
+    when "estimate_accepted"     then "check"
+    when "construction_completed" then "flag"
+    when "insurance_review_requested" then "document"
+    when "insurance_approved"    then "check"
+    when "insurance_change_requested" then "pencil"
+    when "payment_released"      then "banknotes"
+    else "bell"
     end
   end
 

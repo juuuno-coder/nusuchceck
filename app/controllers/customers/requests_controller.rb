@@ -28,6 +28,8 @@ class Customers::RequestsController < ApplicationController
     if @request.save
       # 백그라운드에서 이메일 발송 (자동 재시도 3회)
       RequestMailerJob.perform_later("request_received", @request.id)
+      # 관리자에게 새 체크 접수 알림
+      RequestMailer.admin_new_request(@request).deliver_later rescue nil
 
       # AI 환영 메시지 발송
       SystemMessageService.send_welcome_message(@request)

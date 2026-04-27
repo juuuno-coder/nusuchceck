@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body style="font-family: sans-serif; color: #111; max-width: 520px; margin: 0 auto; padding: 24px;">
+  <h2 style="color: #1d4ed8; margin-bottom: 4px;">새 체크가 접수됐어요</h2>
+  <p style="color: #6b7280; font-size: 13px; margin-top: 0;"><%= @request.created_at.strftime("%Y-%m-%d %H:%M") %> 접수</p>
+  <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 16px 0;">
+  <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+    <tr><td style="padding: 8px 0; color: #6b7280; width: 80px;">접수번호</td><td style="padding: 8px 0; font-weight: 600;">#<%= @request.id %></td></tr>
+    <tr><td style="padding: 8px 0; color: #6b7280;">고객</td><td style="padding: 8px 0; font-weight: 600;"><%= @customer.name %></td></tr>
+    <tr><td style="padding: 8px 0; color: #6b7280;">연락처</td><td style="padding: 8px 0;"><%= @customer.phone.presence || @customer.email %></td></tr>
+    <tr><td style="padding: 8px 0; color: #6b7280;">증상</td><td style="padding: 8px 0;"><%= { 'wall_leak' => '벽면 누수', 'ceiling_leak' => '천장 누수', 'floor_leak' => '바닥 누수', 'pipe_leak' => '배관 누수', 'toilet_leak' => '화장실 누수', 'outdoor_leak' => '외부 누수' }[@request.symptom_type] || @request.symptom_type %></td></tr>
+    <tr><td style="padding: 8px 0; color: #6b7280;">주소</td><td style="padding: 8px 0;"><%= @request.address %></td></tr>
+  </table>
+  <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 16px 0;">
+  <p style="font-size: 13px; color: #6b7280;">관리자 페이지에서 확인하고 전문가를 배정해주세요.</p>
+</body>
+</html>

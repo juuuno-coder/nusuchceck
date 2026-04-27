@@ -1,8 +1,5 @@
 class ExpertInquiryMailer < ApplicationMailer
-  ADMIN_EMAILS = [
-    ENV.fetch("SMTP_USERNAME", "juuuno1116@gmail.com"),
-    "cleanmentor2@gmail.com"
-  ].uniq.freeze
+  # ApplicationMailer::ADMIN_EMAILS 사용
 
   # 문의 접수 시 관리자에게
   def inquiry_received(inquiry)

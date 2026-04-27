@@ -41,6 +41,16 @@ class RequestMailer < ApplicationMailer
     )
   end
 
+  # 새 체크 접수 알림 (관리자에게)
+  def admin_new_request(request)
+    @request  = request
+    @customer = request.customer
+    mail(
+      to:      ADMIN_EMAILS,
+      subject: "[누수체크] 새 체크 접수 (##{request.id}) - #{symptom_label(request.symptom_type)}"
+    )
+  end
+
   # 오더 배정 알림 (마스터에게)
   def new_open_order(master, request)
     @request = request

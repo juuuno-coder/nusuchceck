@@ -1,0 +1,118 @@
+<div class="max-w-2xl mx-auto px-4 py-8">
+
+  <%= link_to admin_master_path(@master), class: "inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 mb-6 transition-colors" do %>
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+    </svg>
+    돌아가기
+  <% end %>
+
+  <h1 class="text-2xl font-bold text-gray-900 mb-1"><%= @master.name %> 프로필 수정</h1>
+  <p class="text-sm text-gray-500 mb-6">관리자가 직접 수정하는 내용이에요. 전문가에게 별도 알림은 가지 않아요.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-100 p-6">
+    <%= form_with(model: @profile, url: admin_master_path(@master), method: :patch, class: "space-y-5") do |f| %>
+
+      <!-- 한 줄 소개 -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-500 mb-1.5">한 줄 소개</label>
+        <%= f.text_field :tagline, placeholder: "예) 서울 강남 15년 누수 전문가", maxlength: 50,
+              class: "w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary-400 focus:outline-none" %>
+      </div>
+
+      <!-- 자기소개 -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-500 mb-1.5">자기소개</label>
+        <%= f.text_area :bio, rows: 5, placeholder: "경력, 전문 분야, 특기 사항 등",
+              class: "w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary-400 focus:outline-none resize-none" %>
+      </div>
+
+      <!-- 자격증 번호 / 경력 -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 mb-1.5">자격증 번호</label>
+          <%= f.text_field :license_number, placeholder: "자격증 번호",
+                class: "w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary-400 focus:outline-none" %>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 mb-1.5">경력 (년)</label>
+          <%= f.number_field :experience_years, min: 0, max: 50,
+                class: "w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary-400 focus:outline-none" %>
+        </div>
+      </div>
+
+      <!-- 보유 장비 -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-500 mb-1.5">보유 장비</label>
+        <%= f.text_field :equipment, value: @profile.equipment_list.join(", "),
+              placeholder: "열화상카메라, 청음기, 수분측정기 (콤마로 구분)",
+              class: "w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary-400 focus:outline-none" %>
+      </div>
+
+      <!-- 서비스 지역 -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-500 mb-1.5">서비스 지역</label>
+        <%= f.text_field :service_areas, value: @profile.service_areas_list.join(", "),
+              placeholder: "서울 강남구, 서울 서초구 (콤마로 구분)",
+              class: "w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary-400 focus:outline-none" %>
+      </div>
+
+      <!-- 자격증 / 수료증 -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-500 mb-1.5">자격증 / 수료증</label>
+        <%= f.text_field :certifications, value: @profile.certifications_list.join(", "),
+              placeholder: "누수탐지기능사, 배관기능사 (콤마로 구분)",
+              class: "w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary-400 focus:outline-none" %>
+      </div>
+
+      <!-- 프로필 사진 -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-500 mb-1.5">프로필 사진</label>
+        <% if @profile.profile_photo.attached? %>
+          <div class="flex items-center gap-3 mb-2">
+            <%= image_tag @profile.profile_photo.variant(resize_to_fill: [60, 60]), class: "w-14 h-14 rounded-xl object-cover border" %>
+            <span class="text-xs text-gray-400">새 파일을 선택하면 교체돼요</span>
+          </div>
+        <% end %>
+        <%= f.file_field :profile_photo, accept: "image/*",
+              class: "block w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary-50 file:text-primary-700" %>
+      </div>
+
+      <!-- 소개 영상 -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-500 mb-1.5">소개 영상 URL</label>
+        <%= f.url_field :intro_video_url, placeholder: "https://youtube.com/watch?v=...",
+              class: "w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary-400 focus:outline-none" %>
+      </div>
+
+      <hr class="border-gray-100">
+
+      <!-- 계좌 정보 -->
+      <h3 class="text-sm font-semibold text-gray-700">정산 계좌</h3>
+      <div class="grid grid-cols-3 gap-3">
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">은행</label>
+          <%= f.text_field :bank_name, placeholder: "은행명",
+                class: "w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary-400 focus:outline-none" %>
+        </div>
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">계좌번호</label>
+          <%= f.text_field :account_number, placeholder: "계좌번호",
+                class: "w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary-400 focus:outline-none" %>
+        </div>
+        <div>
+          <label class="block text-xs text-gray-400 mb-1">예금주</label>
+          <%= f.text_field :account_holder, placeholder: "예금주",
+                class: "w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary-400 focus:outline-none" %>
+        </div>
+      </div>
+
+      <!-- 저장 -->
+      <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+        <%= link_to "취소", admin_master_path(@master), class: "px-4 py-2.5 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors" %>
+        <%= f.submit "저장하기", class: "px-6 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-xl hover:bg-primary-700 transition-colors cursor-pointer" %>
+      </div>
+
+    <% end %>
+  </div>
+</div>

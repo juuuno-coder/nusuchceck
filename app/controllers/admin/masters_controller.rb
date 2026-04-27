@@ -1,7 +1,7 @@
 class Admin::MastersController < ApplicationController
   include AdminAccessible
 
-  before_action :set_master, only: [:show, :verify, :reject, :approve_insurance, :reject_insurance, :approve_profile, :flag_profile]
+  before_action :set_master, only: [:show, :edit, :update, :verify, :reject, :approve_insurance, :reject_insurance, :approve_profile, :flag_profile]
 
   def index
     @q = Master.ransack(params[:q])
@@ -12,6 +12,28 @@ class Admin::MastersController < ApplicationController
     @profile = @master.master_profile
     @recent_requests = @master.assigned_requests.includes(:customer, :escrow_transactions).recent.limit(10)
     @reviews = @master.reviews.recent.limit(5)
+  end
+
+  def edit
+    @profile = @master.master_profile || @master.build_master_profile
+  end
+
+  def update
+    @profile = @master.master_profile || @master.build_master_profile
+
+    # 콤마 구분 텍스트를 배열로 변환
+    %i[equipment service_areas certifications].each do |field|
+      if params.dig(:master_profile, field).is_a?(String)
+        params[:master_profile][field] = params[:master_profile][field].split(",").map(&:strip).reject(&:blank?)
+      end
+    end
+
+    if @profile.update(admin_profile_params)
+      @profile.construction_photos.attach(params[:master_profile][:work_photos]) if params.dig(:master_profile, :work_photos).present?
+      redirect_to admin_master_path(@master), notice: "#{@master.name} 프로필이 수정됐어요."
+    else
+      render :edit, status: :unprocessable_entity
+    end
   end
 
   def verify
@@ -89,5 +111,14 @@ class Admin::MastersController < ApplicationController
 
   def set_master
     @master = Master.find(params[:id])
+  end
+
+  def admin_profile_params
+    params.require(:master_profile).permit(
+      :license_number, :license_type, :experience_years,
+      :bank_name, :account_number, :account_holder,
+      :bio, :tagline, :intro_video_url, :profile_photo,
+      equipment: [], service_areas: [], certifications: []
+    )
   end
 end

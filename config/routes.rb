@@ -174,7 +174,7 @@ Rails.application.routes.draw do
         post :resolve_complaint   # 고객 불만 처리 완료
       end
     end
-    resources :masters, only: [:index, :show] do
+    resources :masters, only: [:index, :show, :edit, :update] do
       member do
         post :verify
         post :reject

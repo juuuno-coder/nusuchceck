@@ -286,7 +286,12 @@
       <% if profile.present? %>
         <div class="bg-white rounded-2xl border border-gray-100 p-6">
           <div class="flex items-center justify-between mb-5">
-            <h3 class="text-base font-bold text-gray-900">프로필 콘텐츠 점검</h3>
+            <div class="flex items-center gap-3">
+              <h3 class="text-base font-bold text-gray-900">프로필 콘텐츠 점검</h3>
+              <%= link_to edit_admin_master_path(@master), class: "text-xs text-primary-600 font-semibold hover:underline" do %>
+                직접 수정하기
+              <% end %>
+            </div>
             <% case profile.profile_review_status
                when "approved" %>
               <span class="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">점검 완료</span>

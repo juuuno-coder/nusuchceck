@@ -12,15 +12,18 @@ class MessagesController < ApplicationController
   end
 
   def create
-    @message = @request.messages.build(message_params)
-    @message.sender = current_user
-    @message.message_type ||= :user
-
     # 스티커 처리
     if params[:sticker_name].present?
-      @message.message_category = :sticker
-      @message.content = params[:sticker_name]
+      @message = @request.messages.build(
+        content: params[:sticker_name],
+        message_category: :sticker,
+        message_type: :user,
+        sender: current_user
+      )
     else
+      @message = @request.messages.build(message_params)
+      @message.sender = current_user
+      @message.message_type ||= :user
       @message.message_category ||= :text
     end
 

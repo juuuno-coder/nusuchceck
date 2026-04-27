@@ -114,6 +114,54 @@
     </div>
   </div>
 
+  <!-- 전문가 구독 상품 -->
+  <div class="mb-8">
+    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">전문가 구독 플랜</h2>
+    <div class="bg-white rounded-2xl border-2 border-primary-200 overflow-hidden">
+      <div class="bg-primary-50 px-5 py-3 border-b border-primary-100">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-base font-bold text-gray-900">마스터 플랜</p>
+            <p class="text-xs text-gray-500 mt-0.5">누수 전문가를 위한 월간 구독</p>
+          </div>
+          <div class="text-right">
+            <p class="text-2xl font-extrabold text-primary-600">99,000<span class="text-sm font-medium text-gray-500">원/월</span></p>
+            <p class="text-xs text-gray-400">VAT 포함</p>
+          </div>
+        </div>
+      </div>
+      <div class="px-5 py-4">
+        <ul class="space-y-2.5 text-sm text-gray-700">
+          <li class="flex items-start gap-2.5">
+            <svg class="w-4 h-4 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span>구역 선점 최대 3개 (우선 배정)</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg class="w-4 h-4 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span>오더 피드 무제한 열람</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg class="w-4 h-4 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span>공개 프로필 (포트폴리오 노출)</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg class="w-4 h-4 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span>공사비 수수료 0%</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg class="w-4 h-4 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span>자동결제 (매월 갱신, 언제든 해지 가능)</span>
+          </li>
+        </ul>
+        <div class="mt-5">
+          <%= link_to expert_root_path, class: "block w-full text-center py-3 bg-primary-600 text-white rounded-xl font-semibold text-sm hover:bg-primary-700 transition-colors" do %>
+            전문가로 시작하기
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- FAQ 간결 버전 -->
   <div>
     <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">자주 묻는 질문</h2>

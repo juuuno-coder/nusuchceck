@@ -594,7 +594,7 @@
   <% if content_for?(:full_screen_layout) %>
     <!-- 풀스크린: 미니 푸터 (1줄) -->
     <footer class="hidden md:block bg-gray-800 text-center py-2">
-      <p class="text-xs text-gray-500">© <%= Date.current.year %> 누수체크</p>
+      <p class="text-xs text-gray-500">&copy; <%= Date.current.year %> 누수체크 (주식회사 디어스)</p>
     </footer>
   <% else %>
   <% show_footer_mobile = controller_name.in?(%w[dashboard profiles]) || (controller_name == 'pages' && action_name == 'home') %>

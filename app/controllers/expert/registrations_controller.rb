@@ -6,6 +6,8 @@ class Expert::RegistrationsController < Devise::RegistrationsController
   private
 
   def redirect_to_inquiry
+    # 승인된 문의의 토큰이 있으면 가입 허용
+    return if params[:token].present? && ExpertInquiry.approved.exists?(id: params[:token])
     redirect_to expert_inquiry_path
   end
 

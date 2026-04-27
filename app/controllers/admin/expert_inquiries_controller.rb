@@ -26,9 +26,9 @@ class Admin::ExpertInquiriesController < ApplicationController
 
       # 이메일 주소가 있으면 승인 안내 발송
       if @inquiry.email.present?
-        registration_url = new_user_registration_url(
+        registration_url = expert_sign_up_url(
           host: request.host_with_port,
-          role: "master"
+          token: @inquiry.id
         )
         ExpertInquiryMailer.approval_notification(@inquiry, registration_url).deliver_later
         redirect_to admin_expert_inquiry_path(@inquiry),

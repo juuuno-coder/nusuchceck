@@ -42,6 +42,13 @@
         <p class="text-sm text-gray-800 leading-relaxed whitespace-pre-line bg-gray-50 rounded-xl p-3"><%= @inquiry.message %></p>
       </div>
     <% end %>
+    <% if @inquiry.respond_to?(:portfolio_url) && @inquiry.portfolio_url.present? %>
+      <div class="px-5 py-4 flex justify-between items-center">
+        <span class="text-xs text-gray-400 font-semibold">포트폴리오</span>
+        <a href="<%= @inquiry.portfolio_url %>" target="_blank" rel="noopener"
+           class="text-sm font-medium text-primary-600 hover:underline truncate max-w-[280px]"><%= @inquiry.portfolio_url %></a>
+      </div>
+    <% end %>
     <% if @inquiry.approval_notes.present? %>
       <div class="px-5 py-4">
         <span class="text-xs text-gray-400 font-semibold block mb-1">처리 메모</span>

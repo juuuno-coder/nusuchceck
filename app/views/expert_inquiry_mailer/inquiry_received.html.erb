@@ -8,6 +8,9 @@
     <tr><td style="padding: 8px 0; color: #6b7280; width: 80px;">이름</td><td style="padding: 8px 0; font-weight: 600;"><%= @inquiry.name %></td></tr>
     <tr><td style="padding: 8px 0; color: #6b7280;">연락처</td><td style="padding: 8px 0; font-weight: 600;"><%= @inquiry.phone %></td></tr>
     <tr><td style="padding: 8px 0; color: #6b7280;">이메일</td><td style="padding: 8px 0;"><%= @inquiry.email.presence || "-" %></td></tr>
+    <% if @inquiry.respond_to?(:portfolio_url) && @inquiry.portfolio_url.present? %>
+      <tr><td style="padding: 8px 0; color: #6b7280;">포트폴리오</td><td style="padding: 8px 0;"><a href="<%= @inquiry.portfolio_url %>" style="color: #2563eb;"><%= @inquiry.portfolio_url %></a></td></tr>
+    <% end %>
   </table>
   <% if @inquiry.message.present? %>
     <div style="margin-top: 12px; padding: 12px; background: #f9fafb; border-radius: 8px; font-size: 13px; white-space: pre-line;"><%= @inquiry.message %></div>

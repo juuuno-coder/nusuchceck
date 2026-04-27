@@ -6,10 +6,11 @@ class Expert::InquiriesController < ApplicationController
 
   def create
     inquiry = ExpertInquiry.new(
-      name:    params[:name].to_s.strip,
-      phone:   params[:phone].to_s.strip,
-      email:   params[:email].to_s.strip,
-      message: params[:message].to_s.strip
+      name:          params[:name].to_s.strip,
+      phone:         params[:phone].to_s.strip,
+      email:         params[:email].to_s.strip,
+      message:       params[:message].to_s.strip,
+      portfolio_url: params[:portfolio_url].to_s.strip.presence
     )
 
     if inquiry.save

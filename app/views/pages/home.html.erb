@@ -94,7 +94,8 @@
   </div>
 </section>
 
-<!-- 활동 중인 전문가 미리보기 -->
+<!-- 활동 중인 전문가 미리보기 (관리자만) -->
+<% if user_signed_in? && current_user.admin? %>
 <% masters_preview = Master.joins(:master_profile).where(master_profiles: { verified: true }).includes(:master_profile).limit(3) %>
 <% if masters_preview.any? %>
 <section class="bg-white border-t border-gray-100 py-6">
@@ -144,6 +145,7 @@
     </div>
   </div>
 </section>
+<% end %>
 <% end %>
 
 <!-- 왜 누수체크? - 간결한 장점 리스트 -->

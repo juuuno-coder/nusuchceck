@@ -590,7 +590,7 @@
   <% end %>
 
   <!-- AI 챗봇 패널 (제로클로) -->
-  <div id="ai-chatbot-panel" class="hidden fixed bottom-20 right-4 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 overflow-hidden" style="max-height: 70vh;">
+  <div id="ai-chatbot-panel" class="hidden fixed bottom-20 right-4 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 overflow-hidden resize" style="width: 420px; max-width: 90vw; max-height: 80vh; min-width: 320px; min-height: 400px;">
     <div class="bg-primary-600 px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-2">
         <img src="/images/characters/ai-robot.png" alt="" class="w-7 h-7 object-contain">
@@ -600,7 +600,7 @@
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
-    <div id="ai-chatbot-messages" class="p-4 space-y-3 overflow-y-auto" style="max-height: 50vh;">
+    <div id="ai-chatbot-messages" class="p-4 space-y-3 overflow-y-auto flex-1" style="min-height: 250px;">
       <div class="flex gap-2">
         <img src="/images/characters/thumbsup.png" alt="" class="w-8 h-8 object-contain flex-shrink-0">
         <div class="bg-gray-100 rounded-2xl rounded-tl-sm px-3 py-2 text-sm text-gray-700 max-w-[80%]">
@@ -849,8 +849,6 @@
     });
   </script>
 <div style="text-align:center;padding:8px 0;font-size:11px;color:#999;">
-  <a href="https://link.coupang.com/a/AF4011706" target="_blank" rel="noopener noreferrer sponsored" style="color:#999;text-decoration:none;">
-    이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.
   </a>
 </div>
 

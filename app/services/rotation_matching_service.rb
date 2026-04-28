@@ -97,6 +97,7 @@ class RotationMatchingService
       master = claim.master
       next unless master
       next unless master.respond_to?(:verified?) && master.verified?
+      next unless master.master_profile&.available_for_assignment?
       next if master_too_busy?(master)
 
       return master

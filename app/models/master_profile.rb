@@ -20,6 +20,13 @@ class MasterProfile < ApplicationRecord
   has_many_attached :work_photos
 
   PROFILE_REVIEW_STATUSES = %w[pending approved flagged].freeze
+  AVAILABILITY_STATUSES = %w[available away busy].freeze
+
+  enum :availability, { available: "available", away: "away", busy: "busy" }, prefix: true
+
+  def available_for_assignment?
+    availability_available? && (!away_until || away_until < Date.current)
+  end
 
   def insurance_active?
     insurance_verified? && (insurance_valid_until.nil? || insurance_valid_until >= Date.current)

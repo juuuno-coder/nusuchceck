@@ -80,6 +80,7 @@ class Masters::ProfilesController < ApplicationController
       :license_number, :license_type, :experience_years,
       :bank_name, :account_number, :account_holder, :bio,
       :tagline, :intro_video_url, :profile_photo, :instagram_username,
+      :availability, :away_until, :away_message,
       work_photos: [],
       equipment: [], service_areas: [], certifications: []
     )

@@ -32,7 +32,7 @@
       </div>
     </div>
 
-  <% elsif message.sticker? %>
+  <% elsif message.sticker? || message.content.to_s.match?(/\A[\w\-]+\.png\z/) %>
     <!-- 스티커 메시지 -->
     <% is_my_message = message.sender_id == current_user&.id %>
     <div class="flex <%= is_my_message ? 'justify-end' : 'justify-start' %> mb-1.5 items-end gap-2">

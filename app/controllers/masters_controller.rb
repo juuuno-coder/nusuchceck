@@ -3,7 +3,12 @@ class MastersController < ApplicationController
   skip_before_action :authenticate_user!, raise: false
 
   def show
-    @master = Master.includes(:master_profile, :reviews).find(params[:id])
+    @master = if params[:id].to_s.match?(/\A\d+\z/)
+                  Master.includes(:master_profile, :reviews).find(params[:id])
+                else
+                  Master.joins(:master_profile).includes(:master_profile, :reviews)
+                       .find_by!(master_profiles: { public_token: params[:id] })
+                end
     @profile = @master.master_profile
 
     # 완료된 작업에서 사진 모아오기 (최근 12개)

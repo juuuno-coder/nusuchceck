@@ -3,6 +3,8 @@ class MasterProfile < ApplicationRecord
 
   belongs_to :user, class_name: "Master", inverse_of: :master_profile
 
+  before_create :generate_public_token
+
   validates :user_id, uniqueness: true
   validates :license_number, presence: true, if: :verified?
   validates :bank_name, :account_number, :account_holder, presence: true, if: :verified?
@@ -75,5 +77,33 @@ class MasterProfile < ApplicationRecord
 
   def profile_flagged?
     profile_review_status == "flagged"
+  end
+
+  # 커스텀 링크 헬퍼
+  def parsed_links
+    (custom_links.is_a?(Array) ? custom_links : []).map(&:symbolize_keys)
+  end
+
+  # SNS 타입 자동 감지
+  def self.detect_link_type(url)
+    case url.to_s.downcase
+    when /instagram\.com/ then "instagram"
+    when /youtube\.com|youtu\.be/ then "youtube"
+    when /blog\.naver\.com/ then "naver_blog"
+    when /tiktok\.com/ then "tiktok"
+    when /facebook\.com/ then "facebook"
+    when /twitter\.com|x\.com/ then "twitter"
+    when /kakao/ then "kakao"
+    else "website"
+    end
+  end
+
+  private
+
+  def generate_public_token
+    loop do
+      self.public_token = SecureRandom.alphanumeric(10).downcase
+      break unless MasterProfile.exists?(public_token: public_token)
+    end
   end
 end

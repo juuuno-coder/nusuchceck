@@ -13,6 +13,11 @@ class Master < User
 
   accepts_nested_attributes_for :master_profile
 
+  # URL에 순차 ID 대신 랜덤 토큰 사용
+  def to_param
+    master_profile&.public_token || id.to_s
+  end
+
   after_create :create_default_profile
   after_create :create_default_subscription
 

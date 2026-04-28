@@ -10,8 +10,15 @@ class Masters::ProfilesController < ApplicationController
   end
 
   def update
+    # 커스텀 링크 처리
+    if params[:custom_links].present?
+      links = params[:custom_links].map { |l| { title: l[:title].to_s.strip, url: l[:url].to_s.strip } }
+                                    .select { |l| l[:url].present? }
+      @profile.custom_links = links
+    end
+
     if @profile.update(profile_params)
-      redirect_to masters_profile_path, notice: "프로필이 수정되었습니다."
+      redirect_to masters_profile_path, notice: "프로필이 수정됐어요."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -72,7 +79,7 @@ class Masters::ProfilesController < ApplicationController
     raw = params.require(:master_profile).permit(
       :license_number, :license_type, :experience_years,
       :bank_name, :account_number, :account_holder, :bio,
-      :tagline, :intro_video_url, :profile_photo,
+      :tagline, :intro_video_url, :profile_photo, :instagram_username,
       work_photos: [],
       equipment: [], service_areas: [], certifications: []
     )

@@ -365,14 +365,14 @@
   <% if @insurance_claim.pending_customer_review? %>
     <div class="bg-white border border-gray-100 rounded-2xl p-6 mb-4">
       <p class="text-sm text-gray-600 mb-5 leading-relaxed">
-        전문가가 작성한 내용을 검토하신 후 승인해주세요. 승인 즉시 보험사로 제출되며, 이후 수정이 불가합니다.
+        전문가가 작성한 내용을 검토하신 후 승인해주세요. 승인하면 PDF가 생성되고, 보험사 접수 안내를 받을 수 있어요.
       </p>
       <div class="flex flex-col gap-3">
         <%= button_to customer_approve_customers_insurance_claim_path(@insurance_claim),
               method: :post,
               class: "w-full py-3.5 bg-primary-600 text-white rounded-xl font-semibold text-sm hover:bg-primary-700 transition",
-              data: { turbo_confirm: "보험청구서를 승인하시겠습니까?\n\n승인하시면 즉시 보험사로 제출됩니다. 내용을 다시 한번 확인해주세요." } do %>
-          승인하고 보험사에 제출하기
+              data: { turbo_confirm: "보험청구서를 승인하시겠습니까?\n\n승인 후 PDF를 다운로드받고 보험사에 직접 접수하시면 돼요." } do %>
+          승인하고 접수 서류 받기
         <% end %>
 
         <details class="border border-gray-100 rounded-xl overflow-hidden">
@@ -402,20 +402,31 @@
             class: "flex-1 py-3.5 bg-white border border-gray-200 text-gray-700 rounded-xl font-semibold text-sm text-center hover:bg-gray-50 transition" do %>
         수정하기
       <% end %>
-      <%= button_to submit_claim_customers_insurance_claim_path(@insurance_claim),
-            method: :post,
-            class: "flex-[2] py-3.5 bg-primary-600 text-white rounded-xl font-semibold text-sm hover:bg-primary-700 transition",
-            data: { turbo_confirm: "신청서를 제출하시겠습니까?\n\n제출 후에는 수정할 수 없습니다." },
-            form: { class: "flex-[2]" } do %>
-        보험사에 제출하기
+      <%= link_to download_pdf_customers_insurance_claim_path(@insurance_claim),
+            class: "flex-1 py-3.5 bg-primary-600 text-white rounded-xl font-semibold text-sm text-center hover:bg-primary-700 transition" do %>
+        PDF 다운로드
       <% end %>
+      <button type="button" onclick="openInsuranceGuide()"
+              class="flex-1 py-3.5 bg-white border-2 border-primary-600 text-primary-700 rounded-xl font-semibold text-sm hover:bg-primary-50 transition">
+        보험사 접수 방법 안내
+      </button>
     </div>
 
   <% elsif @insurance_claim.submitted? %>
     <%# 심사 시작 버튼 %>
     <div class="bg-white border border-gray-100 rounded-2xl p-6">
-      <p class="text-sm font-semibold text-gray-800 mb-1">보험사에 제출하셨나요?</p>
-      <p class="text-xs text-gray-500 mb-4">제출 완료 후 아래 버튼을 눌러주시면 심사 진행 상황을 추적합니다.</p>
+      <p class="text-sm font-semibold text-gray-800 mb-1">보험사에 접수하셨나요?</p>
+      <p class="text-xs text-gray-500 mb-4">PDF를 다운로드하고 보험사 앱에서 직접 접수해주세요. 접수 완료 후 아래 버튼을 눌러주세요.</p>
+      <div class="flex gap-2 mb-4">
+        <%= link_to download_pdf_customers_insurance_claim_path(@insurance_claim),
+              class: "flex-1 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl font-semibold text-sm text-center hover:bg-gray-50 transition" do %>
+          PDF 다운로드
+        <% end %>
+        <button type="button" onclick="openInsuranceGuide()"
+                class="flex-1 py-2.5 bg-white border border-primary-200 text-primary-600 rounded-xl font-semibold text-sm hover:bg-primary-50 transition">
+          접수 방법 안내
+        </button>
+      </div>
       <%= button_to start_review_customers_insurance_claim_path(@insurance_claim),
                     method: :patch,
                     data: { confirm: "보험사 제출을 완료하셨습니까?" },
@@ -460,7 +471,28 @@
       </button>
     </div>
 
-    <div class="p-6 space-y-3">
+    <div class="p-6 space-y-4">
+      <!-- 접수 단계 안내 -->
+      <div class="bg-primary-50 rounded-xl p-4 space-y-2">
+        <p class="text-sm font-bold text-primary-800">이렇게 접수하세요</p>
+        <div class="flex items-start gap-2.5">
+          <span class="w-5 h-5 bg-primary-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0">1</span>
+          <p class="text-xs text-primary-700">위에서 <strong>PDF 다운로드</strong>를 눌러 청구서를 저장하세요</p>
+        </div>
+        <div class="flex items-start gap-2.5">
+          <span class="w-5 h-5 bg-primary-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0">2</span>
+          <p class="text-xs text-primary-700">아래에서 <strong>내 보험사를 찾아</strong> 앱을 열거나 전화하세요</p>
+        </div>
+        <div class="flex items-start gap-2.5">
+          <span class="w-5 h-5 bg-primary-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0">3</span>
+          <p class="text-xs text-primary-700">보험사 앱에서 <strong>사고 접수 > 파일 첨부</strong>에 PDF를 올려주세요</p>
+        </div>
+        <div class="flex items-start gap-2.5">
+          <span class="w-5 h-5 bg-primary-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0">4</span>
+          <p class="text-xs text-primary-700">접수 완료 후 누수체크에서 <strong>"심사 시작" 버튼</strong>을 눌러주세요</p>
+        </div>
+      </div>
+
       <!-- 보험사별 카드 -->
       <% InsuranceSubmissionService.all_companies_guide.each do |company| %>
         <div class="border border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 hover:shadow-sm transition-all">

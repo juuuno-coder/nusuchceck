@@ -35,7 +35,7 @@ class Customers::ProfilesController < ApplicationController
   private
 
   def customer_params
-    params.require(:user).permit(:name, :phone, :address)
+    params.require(:user).permit(:name, :phone, :address, :avatar)
   end
 
   def ensure_customer!

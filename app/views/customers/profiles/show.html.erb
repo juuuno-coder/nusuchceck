@@ -14,9 +14,17 @@
   <div class="bg-white rounded-2xl border border-gray-100 mb-4 shadow-sm overflow-hidden">
     <button onclick="toggleProfileDetail(this)"
             class="w-full flex items-center gap-4 p-5 active:bg-gray-50 transition-colors text-left">
-      <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-2xl font-bold text-white flex-shrink-0">
-        <%= @customer.name&.first || "고" %>
-      </div>
+      <% if @customer.has_avatar? %>
+        <% if @customer.avatar.attached? %>
+          <%= image_tag @customer.avatar.variant(resize_to_fill: [56, 56]), class: "w-14 h-14 rounded-2xl object-cover flex-shrink-0" %>
+        <% else %>
+          <img src="<%= @customer.avatar_url %>" class="w-14 h-14 rounded-2xl object-cover flex-shrink-0" referrerpolicy="no-referrer">
+        <% end %>
+      <% else %>
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-2xl font-bold text-white flex-shrink-0">
+          <%= @customer.name&.first || "?" %>
+        </div>
+      <% end %>
       <div class="flex-1 min-w-0">
         <p class="font-bold text-gray-900 text-lg truncate"><%= @customer.name || "이름 없음" %></p>
         <p class="text-xs text-gray-400 mt-0.5">고객</p>

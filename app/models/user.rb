@@ -15,6 +15,9 @@ class User < ApplicationRecord
          :recoverable, :rememberable,
          :omniauthable, omniauth_providers: [:kakao, :naver, :google_oauth2]
 
+  # Avatar
+  has_one_attached :avatar
+
   # Associations
   has_many :posts, dependent: :destroy
   has_many :notifications, as: :recipient, dependent: :destroy
@@ -74,12 +77,14 @@ class User < ApplicationRecord
     user = find_by(provider: auth.provider, uid: auth.uid)
     return user if user
 
-    # 2) 같은 이메일의 기존 계정이 있으면 카카오 연결
+    # 2) 같은 이메일의 기존 계정이 있으면 소셜 연결
     email = auth.info.email
+    avatar = auth.info.image
     if email.present?
       user = find_by(email: email)
       if user
         user.update!(provider: auth.provider, uid: auth.uid)
+        user.update_column(:avatar_url, avatar) if avatar.present? && user.avatar_url.blank?
         return user
       end
     end
@@ -92,8 +97,22 @@ class User < ApplicationRecord
       password: Devise.friendly_token[0, 20],
       name: auth.info.nickname || auth.info.name || "유저#{SecureRandom.hex(4)}",
       type: "Customer",
-      account_status: :registered
+      account_status: :registered,
+      avatar_url: avatar
     )
+  end
+
+  # 아바타 표시 (업로드 > 소셜 URL > 이니셜)
+  def display_avatar_url
+    if avatar.attached?
+      Rails.application.routes.url_helpers.url_for(avatar.variant(resize_to_fill: [80, 80]))
+    elsif avatar_url.present?
+      avatar_url
+    end
+  end
+
+  def has_avatar?
+    avatar.attached? || avatar_url.present?
   end
 
   # Devise 오버라이드

@@ -193,7 +193,7 @@
   </div>
 <% end %>
 
-<!-- 결제 내역 (에스크로) -->
+<!-- 결제 내역 -->
 <% if @request.escrow_transactions.any? %>
   <div class="bg-white rounded-2xl border border-gray-100 mb-4">
     <h2 class="px-4 pt-4 pb-2 text-sm font-bold text-gray-500">결제 내역</h2>
@@ -393,7 +393,7 @@
         </div>
       <% end %>
 
-    <%# 공사비 에스크로 결제 %>
+    <%# 공사비 결제 %>
     <% elsif @request.construction_agreed? %>
       <% construction_amount = @request.accepted_estimate&.total_amount.to_d %>
       <% if construction_amount > 0 %>

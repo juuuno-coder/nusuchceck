@@ -6,7 +6,7 @@
     <!-- 헤더 -->
     <div class="mb-6">
       <h1 class="text-2xl font-bold text-gray-900">결제 내역</h1>
-      <p class="text-sm text-gray-500 mt-1">에스크로 안전결제로 처리된 내역이에요</p>
+      <p class="text-sm text-gray-500 mt-1">검증된 전문가 직접 시공로 처리된 내역이에요</p>
     </div>
 
     <!-- 요약 카드 -->
@@ -62,10 +62,10 @@
       <div class="space-y-3">
         <% @payments.each do |payment| %>
           <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-            <!-- 상단: 에스크로 타입 + 상태 -->
+            <!-- 상단: 결제 타입 + 상태 -->
             <div class="flex items-center justify-between px-5 pt-4 pb-3">
               <div class="flex items-center gap-2">
-                <!-- 에스크로 타입 아이콘 -->
+                <!-- 결제 타입 아이콘 -->
                 <div class="w-9 h-9 rounded-xl flex items-center justify-center
                   <%= case payment.escrow_type
                       when 'trip'         then 'bg-orange-100'
@@ -168,15 +168,15 @@
       <% end %>
     <% end %>
 
-    <!-- 에스크로 안내 -->
+    <!-- 결제 안내 -->
     <div class="mt-8 bg-primary-50 rounded-2xl p-5 flex gap-3">
       <svg class="w-5 h-5 text-primary-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
         <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
       </svg>
       <div>
-        <p class="text-sm font-semibold text-primary-900">에스크로 안전결제란?</p>
+        <p class="text-sm font-semibold text-primary-900">검증된 전문가 직접 시공란?</p>
         <p class="text-xs text-primary-700 mt-1 leading-relaxed">
-          결제 금액은 에스크로에 안전하게 보관되고, 서비스 완료 확인 후 전문가에게 지급돼요.
+          결제 금액은 전문가와 직접 결제를 진행해요. 문제가 생기면 누수체크가 중재해드려요.
           문제가 생기면 전액 환불이 가능해요.
         </p>
         <p class="text-xs text-primary-600 mt-2">문의 · contact@nusucheck.com</p>

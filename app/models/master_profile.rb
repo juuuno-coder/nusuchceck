@@ -2,6 +2,7 @@ class MasterProfile < ApplicationRecord
   SPECIALTY_OPTIONS = %w[수도배관 방수 욕실 옥상 바닥 외벽].freeze
 
   belongs_to :user, class_name: "Master", inverse_of: :master_profile
+  has_many :portfolio_items, dependent: :destroy
 
   before_create :generate_public_token
 

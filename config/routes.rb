@@ -119,6 +119,10 @@ Rails.application.routes.draw do
       post :upload_insurance, on: :member
     end
 
+    resources :portfolio_items, only: [:index, :create, :update, :destroy] do
+      post :toggle_pin, on: :member
+    end
+
     # 보험 자동 조회 (CODEF API 간편인증)
     resource :insurance_verification, only: [:show], controller: "insurance_verifications" do
       post :request_auth, on: :member

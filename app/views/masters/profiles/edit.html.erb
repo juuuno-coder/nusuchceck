@@ -200,6 +200,17 @@
         <p class="mt-1 text-xs text-gray-400">YouTube 링크를 붙여넣으면 프로필에 영상이 표시돼요</p>
       </div>
 
+      <!-- 시공 사례 관리 바로가기 -->
+      <div class="bg-primary-50 rounded-xl p-4 flex items-center justify-between">
+        <div>
+          <p class="text-sm font-semibold text-gray-900">시공 사례 포트폴리오</p>
+          <p class="text-xs text-gray-500 mt-0.5">사진을 올리고, 고정/삭제할 수 있어요</p>
+        </div>
+        <%= link_to masters_portfolio_items_path, class: "px-4 py-2 bg-primary-600 text-white text-xs font-bold rounded-xl hover:bg-primary-700 transition" do %>
+          관리하기
+        <% end %>
+      </div>
+
       <hr class="border-gray-200">
 
       <!-- 커스텀 링크 -->

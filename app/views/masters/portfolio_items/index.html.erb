@@ -1,0 +1,108 @@
+<div class="max-w-2xl mx-auto px-4 py-6">
+
+  <%= link_to masters_profile_path, class: "inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-4" do %>
+    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+    </svg>
+    프로필로 돌아가기
+  <% end %>
+
+  <div class="flex items-center justify-between mb-5">
+    <div>
+      <h1 class="text-xl font-bold text-gray-900">시공 사례 관리</h1>
+      <p class="text-sm text-gray-500 mt-0.5">포트폴리오를 관리하세요. 고정하면 상단에 표시돼요.</p>
+    </div>
+    <span class="text-xs text-gray-400"><%= @items.count %>개</span>
+  </div>
+
+  <!-- 업로드 폼 -->
+  <div class="bg-white rounded-2xl border border-gray-100 p-5 mb-5">
+    <%= form_with model: PortfolioItem.new, url: masters_portfolio_items_path, method: :post, multipart: true, class: "space-y-3" do |f| %>
+      <div class="flex gap-3">
+        <div class="flex-1">
+          <%= f.text_field :title, placeholder: "제목 (예: 강남 아파트 욕실 방수)",
+                class: "w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary-400 focus:outline-none" %>
+        </div>
+        <label class="flex-shrink-0 px-4 py-2.5 bg-gray-100 text-gray-600 rounded-xl text-sm font-medium cursor-pointer hover:bg-gray-200 transition">
+          사진 선택
+          <%= f.file_field :image, accept: "image/*", class: "hidden", required: true,
+                onchange: "this.closest('form').querySelector('[type=submit]').disabled = false" %>
+        </label>
+      </div>
+      <%= f.text_area :description, placeholder: "설명 (선택)", rows: 2,
+            class: "w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary-400 focus:outline-none resize-none" %>
+      <div class="flex justify-end">
+        <%= f.submit "추가하기", disabled: true,
+              class: "px-5 py-2.5 bg-primary-600 text-white text-sm font-bold rounded-xl hover:bg-primary-700 transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 포트폴리오 목록 -->
+  <% if @items.any? %>
+    <div class="grid grid-cols-2 gap-3">
+      <% @items.each do |item| %>
+        <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden group relative">
+          <!-- 이미지 -->
+          <div class="aspect-square bg-gray-100 overflow-hidden">
+            <% if item.image.attached? %>
+              <%= image_tag item.image.variant(resize_to_fill: [400, 400]), class: "w-full h-full object-cover" %>
+            <% elsif item.image_url.present? %>
+              <img src="<%= item.image_url %>" class="w-full h-full object-cover" loading="lazy">
+            <% else %>
+              <div class="w-full h-full flex items-center justify-center">
+                <img src="/images/characters/upload.png" alt="" class="w-12 h-12 opacity-30">
+              </div>
+            <% end %>
+          </div>
+
+          <!-- 고정 뱃지 -->
+          <% if item.pinned? %>
+            <div class="absolute top-2 left-2 bg-primary-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+              고정
+            </div>
+          <% end %>
+
+          <!-- 인스타 뱃지 -->
+          <% if item.from_instagram? %>
+            <div class="absolute top-2 right-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+              Instagram
+            </div>
+          <% end %>
+
+          <!-- 정보 + 액션 -->
+          <div class="p-3">
+            <% if item.title.present? %>
+              <p class="text-sm font-semibold text-gray-900 truncate"><%= item.title %></p>
+            <% end %>
+            <% if item.description.present? %>
+              <p class="text-xs text-gray-500 mt-0.5 line-clamp-2"><%= item.description %></p>
+            <% end %>
+
+            <div class="flex items-center gap-2 mt-2">
+              <%= button_to toggle_pin_masters_portfolio_item_path(item), method: :post,
+                    class: "text-xs font-medium #{item.pinned? ? 'text-primary-600' : 'text-gray-400 hover:text-primary-600'} transition",
+                    form: { class: "inline" } do %>
+                <%= item.pinned? ? "고정 해제" : "고정" %>
+              <% end %>
+              <span class="text-gray-200">|</span>
+              <%= button_to masters_portfolio_item_path(item), method: :delete,
+                    data: { turbo_confirm: "삭제할까요?" },
+                    class: "text-xs font-medium text-gray-400 hover:text-red-500 transition",
+                    form: { class: "inline" } do %>
+                삭제
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="bg-white rounded-2xl border border-dashed border-gray-200 p-10 text-center">
+      <img src="/images/characters/upload.png" alt="" class="w-20 h-20 mx-auto mb-3 object-contain opacity-60">
+      <p class="text-gray-600 font-medium">시공 사례를 올려보세요</p>
+      <p class="text-sm text-gray-400 mt-1">고객에게 실력을 보여줄 수 있어요</p>
+    </div>
+  <% end %>
+
+</div>

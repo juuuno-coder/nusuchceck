@@ -23,14 +23,20 @@
   <meta property="og:title" content="<%= content_for?(:title) ? yield(:title) : "누수체크 - 누수 전문 매칭 플랫폼" %>">
   <meta property="og:description" content="<%= content_for?(:description) ? yield(:description) : "AI 누수 진단 + 검증된 전문가 매칭 + 투명한 견적" %>">
   <meta property="og:url" content="<%= request.original_url %>">
-  <meta property="og:image" content="<%= asset_url('og-image.png') rescue 'https://nusucheck.com/og-image.png' %>">
+  <meta property="og:image" content="https://nusucheck.com/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="<%= content_for?(:title) ? yield(:title) : "누수체크" %>">
   <meta name="twitter:description" content="AI 누수 진단 + 검증된 전문가 매칭 + 투명한 견적">
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="/favicon.png" sizes="32x32">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="twitter:image" content="https://nusucheck.com/og-image.jpg">
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" href="/app-icon-192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/app-icon-512.png" sizes="512x512">
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">

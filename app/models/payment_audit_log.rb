@@ -13,6 +13,14 @@ class PaymentAuditLog < ApplicationRecord
   # details: JSON (request params, response data, error message 등)
   # ip_address: 결제 시도한 IP 주소
 
+  def self.ransackable_attributes(auth_object = nil)
+    %w[action created_at details escrow_transaction_id id ip_address updated_at user_id]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[escrow_transaction user]
+  end
+
   scope :recent, -> { order(created_at: :desc) }
   scope :by_action, ->(action) { where(action: action) }
   scope :by_user, ->(user_id) { where(user_id: user_id) }

@@ -157,7 +157,7 @@ Rails.application.routes.draw do
     end
 
     # 자동결제(빌링키) 관리
-    resource :billing, only: [:show, :new, :destroy] do
+    resource :billing, only: [:show, :new, :destroy], controller: 'billing' do
       get :success, on: :collection
       get :fail, on: :collection
     end

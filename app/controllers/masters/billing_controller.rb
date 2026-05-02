@@ -15,8 +15,8 @@ class Masters::BillingController < ApplicationController
     end
 
     @customer_key   = "MASTER-#{current_user.id}-#{SecureRandom.hex(4)}"
-    @success_url    = masters_billing_success_url
-    @fail_url       = masters_billing_fail_url
+    @success_url    = success_masters_billing_url
+    @fail_url       = fail_masters_billing_url
     @toss_client_key = ENV["TOSS_CLIENT_KEY"]
 
     unless @toss_client_key.present?

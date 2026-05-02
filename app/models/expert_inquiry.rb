@@ -1,17 +1,19 @@
 class ExpertInquiry < ApplicationRecord
   validates :name, :phone, presence: true
 
-  scope :pending,  -> { where(status: "pending") }
-  scope :approved, -> { where(status: "approved") }
-  scope :rejected, -> { where(status: "rejected") }
-  scope :recent,   -> { order(created_at: :desc) }
+  scope :pending,    -> { where(status: "pending") }
+  scope :approved,   -> { where(status: "approved") }
+  scope :rejected,   -> { where(status: "rejected") }
+  scope :registered, -> { where(status: "registered") }  # 가입 완료 (토큰 소비됨)
+  scope :recent,     -> { order(created_at: :desc) }
 
-  def pending?  = status == "pending"
-  def approved? = status == "approved"
-  def rejected? = status == "rejected"
+  def pending?    = status == "pending"
+  def approved?   = status == "approved"
+  def rejected?   = status == "rejected"
+  def registered? = status == "registered"
 
   def status_label
-    { "pending" => "검토 대기", "approved" => "승인됨", "rejected" => "거절됨" }[status] || status
+    { "pending" => "검토 대기", "approved" => "승인됨", "rejected" => "거절됨", "registered" => "가입 완료" }[status] || status
   end
 
   def self.ransackable_attributes(auth_object = nil)

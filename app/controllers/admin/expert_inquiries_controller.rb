@@ -6,10 +6,11 @@ class Admin::ExpertInquiriesController < ApplicationController
     @q = ExpertInquiry.ransack(params[:q])
     @inquiries = @q.result.recent.page(params[:page]).per(20)
     @counts = {
-      total:    ExpertInquiry.count,
-      pending:  ExpertInquiry.pending.count,
-      approved: ExpertInquiry.approved.count,
-      rejected: ExpertInquiry.rejected.count,
+      total:      ExpertInquiry.count,
+      pending:    ExpertInquiry.pending.count,
+      approved:   ExpertInquiry.approved.count,
+      rejected:   ExpertInquiry.rejected.count,
+      registered: ExpertInquiry.registered.count,
     }
   end
 

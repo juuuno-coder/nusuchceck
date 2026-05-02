@@ -18,7 +18,7 @@ class ExpertInquiryMailer < ApplicationMailer
   def approval_notification(inquiry, registration_url)
     @inquiry          = inquiry
     @registration_url = registration_url
-    mail(to: inquiry.email, subject: "[누수체크] 전문가 파트너 승인 안내 🎉")
+    mail(to: inquiry.email, subject: "[누수체크] 전문가 파트너 승인 안내")
   end
 
   # 거절 알림 → 전문가에게

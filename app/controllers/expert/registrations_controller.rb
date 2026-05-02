@@ -6,8 +6,9 @@ class Expert::RegistrationsController < Devise::RegistrationsController
   private
 
   def redirect_to_inquiry
-    # 승인된 문의의 토큰이 있으면 가입 허용
-    return if params[:token].present? && ExpertInquiry.approved.exists?(id: params[:token])
+    # 승인된 문의의 토큰이 있고, 아직 가입에 사용되지 않은 경우만 허용
+    inquiry = ExpertInquiry.approved.find_by(id: params[:token])
+    return if inquiry.present? && inquiry.status == "approved"
     redirect_to expert_inquiry_path
   end
 
@@ -32,7 +33,12 @@ class Expert::RegistrationsController < Devise::RegistrationsController
   end
 
   def after_sign_up_path_for(resource)
-    # 관리자에게 새 전문가 가입 알림 (N+1 방지: admin 레코드를 한 번만 로드)
+    # 승인 토큰 소비 — 같은 링크로 중복 가입 방지
+    if params[:token].present?
+      ExpertInquiry.approved.find_by(id: params[:token])&.update_columns(status: "registered")
+    end
+
+    # 관리자에게 새 전문가 가입 알림
     begin
       admins = User.where(role: :admin).select(:id, :name, :email)
       admins.find_each do |admin|

@@ -47,7 +47,7 @@
             <!-- 기본 이미지 플레이스홀더 -->
             <div class="flex-shrink-0 w-20 h-20 rounded-xl bg-gradient-to-br from-primary-50 to-teal-50 border border-primary-100 flex items-center justify-center">
               <% post_icons = {"tip" => "tip", "review" => "star", "question" => "inspect", "general" => "document"} %>
-              <img src="/images/icons/<%= post_icons[post.category] || "document" %>.png" alt="" class="w-10 h-10 object-contain">
+              <img src="/images/icons/<%= post_icons[post.category] || "document" %>.png" alt="" class="w-10 h-10 object-contain mix-blend-multiply">
             </div>
           <% end %>
 

@@ -13,6 +13,7 @@ Rails.application.configure do
       "https://js.tosspayments.com",   # 토스페이먼츠 SDK
       "https://cdn.jsdelivr.net",      # Driver.js, Chart.js
       "https://www.youtube.com",       # 유튜브 embed (전문가 프로필)
+      "https://t1.daumcdn.net",        # 카카오 우편번호 API
       :unsafe_inline                   # Turbo/Stimulus inline 핸들러 (추후 nonce로 전환)
     )
 
@@ -23,12 +24,14 @@ Rails.application.configure do
       :unsafe_inline                   # Tailwind 인라인 스타일
     )
 
-    # Frame: 유튜브 embed만 허용
+    # Frame: 유튜브 + 토스 + 카카오 우편번호
     policy.frame_src(
       :self,
       "https://www.youtube.com",
       "https://youtube.com",
-      "https://js.tosspayments.com"    # 토스 결제창
+      "https://js.tosspayments.com",   # 토스 결제창
+      "https://postcode.map.daum.net", # 카카오 우편번호 팝업
+      "https://t1.daumcdn.net"         # 카카오 우편번호 CDN
     )
 
     # WebSocket (ActionCable)

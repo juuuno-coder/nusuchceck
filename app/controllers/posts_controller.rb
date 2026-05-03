@@ -15,6 +15,9 @@ class PostsController < ApplicationController
     @post.increment_views!
     @comments = @post.comments.roots.includes(:user, replies: :user).recent
     @comment = Comment.new
+    @other_posts = Post.where.not(id: @post.id)
+                       .order(created_at: :desc)
+                       .limit(5)
   end
 
   def new

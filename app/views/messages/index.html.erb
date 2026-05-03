@@ -351,14 +351,14 @@
   <% end %>
 
   <!-- 메시지 입력창 -->
-  <div class="bg-white border-t border-gray-100 px-3 py-3 flex-shrink-0" style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom));">
+  <div class="bg-white border-t border-gray-100 px-3 py-3 flex-shrink-0 relative" style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom));">
 
-    <!-- 스티커 패널 -->
-    <div id="expression-panel" class="hidden mb-2 bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden">
-      <div class="p-3 max-h-52 overflow-y-auto">
+    <!-- 스티커 패널 — absolute로 레이아웃 밀림 방지 -->
+    <div id="expression-panel" class="hidden absolute bottom-full left-0 right-0 mb-1 bg-white border border-gray-200 rounded-t-2xl shadow-lg overflow-hidden z-20">
+      <div class="p-3 max-h-60 overflow-y-auto">
         <% sticker_files = Dir.glob(Rails.root.join("public/images/stickers/*")).select { |f| f.match?(/\.(png|gif|webp|jpg)$/i) }.sort.map { |f| File.basename(f) } %>
         <% if sticker_files.any? %>
-          <div class="grid grid-cols-4 gap-2">
+          <div class="grid grid-cols-4 md:grid-cols-8 gap-2">
             <% sticker_files.each do |filename| %>
               <button type="button" onclick="sendSticker('<%= filename %>'); closeExpressionPanel()"
                       class="w-full aspect-square rounded-xl overflow-hidden hover:bg-gray-100 p-2 transition-colors">
@@ -396,7 +396,11 @@
       <%= f.file_field :attachments, multiple: true, accept: "image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.hwp",
             class: "hidden", id: "file-attach-input", onchange: "handleFileAttach(this)" %>
 
-      <div class="flex-1">
+      <div class="flex-1 relative">
+        <!-- 이모지 입력 시 캐릭터 팝업 -->
+        <div id="emoji-char-popup" class="emoji-char-popup hidden">
+          <img id="emoji-char-img" src="/images/characters/thumbsup.png" alt="" class="w-full h-full object-contain drop-shadow-md">
+        </div>
         <!-- 첨부 미리보기 -->
         <div id="file-preview" class="hidden mb-1.5 flex flex-wrap gap-1.5 max-h-20 overflow-y-auto"></div>
         <%= f.text_area :content,
@@ -405,7 +409,7 @@
               data: {
                 chat_target: "input",
                 emoji_picker_target: "textarea",
-                action: "keydown->chat#handleKeydown input->chat#adjustTextareaHeight"
+                action: "keydown->chat#handleKeydown input->chat#adjustTextareaHeight input->chat#detectEmoji"
               },
               class: "w-full px-4 py-2 bg-gray-100 rounded-2xl focus:bg-white focus:ring-2 focus:ring-primary-400 focus:outline-none resize-none text-sm leading-snug transition-all max-h-24" %>
       </div>

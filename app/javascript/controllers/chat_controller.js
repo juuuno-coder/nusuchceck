@@ -126,8 +126,14 @@ export default class extends Controller {
       this.inputTarget.style.height = "auto"
       this.inputTarget.focus()
       this.scrollToBottom()
-      // 타이핑 상태 중지
       this._isTyping = false
+      // 이모지 캐릭터 팝업 즉시 숨김
+      if (this._emojiPopupTimer) {
+        clearTimeout(this._emojiPopupTimer)
+        this._emojiPopupTimer = null
+      }
+      const popup = document.getElementById("emoji-char-popup")
+      if (popup) { popup.classList.add("hidden"); popup.classList.remove("pop-in", "pop-out") }
     }
   }
 
@@ -135,6 +141,33 @@ export default class extends Controller {
     const textarea = this.inputTarget
     textarea.style.height = "auto"
     textarea.style.height = Math.min(textarea.scrollHeight, 120) + "px"
+  }
+
+  detectEmoji() {
+    const text = this.inputTarget.value
+    const emojiRegex = /\p{Emoji_Presentation}|\p{Extended_Pictographic}/u
+    if (!emojiRegex.test(text)) return
+
+    const popup = document.getElementById("emoji-char-popup")
+    if (!popup) return
+
+    // 이미 팝업 표시 중이면 타이머만 리셋
+    if (this._emojiPopupTimer) {
+      clearTimeout(this._emojiPopupTimer)
+    } else {
+      popup.classList.remove("hidden", "pop-out")
+      popup.classList.add("pop-in")
+    }
+
+    this._emojiPopupTimer = setTimeout(() => {
+      popup.classList.remove("pop-in")
+      popup.classList.add("pop-out")
+      setTimeout(() => {
+        popup.classList.add("hidden")
+        popup.classList.remove("pop-out")
+        this._emojiPopupTimer = null
+      }, 250)
+    }, 1500)
   }
 
   scrollToBottom() {

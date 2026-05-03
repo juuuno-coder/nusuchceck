@@ -100,12 +100,12 @@
         </div>
         <div class="space-y-3" data-check-wizard-target="buttonGroup" data-field="symptom_type">
           <% [
-            ["wall_leak", "leak", "벽면 누수", "벽에서 물이 배어나와요"],
-            ["ceiling_leak", "leak2", "천장 누수", "천장에서 물이 떨어져요"],
-            ["floor_leak", "warning", "바닥 누수", "바닥이 축축해요"],
-            ["pipe_leak", "tools", "배관 누수", "배관에서 새는 것 같아요"],
-            ["toilet_leak", "repair", "화장실 누수", "화장실에서 물이 새요"],
-            ["outdoor_leak", "houses", "외부 누수", "외벽, 창틀에서 새요"]
+            ["wall_leak",    "wall_leak",    "벽면 누수",   "벽에서 물이 배어나와요"],
+            ["ceiling_leak", "ceiling_leak", "천장 누수",   "천장에서 물이 떨어져요"],
+            ["floor_leak",   "floor_leak",   "바닥 누수",   "바닥이 축축해요"],
+            ["pipe_leak",    "pipe_leak",    "배관 누수",   "배관에서 새는 것 같아요"],
+            ["toilet_leak",  "toilet_leak",  "화장실 누수", "화장실에서 물이 새요"],
+            ["outdoor_leak", "outdoor_leak", "외부 누수",   "외벽, 창틀에서 새요"]
           ].each do |value, icon, title, desc| %>
             <button type="button"
                     class="option-btn w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-primary-200 bg-gradient-to-br from-primary-50 to-blue-50 hover:shadow-lg transition-all duration-200 text-left group select-button focus:outline-none shadow-sm"
@@ -140,12 +140,12 @@
         </div>
         <div class="grid grid-cols-3 gap-3" data-check-wizard-target="buttonGroup" data-field="building_type">
           <% [
-            ["apartment", "houses", "아파트"],
-            ["villa", "houses", "빌라"],
-            ["house", "houses", "단독주택"],
-            ["office", "houses", "사무실"],
-            ["retail_store", "houses", "상가"],
-            ["other_building", "houses", "기타"]
+            ["apartment",      "apartment",      "아파트"],
+            ["villa",          "villa",          "빌라"],
+            ["house",          "house",          "단독주택"],
+            ["office",         "office",         "사무실"],
+            ["retail_store",   "retail_store",   "상가"],
+            ["other_building", "other_building", "기타"]
           ].each do |value, icon, title| %>
             <button type="button"
                     class="option-btn flex flex-col items-center gap-2 p-4 rounded-2xl border-2 border-gray-200 bg-white hover:border-primary-400 hover:bg-primary-50 hover:shadow-lg transition-all duration-200 select-button focus:outline-none shadow-sm"

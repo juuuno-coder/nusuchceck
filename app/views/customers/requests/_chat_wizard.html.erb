@@ -78,12 +78,12 @@
       <p class="text-xs text-gray-400 font-medium mb-3">해당하는 증상을 선택해주세요</p>
       <div class="grid grid-cols-3 gap-2">
         <% [
-          { value: "wall_leak",    label: "벽면 누수",   icon: "leak2" },
-          { value: "ceiling_leak", label: "천장 누수",   icon: "leak2" },
-          { value: "floor_leak",   label: "바닥 누수",   icon: "leak2" },
-          { value: "pipe_leak",    label: "배관 누수",   icon: "tools" },
-          { value: "toilet_leak",  label: "화장실 누수", icon: "leak2" },
-          { value: "outdoor_leak", label: "외부 누수",   icon: "houses" },
+          { value: "wall_leak",    label: "벽면 누수",   icon: "wall_leak" },
+          { value: "ceiling_leak", label: "천장 누수",   icon: "ceiling_leak" },
+          { value: "floor_leak",   label: "바닥 누수",   icon: "floor_leak" },
+          { value: "pipe_leak",    label: "배관 누수",   icon: "pipe_leak" },
+          { value: "toilet_leak",  label: "화장실 누수", icon: "toilet_leak" },
+          { value: "outdoor_leak", label: "외부 누수",   icon: "outdoor_leak" },
         ].each do |symptom| %>
           <button type="button"
                   data-action="click->chat-wizard#selectSymptom"
@@ -102,12 +102,12 @@
       <p class="text-xs text-gray-400 font-medium mb-3">건물 종류를 선택해주세요</p>
       <div class="grid grid-cols-2 gap-2">
         <% [
-          { value: "apartment",      label: "아파트",    icon: "houses" },
-          { value: "villa",          label: "빌라/연립", icon: "houses" },
-          { value: "house",          label: "단독주택",  icon: "houses" },
-          { value: "office",         label: "사무실",    icon: "houses" },
-          { value: "retail_store",   label: "상가",      icon: "houses" },
-          { value: "other_building", label: "기타",      icon: "houses" },
+          { value: "apartment",      label: "아파트",    icon: "apartment" },
+          { value: "villa",          label: "빌라/연립", icon: "villa" },
+          { value: "house",          label: "단독주택",  icon: "house" },
+          { value: "office",         label: "사무실",    icon: "office" },
+          { value: "retail_store",   label: "상가",      icon: "retail_store" },
+          { value: "other_building", label: "기타",      icon: "other_building" },
         ].each do |building| %>
           <button type="button"
                   data-action="click->chat-wizard#selectBuilding"

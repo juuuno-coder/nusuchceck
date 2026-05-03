@@ -410,13 +410,62 @@ docker-compose exec web bin/rails console
 docker-compose logs -f sidekiq
 ```
 
+## Vibers 공통 스킬 연동
+
+| 작업 | 공통 스킬 | 비고 |
+|------|----------|------|
+| 랜딩·웹 디자인 | `/vibers-design` | LIGHT_GREEN 테마 권장 (신뢰·전문성) |
+| 서버·Docker 점검 | `/vibers-admin` | NCP 포트 4080 |
+
 ## 현재 작업 (NOW)
 <!-- 작업 중단 시 여기에 기록 — 다음 에이전트가 이어받을 수 있도록 -->
 - 진행 중: 없음
-- 마지막 완료: NCP Docker 배포 (2026-03-24)
+- 마지막 완료: 채팅 UI 개선 — 스티커 패널 absolute 포지션, 이모지 캐릭터 팝업 (2026-05-03)
 - 다음 할 일: OKR.md의 KR 기준으로 우선순위 높은 것부터
 
 ---
 
-**마지막 업데이트**: 2026-03-24
-**버전**: 1.2 (인프라/협업 정보 추가)
+## 📌 다음 에이전트 전달 프롬프트 (2026-05-03)
+
+### 최근 완료 작업 요약
+
+#### 채팅 UI 개선 (`app/views/messages/index.html.erb`)
+1. **스티커 패널 레이아웃 수정** (commit: `41a265af`)
+   - `expression-panel`: normal flow → `absolute bottom-full left-0 right-0`
+   - 입력창 부모에 `relative` 추가
+   - 패널이 열릴 때 메시지 영역을 밀어내던 버그 수정
+   - PC에서 8열 그리드: `grid-cols-4 md:grid-cols-8`
+
+2. **이모지 캐릭터 팝업** (`chat_controller.js` + `application.css`)
+   - 이모지 입력 시 thumbsup.png 캐릭터가 텍스트창 위에 pop-in 애니메이션으로 표시
+   - `detectEmoji` 액션 → `emoji-char-popup` div 표시/숨김
+   - 1.5초 후 자동 숨김
+
+#### 파일 구조 핵심
+- **채팅 뷰**: `app/views/messages/index.html.erb`
+- **채팅 컨트롤러(JS)**: `app/javascript/controllers/chat_controller.js`
+- **스티커 이미지**: `public/images/stickers/` (thumbsup.png 포함)
+- **캐릭터 이미지**: `public/images/characters/` (thumbsup.png 등)
+- **스타일**: `app/assets/stylesheets/application.css`
+
+#### 알려진 이슈 / 주의사항
+- `mobile/` 폴더의 파일들이 deleted 상태로 tracking 중 — Expo 앱 파일이 제거됨
+- 커밋 시 `mobile/` 삭제 파일이 같이 올라가지 않도록 주의
+- `public/누수체크_홍합스롤려현화_v2.xlsx` 파일이 untracked 상태 — 커밋하지 말 것
+
+---
+
+**마지막 업데이트**: 2026-05-03
+**버전**: 1.3 (전달 프롬프트 추가)
+
+## 배포 규칙
+- 배포 트리거 후 `gh run watch <run-id>`로 완료까지 대기. "N분 후 됩니다"로 끝내지 말 것.
+- 예상 시간을 알려준 경우, 그 시간 후 반드시 다시 확인하고 결과 메시지 전달.
+- 성공 시: 배포 완료 확인 + 접속 테스트. 실패 시: 로그 분석 + 원인 + 수정 방안 + 조치사항 안내.
+
+## 세션로그 기록 (필수)
+- 모든 개발 대화의 주요 내용을 `session-logs/` 폴더에 기록할 것
+- 파일명: `YYYY-MM-DD_한글제목.md` / 내용: **반드시 한글**
+- 세션 종료 시, 마일스톤 달성 시, **컨텍스트 압축 전**에 반드시 저장
+- 중요한 결정, 작업 내역, 트러블슈팅, 아키텍처 변경은 빠짐없이 기록
+- 다음 세션의 클로드가 이 로그만 읽고도 작업을 이어갈 수 있을 정도로 충실하게 작성

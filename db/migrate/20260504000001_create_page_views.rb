@@ -1,4 +1,4 @@
-class CreatePageViews < ActiveRecord::Migration[7.2]
+class CreatePageViews < ActiveRecord::Migration[7.1]
   def change
     create_table :page_views do |t|
       t.date    :viewed_on,  null: false

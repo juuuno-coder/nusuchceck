@@ -82,6 +82,9 @@ jobs:
             echo "=== db:migrate ==="
             docker exec ${{ env.CONTAINER }} bin/rails db:migrate || echo "⚠️ 마이그레이션 실패"
 
+            echo "=== page_views 로그 백필 ==="
+            docker exec ${{ env.CONTAINER }} bin/rails page_views:backfill || echo "⚠️ 백필 스킵"
+
             echo "=== sidekiq 재시작 ==="
             docker compose up -d --no-build --no-deps sidekiq
 

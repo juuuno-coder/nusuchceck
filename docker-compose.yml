@@ -15,6 +15,7 @@ services:
     env_file: .env
     volumes:
       - storage_data:/rails/storage
+      - /root/projects/nusucheck/log:/rails/log
     networks:
       - npm_default
     restart: unless-stopped
@@ -38,6 +39,7 @@ services:
     env_file: .env
     volumes:
       - storage_data:/rails/storage
+      - /root/projects/nusucheck/log:/rails/log
     networks:
       - npm_default
     restart: unless-stopped

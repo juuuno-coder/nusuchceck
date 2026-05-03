@@ -8,6 +8,13 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_customer, :current_master
 
+  after_action :track_page_view
+
+  SKIP_TRACKING_CONTROLLERS = %w[
+    admin/dashboard admin/masters admin/requests admin/insurance_claims
+    admin/service_zones api/ai_chat
+  ].freeze
+
   def current_customer
     current_user if current_user&.customer?
   end
@@ -17,6 +24,23 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def track_page_view
+    return if SKIP_TRACKING_CONTROLLERS.include?(params[:controller])
+    return unless request.format.html?
+    return if request.path.start_with?("/rails/", "/cable", "/assets/", "/packs/")
+    return unless response.successful?
+
+    PageView.create!(
+      viewed_on:       Date.current,
+      path:            request.path,
+      controller_name: params[:controller],
+      action_name:     params[:action],
+      user_id:         current_user&.id
+    )
+  rescue StandardError
+    # 트래킹 실패가 요청에 영향을 주지 않도록
+  end
 
   def record_not_found
     respond_to do |format|

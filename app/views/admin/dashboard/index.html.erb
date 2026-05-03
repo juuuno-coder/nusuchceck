@@ -123,6 +123,88 @@
     </div>
   </div>
 
+  <!-- 📊 접속 통계 섹션 -->
+  <div class="bg-white rounded-2xl border border-gray-100 p-6">
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <h2 class="text-base font-semibold text-gray-900">📊 접속 통계</h2>
+        <p class="text-xs text-gray-400 mt-0.5">최근 14일 · 페이지뷰 기준 (관리자 페이지 제외)</p>
+      </div>
+      <div class="flex items-center gap-4 text-sm">
+        <span class="text-gray-500">14일 합계</span>
+        <span class="text-2xl font-bold text-primary-600"><%= number_with_delimiter(@pv_total) %> PV</span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- 라인 차트 -->
+      <div class="lg:col-span-2">
+        <div class="h-52">
+          <canvas id="pvTrendChart"></canvas>
+        </div>
+      </div>
+
+      <!-- 인기 페이지 -->
+      <div>
+        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">인기 페이지 Top 10</h3>
+        <div class="space-y-1.5 overflow-y-auto max-h-52">
+          <% total_pv_for_paths = @top_paths.values.sum.to_f %>
+          <% @top_paths.each_with_index do |(path, cnt), idx| %>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-gray-300 w-4"><%= idx + 1 %></span>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between mb-0.5">
+                  <span class="text-xs text-gray-700 truncate max-w-[140px]" title="<%= path %>"><%= path.length > 22 ? "...#{path.last(20)}" : path %></span>
+                  <span class="text-xs font-bold text-gray-700 ml-2"><%= cnt %></span>
+                </div>
+                <div class="w-full bg-gray-100 rounded-full h-1.5">
+                  <div class="bg-primary-400 h-1.5 rounded-full" style="width: <%= total_pv_for_paths > 0 ? [(cnt / total_pv_for_paths * 100).round(1), 100].min : 0 %>%"></div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+          <% if @top_paths.empty? %>
+            <p class="text-xs text-gray-400 text-center py-4">데이터 없음</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- 14일 일자별 표 -->
+    <div class="mt-5 overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead>
+          <tr class="border-b border-gray-100">
+            <th class="pb-2 text-left text-xs font-semibold text-gray-500 pr-4">날짜</th>
+            <th class="pb-2 text-left text-xs font-semibold text-gray-500 pr-4">요일</th>
+            <th class="pb-2 text-right text-xs font-semibold text-gray-500 pr-4">전체 PV</th>
+            <th class="pb-2 text-right text-xs font-semibold text-gray-500 pr-4">로그인 사용자</th>
+            <th class="pb-2 text-right text-xs font-semibold text-gray-500">비로그인</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          <% @pv_daily_rows.each_with_index do |row, idx| %>
+            <tr class="<%= idx == 0 ? 'bg-primary-50' : 'hover:bg-gray-50' %>">
+              <td class="py-2 pr-4 text-xs font-mono text-gray-700 font-medium"><%= row[:date] %></td>
+              <td class="py-2 pr-4 text-xs text-gray-400"><%= row[:weekday] %></td>
+              <td class="py-2 pr-4 text-xs text-right <%= row[:total] > 0 ? 'font-bold text-primary-700' : 'text-gray-300' %>"><%= row[:total] > 0 ? number_with_delimiter(row[:total]) : '-' %></td>
+              <td class="py-2 pr-4 text-xs text-right text-gray-600"><%= row[:logged] > 0 ? number_with_delimiter(row[:logged]) : '-' %></td>
+              <td class="py-2 text-xs text-right text-gray-400"><%= row[:anon] > 0 ? number_with_delimiter(row[:anon]) : '-' %></td>
+            </tr>
+          <% end %>
+        </tbody>
+        <tfoot>
+          <tr class="border-t border-gray-200">
+            <td colspan="2" class="pt-2 text-xs font-semibold text-gray-500">합계</td>
+            <td class="pt-2 text-xs text-right font-bold text-primary-700"><%= number_with_delimiter(@pv_total) %></td>
+            <td class="pt-2 text-xs text-right font-semibold text-gray-600"><%= number_with_delimiter(@pv_daily_rows.sum { |r| r[:logged] }) %></td>
+            <td class="pt-2 text-xs text-right text-gray-400"><%= number_with_delimiter(@pv_daily_rows.sum { |r| r[:anon] }) %></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
   <!-- 📈 차트 섹션 -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 p-6">
@@ -203,10 +285,54 @@
       if (typeof Chart === 'undefined') return;
 
       // 기존 인스턴스 파괴 (Turbo 캐시 재진입 시 canvas 재사용 오류 방지)
-      ['requestTrendChart','symptomChart','revenueChart'].forEach(id => {
+      ['requestTrendChart','symptomChart','revenueChart','pvTrendChart'].forEach(id => {
         const existing = Chart.getChart(id);
         if (existing) existing.destroy();
       });
+
+    // 접속 통계 (PV) 차트
+    new Chart(document.getElementById('pvTrendChart'), {
+      type: 'line',
+      data: {
+        labels: <%= @pv_labels.to_json.html_safe %>,
+        datasets: [
+          {
+            label: '전체 PV',
+            data: <%= @pv_data.to_json.html_safe %>,
+            borderColor: 'rgb(59,130,246)',
+            backgroundColor: 'rgba(59,130,246,0.08)',
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: 'rgb(59,130,246)',
+            pointRadius: 3
+          },
+          {
+            label: '로그인 사용자',
+            data: <%= @pv_user_data.to_json.html_safe %>,
+            borderColor: 'rgb(16,185,129)',
+            backgroundColor: 'transparent',
+            borderWidth: 1.5,
+            borderDash: [4, 3],
+            tension: 0.4,
+            fill: false,
+            pointRadius: 2,
+            pointBackgroundColor: 'rgb(16,185,129)'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', labels: { font: { size: 11 }, padding: 10, boxWidth: 12 } }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { size: 10 }, maxTicksLimit: 7 } },
+          y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 10 } } }
+        }
+      }
+    });
 
     new Chart(document.getElementById('requestTrendChart'), {
       type: 'bar',

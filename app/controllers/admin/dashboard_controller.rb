@@ -145,6 +145,38 @@ class Admin::DashboardController < ApplicationController
       }
     end.reverse  # 최신 날짜가 위로
 
+    # === 접속 통계 (14일) ===
+    fourteen_days = (13.downto(0)).map { |i| Date.current - i.days }
+    raw_pv = PageView.where("viewed_on >= ?", 13.days.ago.to_date)
+                     .group(:viewed_on)
+                     .order(:viewed_on)
+                     .count
+
+    raw_user_pv = PageView.where("viewed_on >= ?", 13.days.ago.to_date)
+                          .where.not(user_id: nil)
+                          .group(:viewed_on)
+                          .order(:viewed_on)
+                          .count
+
+    @pv_labels = fourteen_days.map { |d| d.strftime("%m/%d") }
+    @pv_data   = fourteen_days.map { |d| raw_pv[d] || 0 }
+    @pv_user_data = fourteen_days.map { |d| raw_user_pv[d] || 0 }
+    @pv_total  = @pv_data.sum
+
+    top_paths_raw = PageView.where("viewed_on >= ?", 13.days.ago.to_date)
+                            .group(:path)
+                            .order("count_all DESC")
+                            .limit(10)
+                            .count
+
+    @pv_daily_rows = fourteen_days.reverse.map do |d|
+      total   = raw_pv[d] || 0
+      logged  = raw_user_pv[d] || 0
+      { date: d.strftime("%m/%d"), weekday: %w[일 월 화 수 목 금 토][d.wday], total: total, logged: logged, anon: total - logged }
+    end
+
+    @top_paths = top_paths_raw
+
     # === 전체 마스터 현황 ===
     @master_list = Master.includes(:master_profile, :reviews, :assigned_requests)
                          .order(:name)

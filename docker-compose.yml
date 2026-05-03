@@ -4,6 +4,7 @@ services:
   app:
     container_name: nusucheck-app
     build: .
+    image: nusucheck-app:latest
     ports:
       - "4080:3000"
     depends_on:
@@ -27,6 +28,7 @@ services:
   sidekiq:
     container_name: nusucheck-sidekiq
     build: .
+    image: nusucheck-app:latest
     command: bundle exec sidekiq
     depends_on:
       db:

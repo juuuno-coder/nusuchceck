@@ -23,9 +23,14 @@ Rails.application.configure do
   config.ssl_options = { redirect: { exclude: -> request { request.path == "/up" || request.path == "/cable" } } }
   # stdout + 파일 동시 기록 (Docker 로그 수집 유지 + 볼륨 마운트된 파일에도 저장)
   stdout_logger = Logger.new($stdout)
-  file_logger   = Logger.new(Rails.root.join("log", "production.log"), 5, 100.megabytes)
-  broadcast_logger = ActiveSupport::BroadcastLogger.new(stdout_logger, file_logger)
-  config.logger = ActiveSupport::TaggedLogging.new(broadcast_logger)
+  log_dir = Rails.root.join("log")
+  if log_dir.exist? && log_dir.writable?
+    file_logger      = Logger.new(log_dir.join("production.log"), 5, 100.megabytes)
+    broadcast_logger = ActiveSupport::BroadcastLogger.new(stdout_logger, file_logger)
+    config.logger    = ActiveSupport::TaggedLogging.new(broadcast_logger)
+  else
+    config.logger = ActiveSupport::TaggedLogging.new(stdout_logger)
+  end
   config.log_tags = [:request_id]
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
 

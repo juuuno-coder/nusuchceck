@@ -2,6 +2,8 @@
 
 # If running the rails server then create or migrate existing database
 if [ "${1}" == "./bin/rails" ] && [ "${2}" == "server" ]; then
+  # 비정상 종료 시 남은 스테일 PID 파일 제거 (재시작 루프 방지)
+  rm -f /rails/tmp/pids/server.pid
   ./bin/rails db:prepare
 fi
 
